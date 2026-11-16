@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "id": "2", "name": "Rina Ring", "username": "ringnerd_test", "created_at": "2015-06-01T00:00:00.000Z",
+      "description": "Reviewing wearables since 2019.", "location": "Austin, TX", "verified": true, "verified_type": "blue",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/1/rina_normal.jpg",
+      "public_metrics": {"followers_count": 48000, "following_count": 1200, "tweet_count": 12000, "listed_count": 210}
+    },
+    {
+      "id": "3", "name": "Tom Writer", "username": "techwriter_test", "created_at": "2010-01-01T00:00:00.000Z",
+      "description": "Senior editor @GadgetDaily.", "location": "New York, NY", "verified": true, "verified_type": "blue",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/3/tom_normal.jpg",
+      "public_metrics": {"followers_count": 120000, "following_count": 2000, "tweet_count": 40000, "listed_count": 900}
+    }
+  ],
+  "meta": {"result_count": 2, "next_token": "7140dibdnow9c7btw3w29grvxfmqzoxc4tj7k4wd1"}
+}

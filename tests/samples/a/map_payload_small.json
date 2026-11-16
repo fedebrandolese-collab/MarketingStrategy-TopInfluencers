@@ -1,0 +1,30 @@
+{
+ "exported_at": "2026-09-29T00:00:00.000Z",
+ "capital": {
+  "group": "capital",
+  "people": [
+   {"channels": "imessage", "company": "Fund X", "first_contact": "2026-01-02T10:00:00Z", "id": 1, "interactions": 20, "intros_got": 0, "intros_made": 1, "last_contact": "2026-09-01T10:00:00Z", "meetings": 2, "name": "Ada Sample", "received": 10, "role": "Partner", "sector": "vc", "tags": "vc,x_following", "warmth": 12.5},
+   {"channels": "gmail", "company": "Both Co", "first_contact": "2026-02-02T10:00:00Z", "id": 2, "interactions": 4, "intros_got": 0, "intros_made": 0, "last_contact": "2026-08-01T10:00:00Z", "meetings": 0, "name": "Bo Both", "received": 2, "role": "founder; angel", "sector": "angel", "tags": "angel,investor", "warmth": 3.0}
+  ],
+  "edges": [{"from_id": 1, "source": "imessage", "to_id": 2}],
+  "monthly": [{"month": "2026-01", "n": 5, "source": "gmail"}],
+  "counts": {"archive": 0, "capital": 2, "press": 2},
+  "competitor_funds": [{"competitor": "Oura", "fund": "Fund X", "round": "Series A"}]
+ },
+ "press": {
+  "group": "press",
+  "people": [
+   {"channels": "gmail", "company": "Both Co", "first_contact": "2026-02-02T10:00:00Z", "id": 2, "interactions": 4, "intros_got": 0, "intros_made": 0, "last_contact": "2026-08-01T10:00:00Z", "meetings": 0, "name": "Bo Both", "received": 2, "role": "founder; angel", "sector": "connector", "tags": "angel,press", "warmth": 3.0},
+   {"channels": null, "company": "Daily Sample", "first_contact": null, "id": 3, "interactions": 0, "intros_got": 0, "intros_made": 0, "last_contact": null, "meetings": 0, "name": "Cy Reporter", "received": 0, "role": "Reporter", "sector": "press", "tags": "press,coverage", "warmth": 0}
+  ],
+  "edges": [{"from_id": 2, "source": "transcript", "to_id": 3}],
+  "monthly": [{"month": "2026-01", "n": 2, "source": "meeting"}],
+  "counts": {"archive": 0, "capital": 2, "press": 2},
+  "competitor_funds": [{"competitor": "Oura", "fund": "Fund X", "round": "Series A"}]
+ },
+ "timelines": {
+  "1": {"enrich": null, "events": [], "linkedin": {"company": "Fund X", "connected_on": "1 Jan 2026", "position": "Partner", "profile_url": "https://www.linkedin.com/in/ada-sample"}, "summary": ""},
+  "2": {"enrich": null, "events": [], "linkedin": null, "summary": ""},
+  "3": {"enrich": null, "events": [], "linkedin": null, "summary": ""}
+ }
+}

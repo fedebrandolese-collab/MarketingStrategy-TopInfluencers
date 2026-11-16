@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "id": "3", "name": "Tom Writer", "username": "TechWriter_Test", "created_at": "2010-01-01T00:00:00.000Z",
+      "description": "Senior editor @GadgetDaily. Covers AI hardware, wearables, and the post-smartphone era. Tips open.",
+      "location": "New York, NY", "url": "", "verified": true, "verified_type": "blue",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/3/tom_normal.jpg",
+      "public_metrics": {"followers_count": 120000, "following_count": 2000, "tweet_count": 40000, "listed_count": 900},
+      "entities": {"description": {"mentions": [{"start": 14, "end": 26, "username": "GadgetDaily"}]}}
+    },
+    {
+      "id": "4", "name": "Vera Capital", "username": "vc_test", "created_at": "2011-01-01T00:00:00.000Z",
+      "description": "Partner @ExampleVentures. Consumer hardware, voice, agents. Wears a ring, talks to her AI.",
+      "location": "Palo Alto, CA", "url": "https://t.co/vc1", "verified": false, "verified_type": "none",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/4/vera_normal.jpg",
+      "public_metrics": {"followers_count": 30000, "following_count": 900, "tweet_count": 8000, "listed_count": 300},
+      "entities": {"url": {"urls": [{"start": 0, "end": 23, "url": "https://t.co/vc1", "expanded_url": "https://example.ventures", "display_url": "example.ventures"}]}}
+    }
+  ],
+  "errors": [
+    {"value": "ghost_handle", "detail": "Could not find user with usernames: [ghost_handle].", "title": "Not Found Error",
+     "resource_type": "user", "parameter": "usernames", "resource_id": "ghost_handle", "type": "https://api.twitter.com/2/problems/resource-not-found"}
+  ]
+}

@@ -1,0 +1,65 @@
+# Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
+# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+checked: 2026-09-29
+people:
+  - handle: rileybrown
+    name: "Riley Brown"
+    verdict: contactable
+    routes:
+      - type: agent
+        detail: "[redacted-email]"
+        source_url: "https://x.com/rileybrown"
+        note: "Rakugo Media, a creator talent agency; his X bio lists it as Media"
+    reason: "Published in his own X bio for media inquiries; Rakugo Media describes itself as tech's talent agency."
+
+  - handle: priymrj
+    name: "Priyam Raj"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://priyamraj.com/contact"
+        note: "Mailto behind the Contact and Email links on his site (Cloudflare-masked)"
+    reason: "His own site priyamraj.com, the link on his X profile, publishes this address in its nav and footer."
+
+  - handle: lenadroid
+    name: "Lena Hall"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://github.com/DroidAIOrg"
+        note: "Business inbox of Droid AI, her company per her X and GitHub bios"
+      - type: contact_form
+        detail: "https://droidai.ai/contact_request.html"
+        source_url: "https://droidai.ai"
+        note: "Droid AI site names her as CEO; contact request form"
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/lena-hall/"
+        source_url: "https://x.com/lenadroid"
+        note: "The link on her X profile; weak fallback"
+    reason: "She founded Droid AI (X bio; GitHub bio links @DroidAIOrg), whose GitHub org publishes this business address; LinkedIn is her chosen X link."
+
+  - handle: steventey
+    name: "Steven Tey"
+    verdict: contactable
+    routes:
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/steventey/"
+        source_url: "https://steventey.com"
+        note: "Linked from his own site and GitHub; weak fallback"
+      - type: contact_form
+        detail: "https://dub.co/contact"
+        source_url: "https://dub.co/about"
+        note: "Dub's company contact page; About names him Founder, CEO. Not personal"
+    reason: "No email published on his site, GitHub or Dub's pages; only LinkedIn and his company's contact page. Weak but real."
+
+  - handle: kyliebytes
+    name: "Kylie Robison"
+    verdict: contactable
+    routes:
+      - type: other_social
+        detail: "Signal: kylie.111"
+        source_url: "https://x.com/kyliebytes"
+        note: "Username from her X bio; also in her Bluesky bio; her site links Signal"
+    reason: "Journalist at Core Memory; publishes Signal as her contact on X, Bluesky and her site. No email or tips line found."

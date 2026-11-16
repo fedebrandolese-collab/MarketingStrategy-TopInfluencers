@@ -1,0 +1,65 @@
+# Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
+# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+checked: 2026-09-29
+people:
+  - handle: mkbhd
+    name: "Marques Brownlee"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://x.com/MKBHD/status/1452448827730903041"
+        note: "He posted it from @MKBHD in public replies, 2019 and 2021."
+    reason: "His own tweets twice give this address, on mkbhd.com, the domain in his X bio. mkbhd.com's contact form is merch support only."
+
+  - handle: kai_brokering
+    name: "Kai Brokering"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://voiceos.com/contact"
+        note: "VoiceOS company inbox; invites partnership notes, replies within one business day."
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/kai-brokering/"
+        source_url: "https://www.voiceos.com/authors/kai-brokering"
+        note: "Linked from his VoiceOS author page and kaibrokering.com, beside his X."
+    reason: "Co-founder of a small YC startup whose published inbox invites partnerships; VoiceOS and his own site confirm the LinkedIn."
+
+  - handle: huang_song_
+    name: "Huang Song"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://www.typeless.com/contact"
+        note: "Typeless's general company inbox, not a personal address."
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/huang-song-33122743/"
+        source_url: "https://www.typeless.com/about"
+        note: "Typeless about page names him Founder & CEO and links this."
+    reason: "Typeless's about page names him Founder & CEO and links his X and LinkedIn; the company inbox is its published contact."
+
+  - handle: nbtjacklyn
+    name: "Jacklyn Dallas"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://nbtjacklyn.com/"
+        note: "Business and partnerships email on her show's site, which links @NBTJacklyn."
+    reason: "Her own NBT site, hosted by Jacklyn Dallas and linking her X, invites partner inquiries to this address."
+
+  - handle: alexisohanian
+    name: "Alexis Ohanian"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://sevensevensix.com/"
+        note: "Contact address of Seven Seven Six, the fund he founded (checked in a browser)."
+      - type: press_office
+        detail: "[redacted-email]"
+        source_url: "https://alexisohanian.com/contact"
+        note: "Unconfirmed: his own site had expired when checked on 29 Sep."
+    reason: "His fund's site publishes [redacted-email] (confirmed 29 Sep); his personal site has expired, so its press inbox is unconfirmed."

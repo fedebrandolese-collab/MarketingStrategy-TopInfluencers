@@ -1,0 +1,65 @@
+# Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
+# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+checked: 2026-09-29
+people:
+  - handle: morganlinton
+    name: "Morgan Linton"
+    verdict: contactable
+    routes:
+      - type: newsletter_reply
+        detail: "https://modelrouting.substack.com"
+        source_url: "https://www.morganlinton.com/"
+        note: "His Substack, linked from X and his site; subscribe free, reply to an issue"
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/morganlinton/"
+        source_url: "https://www.linkedin.com/in/morganlinton/"
+        note: "Headline 'Cofounder + CTO at Bold Metrics' matches his X bio; weak fallback"
+    reason: "No email on his site, VulcanBench, Substack about page or GitHub; Substack replies go to the author by default."
+
+  - handle: vadimyuryev
+    name: "Vadim Yuryev"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "Max Tech business email in YouTube 'Channel details' (View email address)"
+        source_url: "https://www.youtube.com/@MaxTechOfficial/about"
+        note: "Address hidden behind YouTube sign-in and captcha; Carlo reveals it himself"
+    reason: "X bio links Max Tech; its About names a details-section business email and @vadimyuryev as sole contacts (read via search index)."
+
+  - handle: paularambles
+    name: "Paula Dozsa"
+    verdict: contactable
+    routes:
+      - type: other_social
+        detail: "https://www.instagram.com/paularambles/"
+        source_url: "https://www.threads.com/@paularambles"
+        note: "Weak: Instagram message request; confirmed hers, her Threads links her X"
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/paulacodes/"
+        source_url: "https://www.linkedin.com/in/paulacodes/"
+        note: "Unconfirmed: matched by name and job history only"
+    reason: "Weak route only: no site or email, X DMs closed; an Instagram message request is the one confirmed channel."
+
+  - handle: sawyerhood
+    name: "Sawyer Hood"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://sawyerhood.com"
+        note: "Mailto link on his homepage, which his X profile links to"
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/sawyer-hood-24201a81/"
+        source_url: "https://sawyerhood.com"
+        note: "Linked from his own homepage"
+    reason: "His own site, linked from X and linking back to @sawyerhood, publishes this email directly."
+
+  - handle: leerob
+    name: "Lee Robinson"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://leerob.com"
+        note: "Linked from 'I also advise companies and angel invest' on his homepage"
+    reason: "His own site, linked from his X profile, publishes this email for advising and investing; site confirms ML at SpaceX."

@@ -1,0 +1,76 @@
+# Discovery configuration. Queries use X search syntax (the monid/Apify adapter maps them to searchTerms).
+# Keep lang:en and exclude retweets; discovery surfaces PEOPLE by aggregating authors, not posts.
+topics:
+  - '"smart ring" (AI OR voice OR assistant OR agent) -is:retweet lang:en'
+  - '"AI wearable" OR "AI wearables" -is:retweet lang:en'
+  - '"screen-free" OR "screenless" (AI OR device OR wearable) -is:retweet lang:en'
+  - '"voice-first" (device OR AI OR wearable OR assistant) -is:retweet lang:en'
+  - '"personal AI agent" OR "personal agent" (wearable OR ring OR earbuds OR voice) -is:retweet lang:en'
+  - '"AI earbuds" OR "AI pendant" OR "AI pin" -is:retweet lang:en'
+  - '"ambient computing" OR "post-smartphone" -is:retweet lang:en'
+  - '"voice interface" OR "voice AI" (wearable OR device OR future OR screen) -is:retweet lang:en'
+  - '"Ray-Ban Meta" OR "Meta Ray-Ban" OR "AI glasses" (daily OR review OR "every day" OR weeks) -is:retweet lang:en'
+  - '"Light Phone" OR dumbphone OR "digital minimalism" OR "screen time" (AI OR voice OR wearable) -is:retweet lang:en'
+competitor_products:   # people who tried/reviewed/unboxed these are exactly who wears devices
+  - '"Oura" (unboxing OR review OR "day one" OR "weeks with") -is:retweet lang:en'
+  - '"Ultrahuman" (ring OR review OR unboxing) -is:retweet lang:en'
+  - '"Humane" (pin OR review) -is:retweet lang:en'
+  - '"Rabbit r1" OR "Rabbit R1" -is:retweet lang:en'
+  - '"Limitless" (pendant OR review) -is:retweet lang:en'
+  - '"Plaud" (note OR pin OR review) -is:retweet lang:en'
+  - '"Omi" (wearable OR device OR review) -is:retweet lang:en'
+  - '"Bee" (wearable OR bracelet OR review) AI -is:retweet lang:en'
+  - '"Friend" pendant -is:retweet lang:en'
+  - '"Sesame" (voice OR glasses OR AI) -is:retweet lang:en'
+  - '"Wispr Flow" -is:retweet lang:en'
+  - '"Sandbar" ring -is:retweet lang:en'
+ring_wishlist:   # bare product wording is ambiguous: always English-only and anchored on the project account or products
+  - '(@RingWishlistAI OR TinyNature OR HumanPods OR "ring-wishlist.example" OR "Ring Wishlist") -is:retweet lang:en'
+authors:   # people-centric: posts with an audience (min_faves floor, "Top" sort) on how people live with voice AI and wearables
+  - '"voice mode" min_faves:200 -is:retweet lang:en'
+  - '(ChatGPT OR Claude OR Gemini) voice (walk OR walking OR driving OR "in the car" OR commute) min_faves:200 -is:retweet lang:en'
+  - '(talking OR talk OR talked) to (ChatGPT OR Claude OR Gemini) (walk OR walking OR drive OR driving) min_faves:200 -is:retweet lang:en'
+  - '"Gemini Live" min_faves:200 -is:retweet lang:en'
+  - '("Meta Ray-Ban" OR "Ray-Ban Meta" OR "Meta glasses" OR "AI glasses") min_faves:200 -is:retweet lang:en'
+  - '(Whisper OR Wispr OR superwhisper OR MacWhisper) (dictation OR dictate OR dictating OR "voice typing") min_faves:200 -is:retweet lang:en'
+  - '("personal agent" OR "personal agents" OR "personal AI agent") min_faves:200 -is:retweet lang:en'
+  - '("AI agent" OR "AI agents") ("every day" OR daily OR "my workflow" OR "my life") min_faves:200 -is:retweet lang:en'
+  - '(Oura OR Whoop OR "Apple Watch") ("every day" OR "every night" OR wearing OR years) min_faves:200 -is:retweet lang:en'
+  - '("AI wearable" OR "AI wearables" OR "wearable AI" OR "AI pendant" OR "AI necklace") min_faves:200 -is:retweet lang:en'
+  - '("voice interface" OR "voice interfaces" OR "voice UI") min_faves:200 -is:retweet lang:en'
+  - '"screen time" (AI OR ChatGPT OR Claude OR agent OR agents) min_faves:200 -is:retweet lang:en'
+# evidence: evidence-first search (30 Sep). Finds people by their OWN first-person posts about wearing a device or using a
+# voice tool ("my Oura", "wearing my", "Hey Meta", "I dictate", voice mode on a walk), so a new author arrives with the bar's
+# wear evidence already in hand. Floor from the list's own wear posts (median 85 likes): min_faves:50 keeps the best wear
+# post of 49 of the 73 list members who have one, the authors floor of 200 only 27; 50 for niche devices and tools, 100
+# for mass-market ones (Apple Watch, voice mode, generic dictation phrasing). Phrases avoid apostrophes (iOS types a
+# curly one). Brand accounts are excluded with -from:. Not run_enrich's per-person 'evidence' search (query_kind).
+evidence:
+  - '("my Oura" OR "Oura says" OR "Oura told me" OR "Oura thinks") -from:ouraring min_faves:50 -is:retweet lang:en'
+  - '(Ultrahuman OR RingConn OR "Galaxy Ring") (my OR "I wear" OR "been wearing" OR "I got" OR "switched to") -from:ultrahumanhq -from:SamsungMobile -from:SamsungMobileUS min_faves:50 -is:retweet lang:en'
+  - '("my Sandbar" OR "Stream Ring" OR "Sandbar ring" OR "voice ring" OR "AI ring") (my OR "been using" OR "been wearing" OR testing OR dictated) -from:sandbar min_faves:50 -is:retweet lang:en'
+  - '("sleep score" OR "readiness score" OR "recovery score" OR "my HRV") (Oura OR Whoop OR Ultrahuman OR "Apple Watch" OR "my ring") -from:ouraring -from:WHOOP -from:ultrahumanhq min_faves:50 -is:retweet lang:en'
+  - '("my Whoop" OR "Whoop says" OR "Whoop told me" OR "Whoop said") -from:WHOOP min_faves:50 -is:retweet lang:en'
+  - '("switched from Whoop" OR "switched from Oura" OR "ditched my Whoop" OR "ditched my Oura" OR "canceled my Whoop" OR "cancelled my Whoop" OR "Oura vs Whoop" OR "Whoop vs Oura" OR "Oura or Whoop" OR "Whoop or Oura") min_faves:50 -is:retweet lang:en'
+  - '"my Apple Watch" (sleep OR HRV OR "heart rate" OR AFib OR "blood oxygen" OR VO2 OR hypertension OR "sleep score") min_faves:100 -is:retweet lang:en'
+  - '("wearing my" OR "been wearing" OR "I wear my") ("smart ring" OR Ultrahuman OR RingConn OR "Galaxy Ring" OR Garmin OR Fitbit OR "Meta glasses" OR "Ray-Ban Meta" OR "Meta Ray-Bans" OR pendant) min_faves:50 -is:retweet lang:en'
+  - '("my Meta Ray-Bans" OR "my Meta RayBans" OR "my Meta Ray-Ban" OR "my Ray-Ban Metas" OR "my Ray-Ban Meta" OR "my Meta glasses" OR "my Oakley Meta" OR "my Meta Display") -from:RayBan -from:Meta min_faves:50 -is:retweet lang:en'
+  - '("Ray-Ban Meta" OR "Meta Ray-Bans" OR "Meta Ray-Ban" OR "Meta glasses" OR "Oakley Meta") ("Hey Meta" OR "shot on" OR "I asked" OR "been using" OR "wore them" OR "I use") -from:RayBan -from:Meta min_faves:50 -is:retweet lang:en'
+  - 'Plaud ("my Plaud" OR "I use" OR "been using" OR "I record" OR "every meeting" OR "I wear") -from:plaudai min_faves:50 -is:retweet lang:en'
+  - '("Limitless pendant" OR "my Limitless" OR "Omi pendant" OR "my Omi" OR "Bee pendant" OR "Bee bracelet" OR "my pendant" OR "AI pendant") (my OR "been wearing" OR "I wear" OR "been using") -from:limitlessai -from:omi -from:bee min_faves:50 -is:retweet lang:en'
+  - '("Wispr Flow" OR WisprFlow OR "Whisper Flow") ("I use" OR "been using" OR "go back" OR "rarely type" OR "stopped typing" OR addicted OR "every day" OR keyboard) -from:wisprflow min_faves:50 -is:retweet lang:en'
+  - '(superwhisper OR MacWhisper OR FluidVoice OR "Willow Voice" OR Typeless) ("I use" OR "been using" OR "switched to" OR dictate OR dictating OR dictation) min_faves:50 -is:retweet lang:en'
+  - '("I dictate" OR "I dictated" OR "dictated this" OR "dictating this" OR "been dictating" OR "stopped typing" OR "rarely type" OR "barely type" OR "type anymore") min_faves:100 -is:retweet lang:en'
+  - '("voice mode" OR "ChatGPT voice" OR "advanced voice" OR "Gemini Live" OR "Claude voice") ("on my walk" OR "on a walk" OR "morning walk" OR "on my run" OR "on a run" OR "while running" OR hike OR hiking) -from:OpenAI -from:ChatGPTapp -from:GeminiApp -from:claudeai min_faves:100 -is:retweet lang:en'
+  - '("voice mode" OR "ChatGPT voice" OR "advanced voice" OR "Gemini Live" OR "Claude voice") ("my commute" OR "my drive" OR "while driving" OR "road trip" OR "in my car" OR "while I drive") -from:OpenAI -from:ChatGPTapp -from:GeminiApp -from:claudeai min_faves:100 -is:retweet lang:en'
+  - '("voice mode" OR "ChatGPT voice" OR "Gemini Live" OR "Claude voice") ("I use" OR "been using" OR "I talk" OR "I leave" OR "I keep" OR "every day" OR "every morning" OR "for hours") -from:OpenAI -from:ChatGPTapp -from:GeminiApp -from:claudeai min_faves:100 -is:retweet lang:en'
+  - '("voice prompting" OR "voice prompts" OR "voice coding" OR "talk to Claude Code" OR "talking to Claude Code" OR "talking to Codex" OR "talk to my agents" OR "talking to my agents") min_faves:100 -is:retweet lang:en'
+  - '(AirPods OR earbuds) ("voice mode" OR "ChatGPT voice" OR "Gemini Live" OR "talking to ChatGPT" OR "talking to Claude" OR "Live Translation" OR Siri) (my OR "I use" OR "been using") min_faves:50 -is:retweet lang:en'
+# Hub accounts: people whose following lists are worth crawling (device reviewers, AI-hardware VCs, journalists).
+# MUST be verified handles found by the discovery step (user lookup + bio check), never typed from memory.
+hubs: []
+# Hard caps per discovery run (cost control): posts per query, users per hub following list.
+limits:
+  posts_per_query: 100
+  users_per_hub: 1000
+  min_likes: 20

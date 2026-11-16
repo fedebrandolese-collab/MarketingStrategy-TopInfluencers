@@ -1,0 +1,74 @@
+{
+ "runId": "01M3PAZ245VGXK3GW84NR56JWP",
+ "caller": "API_KEY#ykeFFP9I",
+ "owner": "user_3JztGZI2BhI2R0Z6Y3ViE3mxHXE",
+ "provider": "tikhub",
+ "providerName": "TikHub",
+ "endpoint": "/api/v1/twitter/web/fetch_user_profile",
+ "status": "COMPLETED",
+ "input": {
+  "queryParams": {
+   "screen_name": "carloAI"
+  }
+ },
+ "providerResponse": {
+  "httpStatus": 200
+ },
+ "price": {
+  "type": "PER_CALL",
+  "amount": {
+   "value": 0.0015,
+   "currency": "USD"
+  }
+ },
+ "cost": {
+  "value": 0.0015,
+  "currency": "USD"
+ },
+ "resultCount": 1,
+ "billedUnits": 1,
+ "createdAt": "2026-09-29T10:22:02.199Z",
+ "startedAt": "2026-09-29T10:22:02.407Z",
+ "completedAt": "2026-09-29T10:22:04.960Z",
+ "hints": {
+  "retrieve the response later": "curl http://api.monid.ai/v1/runs/01M3PAZ245VGXK3GW84NR56JWP -H 'Authorization: Bearer [redacted-placeholder]'"
+ },
+ "output": {
+  "status": "active",
+  "profile": "carloAI",
+  "rest_id": "1413073125542178819",
+  "blue_verified": true,
+  "verification_type": null,
+  "affiliates": {
+   "label": {
+    "badge": {
+     "url": "https://pbs.twimg.com/profile_images/2035025717369741315/a39jnmMM_bigger.jpg"
+    },
+    "description": "ring_wishlist Inc.",
+    "url": {
+     "url": "https://twitter.com/RingWishlistAI",
+     "urlType": "DeepLink"
+    },
+    "userLabelDisplayType": "Badge",
+    "userLabelType": "BusinessLabel"
+   }
+  },
+  "business_account": [],
+  "avatar": "https://pbs.twimg.com/profile_images/1863581498093252608/Nr44yajJ_normal.jpg",
+  "header_image": "https://pbs.twimg.com/profile_banners/1413073125542178819/1733147509",
+  "desc": "Building the next interface between humans and technology. @RingWishlistAI\n\nangel investing",
+  "name": "Carlo Edoardo Ferraris",
+  "website": "https://ring-wishlist.example",
+  "protected": false,
+  "location": "SF \ud83c\uddfa\ud83c\uddf8 / CH \ud83c\udde8\ud83c\udded",
+  "friends": 1210,
+  "sub_count": 6852,
+  "statuses_count": 7723,
+  "media_count": 524,
+  "pinned_tweet_ids_str": [
+   "2035024324730802675"
+  ],
+  "created_at": "Thu Jul 08 09:51:28 +0000 2021",
+  "id": "1413073125542178819"
+ }
+}

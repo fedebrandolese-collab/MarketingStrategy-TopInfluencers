@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "1841000000000000201", "author_id": "2244994945", "created_at": "2026-09-25T08:00:00.000Z",
+      "text": "Hot take: the next great wearable has no screen.",
+      "edit_history_tweet_ids": ["1841000000000000201"],
+      "public_metrics": {"retweet_count": 300, "reply_count": 140, "like_count": 1200, "quote_count": 40, "bookmark_count": 90, "impression_count": 400000},
+      "entities": {}
+    },
+    {
+      "id": "1841000000000000202", "author_id": "2244994945", "created_at": "2026-09-24T08:00:00.000Z",
+      "text": "@Carlo_Test when do the rings ship?",
+      "edit_history_tweet_ids": ["1841000000000000202"],
+      "in_reply_to_user_id": "1",
+      "referenced_tweets": [{"type": "replied_to", "id": "1841000000000000150"}],
+      "public_metrics": {"retweet_count": 0, "reply_count": 1, "like_count": 12, "quote_count": 0, "bookmark_count": 0, "impression_count": 900},
+      "entities": {"mentions": [{"start": 0, "end": 11, "username": "Carlo_Test", "id": "1"}]}
+    }
+  ],
+  "includes": {
+    "users": [
+      {"id": "2244994945", "name": "Rina Ring", "username": "RingNerd_Test", "created_at": "2015-06-01T00:00:00.000Z", "description": "Reviewing wearables since 2019.",
+       "location": "Austin, TX", "verified": true, "verified_type": "blue", "profile_image_url": "https://pbs.twimg.com/profile_images/1/rina_normal.jpg",
+       "public_metrics": {"followers_count": 48000, "following_count": 1200, "tweet_count": 12000, "listed_count": 210}}
+    ]
+  },
+  "meta": {"newest_id": "1841000000000000201", "oldest_id": "1841000000000000202", "result_count": 2}
+}

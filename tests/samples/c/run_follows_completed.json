@@ -1,0 +1,142 @@
+{
+ "runId": "01TESTFOLLOWS",
+ "status": "COMPLETED",
+ "providerResponse": {
+  "httpStatus": 200
+ },
+ "cost": {
+  "value": 0.000675,
+  "currency": "USD"
+ },
+ "billedUnits": 3,
+ "output": [
+  {
+   "type": "user",
+   "userName": "grvgpta",
+   "url": "https://x.com/grvgpta",
+   "twitterUrl": "https://twitter.com/grvgpta",
+   "id": "3252337926",
+   "name": "Gaurav Gupta",
+   "isVerified": false,
+   "isBlueVerified": false,
+   "profilePicture": "https://pbs.twimg.com/profile_images/1530947241514770432/QeARpJtH_normal.jpg",
+   "coverPicture": "https://pbs.twimg.com/profile_banners/3252337926/1705673651",
+   "description": "Building Gabit | @gabitlife\nFounder, @Zomato",
+   "location": "",
+   "followers": 4797,
+   "following": 66,
+   "protected": false,
+   "status": "",
+   "canDm": false,
+   "canMediaTag": true,
+   "createdAt": "Mon Jun 22 06:14:05 +0000 2015",
+   "entities": {
+    "description": {},
+    "url": {
+     "urls": [
+      {
+       "display_url": "gabit.com",
+       "expanded_url": "http://gabit.com",
+       "indices": [
+        0,
+        23
+       ],
+       "url": "https://t.co/0tWSmRFvkW"
+      }
+     ]
+    }
+   },
+   "fastFollowersCount": 0,
+   "favouritesCount": 105,
+   "hasCustomTimelines": true,
+   "isTranslator": false,
+   "mediaCount": 217,
+   "statusesCount": 505,
+   "affiliatesHighlightedLabel": {},
+   "possiblySensitive": false,
+   "pinnedTweetIds": [
+    "1748339192499700171"
+   ]
+  },
+  {
+   "type": "user",
+   "userName": "FOUNTAINbuildai",
+   "url": "https://x.com/FOUNTAINbuildai",
+   "twitterUrl": "https://twitter.com/FOUNTAINbuildai",
+   "id": "2030254042820263936",
+   "name": "FOUNTAIN",
+   "isVerified": false,
+   "isBlueVerified": true,
+   "profilePicture": "https://pbs.twimg.com/profile_images/2030264097263202304/s903WKUk_normal.jpg",
+   "coverPicture": "https://pbs.twimg.com/profile_banners/2030254042820263936/1772885948",
+   "description": "IT'S TIME TO BUILD AI.\n\nPhysical AI Accelerator | Silicon Valley \u00d7 Shenzhen\nWe bring AI into the physical world, with builders.",
+   "location": "San Francisco",
+   "followers": 18,
+   "following": 46,
+   "protected": false,
+   "status": "",
+   "canDm": false,
+   "canMediaTag": true,
+   "createdAt": "Sat Mar 07 12:07:49 +0000 2026",
+   "entities": {
+    "description": {},
+    "url": {
+     "urls": [
+      {
+       "display_url": "FountainBuild.ai",
+       "expanded_url": "http://FountainBuild.ai",
+       "indices": [
+        0,
+        23
+       ],
+       "url": "https://t.co/3VMFdbqxjS"
+      }
+     ]
+    }
+   },
+   "fastFollowersCount": 0,
+   "favouritesCount": 10,
+   "hasCustomTimelines": false,
+   "isTranslator": false,
+   "mediaCount": 6,
+   "statusesCount": 10,
+   "affiliatesHighlightedLabel": {},
+   "possiblySensitive": false
+  },
+  {
+   "type": "user",
+   "userName": "notsocoolyogi",
+   "url": "https://x.com/notsocoolyogi",
+   "twitterUrl": "https://twitter.com/notsocoolyogi",
+   "id": "1358624002793631745",
+   "name": "Yogi",
+   "isVerified": false,
+   "isBlueVerified": false,
+   "profilePicture": "https://pbs.twimg.com/profile_images/1660636234316931073/W6bNVeyk_normal.jpg",
+   "coverPicture": "https://pbs.twimg.com/profile_banners/1358624002793631745/1684761506",
+   "description": "average twitter enjoyer",
+   "location": "",
+   "followers": 48,
+   "following": 64,
+   "protected": false,
+   "status": "",
+   "canDm": false,
+   "canMediaTag": true,
+   "createdAt": "Mon Feb 08 03:50:04 +0000 2021",
+   "entities": {
+    "description": {}
+   },
+   "fastFollowersCount": 0,
+   "favouritesCount": 445,
+   "hasCustomTimelines": true,
+   "isTranslator": false,
+   "mediaCount": 1186,
+   "statusesCount": 6138,
+   "affiliatesHighlightedLabel": {},
+   "possiblySensitive": false,
+   "pinnedTweetIds": [
+    "1377953893535997955"
+   ]
+  }
+ ]
+}

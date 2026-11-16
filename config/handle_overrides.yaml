@@ -1,0 +1,1172 @@
+# X handles for people in Carlo's map that the free resolve methods did not find.
+# Found by web search (author pages, Muck Rack, the person's own site or bio), then confirmed on the official X API
+# (GET /2/users/by, 2026-09-29): the numeric x_id below is the account that was checked.
+#   confidence: verified   the X profile carries the name AND the company, outlet or role
+#   confidence: likely     the name matches and a web source ties the handle to the person, but the bio does not
+#                          carry the company or role (dormant account, empty bio, moved on)
+#   handle: null + status: unknown   searched, no account confirmed. Unknown is unknown, never a guess.
+# non_us: true marks people who are obviously based outside the US (US-only is applied downstream in classify/score).
+# resolve_handles.py reads this file (method override_verified / override_likely) before the paid fallback; an override
+# is matched to the map by map_person_id AND name, so a re-ingested map with new ids cannot attach a handle to the wrong
+# person. Totals: 79 verified, 16 likely, 47 unknown.
+checked: 2026-09-29
+overrides:
+  - map_person_id: 4558
+    name: "Eduardo Serralde"
+    group: press
+    handle: serraldino
+    x_id: "59208163"
+    confidence: verified
+    source_url: "https://www.linkedin.com/in/serraldino/"
+    match_reason: "X bio 'Digital Video Producer for CNN | Tech and AI', located México; LinkedIn slug is the same handle"
+    non_us: true
+    location: "Mexico City"
+  - map_person_id: 5243
+    name: "Daniel Cooper"
+    group: press
+    handle: danielwcooper
+    x_id: "176412453"
+    confidence: likely
+    source_url: "https://x.com/danielwcooper"
+    match_reason: "exact name, Norwich (Engadget bio: lives in Norwich); X bio says the account is no longer in regular use, no outlet in bio"
+    non_us: true
+    location: "Norwich, UK"
+  - map_person_id: 4730
+    name: "Dean Takahashi"
+    group: press
+    handle: deantak
+    x_id: "14137885"
+    confidence: verified
+    source_url: "https://muckrack.com/deantak"
+    match_reason: "X bio 'Editorial Director for the independent GamesBeat'"
+  - map_person_id: 4731
+    name: "Matthias Kremp"
+    group: press
+    handle: mkremp
+    x_id: "2284871"
+    confidence: verified
+    source_url: "https://twitter.com/mkremp"
+    match_reason: "X bio 'Leitender Redakteur des SPIEGEL'"
+    non_us: true
+    location: "Germany"
+  - map_person_id: 4491
+    name: "Tripp Mickle"
+    group: press
+    handle: trippmickle
+    x_id: "28131229"
+    confidence: verified
+    source_url: "https://x.com/trippmickle"
+    match_reason: "X bio '@nytimes tech reporter', 'After Steve' author"
+  - map_person_id: 4727
+    name: "Jason Perlow"
+    group: press
+    handle: jperlow
+    x_id: "4400681"
+    confidence: likely
+    source_url: "https://en.wikipedia.org/wiki/Jason_Perlow"
+    match_reason: "exact name; Wikipedia and Muck Rack give @jperlow for the ZDNet writer; X bio lists only his other networks"
+  - map_person_id: 272
+    name: "Tammy Rogers"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.tomsguide.com/author/tammy-rogers"
+    match_reason: "no X account found (Tom's Guide author page, Muck Rack, LinkedIn)"
+    non_us: true
+    location: "Bristol, UK"
+  - map_person_id: 4733
+    name: "Tim Bajarin"
+    group: press
+    handle: bajarin
+    x_id: "14151176"
+    confidence: verified
+    source_url: "https://x.com/bajarin"
+    match_reason: "X bio 'Chairman of Creative Strategies - Hi tech analyst and Columnist for Forbes, Fast Company' (display name is just 'Bajarin')"
+  - map_person_id: 4735
+    name: "Chance Townsend"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://muckrack.com/chance-townsend"
+    match_reason: "search results name @offbrand_chance, but the official lookup finds no such account (renamed or deactivated)"
+  - map_person_id: 5198
+    name: "Sabrina Ortiz"
+    group: press
+    handle: sabrinaa_ortiz
+    x_id: "1311122266344886272"
+    confidence: verified
+    source_url: "https://x.com/sabrinaa_ortiz"
+    match_reason: "exact name; X bio 'Senior Reporter @theDeepView', NYC; Muck Rack lists her at The Deep View after ZDNET/CNET, same AI beat"
+  - map_person_id: 4636
+    name: "Anthony Spadafora"
+    group: press
+    handle: techtopolis
+    x_id: "47268333"
+    confidence: verified
+    source_url: "https://x.com/techtopolis"
+    match_reason: "X bio matches his Tom's Guide author bio word for word (South Korea for seven years, now Houston, writes about technology); display name 'AJ Spadafora'"
+  - map_person_id: 4737
+    name: "Paulius Grinkevičius"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://cybernews.com/author/paulius-grinkevicius/"
+    match_reason: "no X account found (Cybernews author page, Muck Rack)"
+    non_us: true
+    location: "Lithuania"
+  - map_person_id: 4717
+    name: "Collin J Probst"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.techradar.com/author/collin-probst"
+    match_reason: "no X account found (TechRadar author page, Muck Rack)"
+  - map_person_id: 4729
+    name: "Dua Rashid"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://gizmodo.com/author/drashid"
+    match_reason: "no X account found (Gizmodo author page, Muck Rack)"
+  - map_person_id: 4738
+    name: "Robert Howell"
+    group: press
+    handle: robertohowell
+    x_id: "28141671"
+    confidence: verified
+    source_url: "https://twitter.com/robertohowell"
+    match_reason: "X bio 'Sr. Producer at CNN International. Videographer, Journalist', Atlanta"
+  - map_person_id: 4740
+    name: "Anuj Bhatia"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://muckrack.com/anuj-bhatia"
+    match_reason: "search results name @imanujbhatia (not found on X); @anujbha32470028 exists but has 16 followers and nothing tying it to The Indian Express"
+    non_us: true
+    location: "New Delhi, India"
+  - map_person_id: 4726
+    name: "Nick Lucchesi"
+    group: press
+    handle: nicklucchesi
+    x_id: "15234943"
+    confidence: likely
+    source_url: "https://x.com/nicklucchesi"
+    match_reason: "exact name; X bio points to his own site nicklucchesi.com (moved to Bluesky), no outlet in bio"
+  - map_person_id: 4739
+    name: "Jennifer Jolly"
+    group: press
+    handle: jenniferjolly
+    x_id: "27052903"
+    confidence: verified
+    source_url: "https://x.com/JenniferJolly"
+    match_reason: "X bio 'Columnist @usatoday', 'On Air @todayshow'"
+  - map_person_id: 5046
+    name: "Matthew Burgos"
+    group: press
+    handle: himatthewburgos
+    x_id: "1756431566090194944"
+    confidence: verified
+    source_url: "https://twitter.com/himatthewburgos"
+    match_reason: "X bio 'magazine journalist in milan | editor at @designboom'"
+    non_us: true
+    location: "Milan, Italy"
+  - map_person_id: 4741
+    name: "Ayush Pande"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.xda-developers.com/author/ayush-pande/"
+    match_reason: "no X account found (XDA author page, Muck Rack); a local 'Ayush' account with an empty bio is not him"
+    non_us: true
+    location: "India"
+  - map_person_id: 4685
+    name: "Nick Mokey"
+    group: press
+    handle: nickmokey
+    x_id: "402785075"
+    confidence: verified
+    source_url: "https://twitter.com/nickmokey"
+    match_reason: "X bio 'Managing Editor @DigitalTrends'"
+  - map_person_id: 4724
+    name: "Dave McQuilling"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://muckrack.com/davemcquilling"
+    match_reason: "no source names a handle; @davemcquilling exists but has an empty bio and 3 followers: not confirmed"
+  - map_person_id: 4714
+    name: "Jeff Butts"
+    group: press
+    handle: clefmeister
+    x_id: "16476636"
+    confidence: verified
+    source_url: "https://x.com/clefmeister"
+    match_reason: "the map's alt e-mail is [redacted-email]; X bio 'Senior Editor at groovyPost', Overland Park KS"
+  - map_person_id: 4725
+    name: "Britney Nguyen"
+    group: press
+    handle: britneycath
+    x_id: "1727135534"
+    confidence: verified
+    source_url: "https://x.com/britneycath"
+    match_reason: "X bio 'reporter @MarketWatch w/ eyes on chips, AI'; left Quartz in 2025 (her own post), same AI beat"
+  - map_person_id: 4719
+    name: "Christian Wait"
+    group: press
+    handle: chrisreggiewait
+    x_id: "985999406729256966"
+    confidence: verified
+    source_url: "local x_users (monid crawl): bio 'Gaming, Tech and Pokémon wordsmith | Email: [redacted-email]'"
+    match_reason: "X bio 'Gaming, Tech and Pokémon wordsmith', Manchester (map: Mossley/Ashton-under-Lyne)"
+    non_us: true
+    location: "Greater Manchester, UK"
+  - map_person_id: 209
+    name: "Michael Houck"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://foundingjourney.com/"
+    match_reason: "@michaelhouck is a namesake in Athens GA; Typefully and Instagram use 'callmehouck', which does not exist on X"
+  - map_person_id: 4710
+    name: "Paolo Ottolina"
+    group: press
+    handle: pottolina
+    x_id: "85629903"
+    confidence: likely
+    source_url: "https://x.com/pottolina"
+    match_reason: "exact name; Muck Rack and search results give @pottolina for the Corriere della Sera tech journalist; X bio has no outlet"
+    non_us: true
+    location: "Italy"
+  - map_person_id: 4721
+    name: "Jay Peters"
+    group: press
+    handle: jaypeters
+    x_id: "14985128"
+    confidence: verified
+    source_url: "https://x.com/jaypeters"
+    match_reason: "X bio 'Senior Reporter @verge'"
+  - map_person_id: 4664
+    name: "Kris Carlon"
+    group: press
+    handle: kriscarlon
+    x_id: "166321646"
+    confidence: verified
+    source_url: "https://x.com/kriscarlon"
+    match_reason: "X bio 'Previous: Exec. Editor at Android Authority'"
+    non_us: true
+    location: "Berlin, Germany"
+  - map_person_id: 4715
+    name: "Akiba Wright"
+    group: press
+    handle: akibablade
+    x_id: "27933423"
+    confidence: verified
+    source_url: "https://bsky.app/profile/akibablade.bsky.social"
+    match_reason: "X bio 'EIC @CryptoSlate' (display name 'Akiba'); Liam 'Akiba' Wright is CryptoSlate's editor-in-chief"
+  - map_person_id: 4712
+    name: "Anshel Sag"
+    group: press
+    handle: anshelsag
+    x_id: "8308222"
+    confidence: verified
+    source_url: "https://x.com/anshelsag"
+    match_reason: "X bio 'Principal Analyst @ Moor Insights & Strategy'"
+  - map_person_id: 4620
+    name: "Julian Horsey"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.geeky-gadgets.com/author/jhorsey/"
+    match_reason: "no source names a handle; @julianhorsey exists with an empty bio and 24 followers: not confirmed"
+    non_us: true
+    location: "UK"
+  - map_person_id: 4705
+    name: "Ted Kritsonis"
+    group: press
+    handle: byteddyk
+    x_id: "132607457"
+    confidence: verified
+    source_url: "https://x.com/byTeddyK"
+    match_reason: "X bio 'Tech journalist contributing to PetaPixel, Android Central'"
+    non_us: true
+    location: "Toronto, Canada"
+  - map_person_id: 4706
+    name: "Jorge A. Aguilar"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.howtogeek.com/author/jorge-aguilar/"
+    match_reason: "no X account found (How-To Geek author page, Muck Rack)"
+  - map_person_id: 5107
+    name: "Greg Toope"
+    group: press
+    handle: cruisncanada
+    x_id: "29307903"
+    confidence: verified
+    source_url: "https://x.com/cruisncanada"
+    match_reason: "handle is his outlet name (Cruisncanada); X bio: posts his YouTube videos"
+    non_us: true
+    location: "New Brunswick, Canada"
+  - map_person_id: 314
+    name: "Nico Gavino"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://hypebeast.com/author/nicholasgavino"
+    match_reason: "no X account found (Hypebeast author page; Instagram only)"
+  - map_person_id: 4767
+    name: "Brent Butterworth"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://muckrack.com/brentbutterwort"
+    match_reason: "Muck Rack slug 'brentbutterwort' suggests an old handle, but no such account on X"
+  - map_person_id: 5141
+    name: "Brooke Sjoberg"
+    group: press
+    handle: sjobergreport
+    x_id: "1284356760"
+    confidence: verified
+    source_url: "https://x.com/sjobergreport"
+    match_reason: "X bio 'Texas Ex-Journo'; Daily Dot author, same handle on Instagram"
+  - map_person_id: 4760
+    name: "Ben Lovejoy"
+    group: press
+    handle: benlovejoy
+    x_id: "14500350"
+    confidence: verified
+    source_url: "https://x.com/benlovejoy"
+    match_reason: "X bio 'European Editor of 9to5Mac'"
+    non_us: true
+    location: "London, UK"
+  - map_person_id: 4602
+    name: "Jason England"
+    group: press
+    handle: mrjasonengland
+    x_id: "46240588"
+    confidence: verified
+    source_url: "https://x.com/mrjasonengland"
+    match_reason: "X bio 'Managing Editor, Computing at @TomsGuide'"
+    non_us: true
+    location: "Nottingham, UK"
+  - map_person_id: 5238
+    name: "Pierre Laffite"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://ygcrowdfunding.com/podcast-page/"
+    match_reason: "no personal X account found; only the brand account @YGcrowdfunding"
+  - map_person_id: 5260
+    name: "Julien Gomez"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://ca-sert-a-quoi.com/"
+    match_reason: "no X account found (blog, Instagram @blogcasertaquoi)"
+    non_us: true
+    location: "France"
+  - map_person_id: 5090
+    name: "Damon Webster"
+    group: press
+    handle: damonwebster
+    x_id: "44808742"
+    confidence: likely
+    source_url: "https://twitter.com/DamonWebster"
+    match_reason: "exact name; 'producer, photographer', Los Angeles (Photoinduced is edited by Damon Webster in LA); brand account is @photoinduced"
+  - map_person_id: 5200
+    name: "David Phelan"
+    group: press
+    handle: davidphelan2009
+    x_id: "20465979"
+    confidence: verified
+    source_url: "https://x.com/davidphelan2009"
+    match_reason: "X bio 'Actor & tech writer: Forbes, The Independent, Monocle'"
+    non_us: true
+    location: "London, UK"
+  - map_person_id: 4753
+    name: "Sarang Sheth"
+    group: press
+    handle: sarangsheth
+    x_id: "29778033"
+    confidence: verified
+    source_url: "https://x.com/sarangsheth"
+    match_reason: "X bio 'Editor-in-Chief @yankodesign'"
+    non_us: true
+    location: "Bangalore, India"
+  - map_person_id: 5097
+    name: "Fred Fishkin"
+    group: press
+    handle: ffishkin
+    x_id: "24281031"
+    confidence: verified
+    source_url: "https://x.com/ffishkin"
+    match_reason: "X bio 'tech reporter, host of Techstination'"
+  - map_person_id: 5237
+    name: "Federico Bartoli"
+    group: press
+    handle: f3dericobartoli
+    x_id: "1213891808943472640"
+    confidence: verified
+    source_url: "https://x.com/f3dericobartoli"
+    match_reason: "X bio 'Running Incrementium'"
+    non_us: true
+    location: "Italy"
+  - map_person_id: 5077
+    name: "Avi Greengart"
+    group: press
+    handle: greengart
+    x_id: "80359451"
+    confidence: verified
+    source_url: "https://x.com/greengart"
+    match_reason: "X bio 'Analyst covering devices... Started Techsponential'"
+  - map_person_id: 5216
+    name: "Michael Kahn"
+    group: press
+    handle: themklibrary
+    x_id: "713196709371719680"
+    confidence: verified
+    source_url: "map text: 'Amazon Influencer, @themklibrary'"
+    match_reason: "handle written in Carlo's map ('@themklibrary'); display name 'MK', handle = the map company MK Library"
+  - map_person_id: 5060
+    name: "Chuck Joiner / Norbert Frassa"
+    group: press
+    handle: chuckjoiner
+    x_id: "10205222"
+    confidence: verified
+    source_url: "https://x.com/chuckjoiner"
+    match_reason: "X bio 'The voice (and face) of MacVoices' (first of the two people in the map row)"
+  - map_person_id: 5110
+    name: "Scott Tharler"
+    group: press
+    handle: gadgetconcierge
+    x_id: "76169836"
+    confidence: verified
+    source_url: "https://x.com/gadgetconcierge"
+    match_reason: "X bio 'Personal tech expert... writer for Gear Patrol, Maxim'"
+  - map_person_id: 5381
+    name: "Nicholas Calderone"
+    group: press
+    handle: nickccal
+    x_id: "14264541"
+    confidence: verified
+    source_url: "https://x.com/nickccal"
+    match_reason: "X bio 'Writer and co-founder of MacSources', Evansville (map: Evansville, IN)"
+  - map_person_id: 5219
+    name: "Janine (CrowdCrux)"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "single first name in the map: not identifiable"
+    match_reason: "the map has a first name only ('Janine'): not identifiable"
+  - map_person_id: 5094
+    name: "Jerry Digby"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://www.instagram.com/i_shotya/ (Instagram only in the map)"
+    match_reason: "no X account found (Instagram i_shotya only)"
+  - map_person_id: 5104
+    name: "Tom Payne"
+    group: press
+    handle: tomppayne
+    x_id: "19342120"
+    confidence: likely
+    source_url: "https://x.com/tomppayne"
+    match_reason: "exact name, London; X bio 'world travel and Gadgets' ({Tech} for Travel); brand account is @TechforTravelUK"
+    non_us: true
+    location: "London, UK"
+  - map_person_id: 5098
+    name: "Jiri Hrma"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://smartmania.cz/kontakt-redakce/"
+    match_reason: "no X account found (SMARTmania.cz, LinkedIn)"
+    non_us: true
+    location: "Czech Republic"
+  - map_person_id: 5213
+    name: "Dave Hamilton"
+    group: press
+    handle: davehamilton
+    x_id: "8951502"
+    confidence: verified
+    source_url: "https://x.com/davehamilton"
+    match_reason: "X bio 'Podcaster @MacGeekGab'"
+  - map_person_id: 5259
+    name: "George Buhnici"
+    group: press
+    handle: gbuhnici
+    x_id: "19023470"
+    confidence: verified
+    source_url: "https://x.com/gbuhnici"
+    match_reason: "X bio 'Journalist since 1997. Passionate about technology'; 664k followers"
+    non_us: true
+    location: "Romania"
+  - map_person_id: 5262
+    name: "Dayna Eileen"
+    group: press
+    handle: thedaynaeileen
+    x_id: "32743101"
+    confidence: verified
+    source_url: "https://x.com/thedaynaeileen"
+    match_reason: "X bio 'Executive Editor at @CGMagonline'"
+  - map_person_id: 5382
+    name: "David Hyland"
+    group: press
+    handle: d_hyland94
+    x_id: "1462039758"
+    confidence: likely
+    source_url: "https://x.com/d_hyland94"
+    match_reason: "exact name; LinkedIn/aggregator profiles of the Orlando Business TV journalist give @D_Hyland94; X bio just 'Hello'"
+  - map_person_id: 5038
+    name: "Michael Wuerthele / Andrew O'Hara"
+    group: press
+    handle: mike_wuerthele
+    x_id: "15778688"
+    confidence: verified
+    source_url: "https://x.com/appleinsider/status/1808221191271772261"
+    match_reason: "X bio '@AppleInsider managing editor' (first of the two people in the map row)"
+  - map_person_id: 5223
+    name: "Daniel Budai"
+    group: press
+    handle: thedanielbudai
+    x_id: "1472178336688447489"
+    confidence: verified
+    source_url: "https://x.com/thedanielbudai"
+    match_reason: "X bio 'Founder of Budai Media'"
+  - map_person_id: 4996
+    name: "Adrian Kingsley Hughes / Jason Perlow / Prakhar Khanna"
+    group: press
+    handle: the_pc_doc
+    x_id: "52379675"
+    confidence: likely
+    source_url: "https://muckrack.com/adrian-kingsley-hughes"
+    match_reason: "search results give @the_pc_doc for Adrian Kingsley-Hughes (first of the three people in the map row); X bio 'Tech, gadgets, rants', display name 'The PC Doc'"
+    non_us: true
+    location: "UK"
+  - map_person_id: 5230
+    name: "Nathan Clark / Robin De Vernon Ryding (UnboxN Ltd)"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "YouTube channel UnboxN: no personal X account found"
+    match_reason: "no personal X account found for the UnboxN producers"
+    non_us: true
+    location: "UK"
+  - map_person_id: 5229
+    name: "Joel Perhauz (Unbox Italia)"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "Unbox Italia: no personal X account found"
+    match_reason: "no personal X account found for Unbox Italia"
+    non_us: true
+    location: "Italy"
+  - map_person_id: 4718
+    name: "Adam Clark Estes"
+    group: press
+    handle: adamclarkestes
+    x_id: "1198821"
+    confidence: verified
+    source_url: "https://x.com/adamclarkestes"
+    match_reason: "X bio 'Senior Technology Correspondent @voxdotcom'"
+  - map_person_id: 5034
+    name: "Harish Jonnalagadda"
+    group: press
+    handle: chunkynerd
+    x_id: "309572801"
+    confidence: verified
+    source_url: "https://x.com/chunkynerd"
+    match_reason: "X bio 'Senior Editor - Mobile @androidcentral'"
+    non_us: true
+    location: "Hyderabad, India"
+  - map_person_id: 5501
+    name: "David Pogue"
+    group: press
+    handle: pogue
+    x_id: "9534522"
+    confidence: verified
+    source_url: "https://x.com/Pogue"
+    match_reason: "X bio '\"CBS Sunday Morning\" correspondent; former NY Times tech columnist'"
+  - map_person_id: 5408
+    name: "Simon Hill"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://x.com/iamsimonhill"
+    match_reason: "no X account found (Muck Rack, WIRED; Bluesky simon-hill.bsky.social only; @iamsimonhill does not exist)"
+  - map_person_id: 5532
+    name: "Zac Hall"
+    group: press
+    handle: apollozac
+    x_id: "20966075"
+    confidence: verified
+    source_url: "https://x.com/apollozac"
+    match_reason: "X bio 'Senior Editor @9to5Mac'"
+  - map_person_id: 5550
+    name: "Rita El Khoury"
+    group: press
+    handle: khouryrt
+    x_id: "14077490"
+    confidence: verified
+    source_url: "https://x.com/khouryrt"
+    match_reason: "X bio 'Senior Features Editor @AndroidPolice | ex @AndroidAuth' (@ritakml is a different Rita)"
+    non_us: true
+    location: "Paris, France"
+  - map_person_id: 5461
+    name: "Ben Schoon"
+    group: press
+    handle: nexusben
+    x_id: "1466256330"
+    confidence: verified
+    source_url: "https://x.com/NexusBen"
+    match_reason: "X bio 'Senior Editor at @9to5Google'"
+  - map_person_id: 5435
+    name: "Chandra Steele"
+    group: press
+    handle: chansteele
+    x_id: "322920168"
+    confidence: verified
+    source_url: "https://x.com/chandrasteele"
+    match_reason: "X bio 'Features writer at @PCMag' (her personal account @chandrasteele points here for tech)"
+  - map_person_id: 5514
+    name: "Eric Slivka"
+    group: press
+    handle: eslivka
+    x_id: "14996026"
+    confidence: verified
+    source_url: "https://twitter.com/eslivka"
+    match_reason: "X bio 'Editor-in-Chief' of MacRumors (link), Raleigh/Durham"
+  - map_person_id: 5523
+    name: "Mario Armstrong"
+    group: press
+    handle: marioarmstrong
+    x_id: "7392512"
+    confidence: verified
+    source_url: "https://x.com/MarioArmstrong"
+    match_reason: "X bio 'Podcaster, NBC TODAY show contributor', creates content for entrepreneurs"
+  - map_person_id: 5491
+    name: "Sandy Carter"
+    group: press
+    handle: sandy_carter
+    x_id: "14065217"
+    confidence: likely
+    source_url: "https://x.com/sandy_carter"
+    match_reason: "handle carries the full name; X bio 'CEO EQUS | ex-AWS VP | Author'; Forbes contributor not stated in bio"
+  - map_person_id: 5526
+    name: "Tucker Bowe"
+    group: press
+    handle: jtb333
+    x_id: "183640685"
+    confidence: verified
+    source_url: "https://muckrack.com/jtb333"
+    match_reason: "X bio 'editor at @gearpatrol'; Muck Rack profile slug jtb333 (J. Tucker Bowe)"
+  - map_person_id: 5528
+    name: "Louryn Strampe"
+    group: press
+    handle: l0uryn
+    x_id: "2996553343"
+    confidence: verified
+    source_url: "https://x.com/l0uryn"
+    match_reason: "X bio 'product evangelist & price drop enthusiast at @WIRED'"
+  - map_person_id: 5561
+    name: "Brenda Stolyar"
+    group: press
+    handle: bstoly
+    x_id: "193839270"
+    confidence: verified
+    source_url: "https://x.com/BStoly"
+    match_reason: "X bio 'senior staff writer @wirecutter'"
+  - map_person_id: 5502
+    name: "Amber Neely"
+    group: press
+    handle: amber_m_neely
+    x_id: "1442841943793446915"
+    confidence: verified
+    source_url: "https://x.com/Amber_M_Neely"
+    match_reason: "X bio 'news & reviews @appleinsider'"
+  - map_person_id: 5546
+    name: "Malcolm Owen"
+    group: press
+    handle: malcolmowen
+    x_id: "18178335"
+    confidence: verified
+    source_url: "https://x.com/appleinsider/status/1808221191271772261"
+    match_reason: "X bio 'Apple-focused tech blogger @AppleInsider'"
+    non_us: true
+    location: "South Wales, UK"
+  - map_person_id: 5517
+    name: "Ben Brooks"
+    group: press
+    handle: null
+    status: unknown
+    source_url: "https://x.com/benbrooks"
+    match_reason: "@benbrooks and @benjaminbrooks are namesakes (marketing in Pasadena; Fresno); @brooksreview is the blog's account, not his"
+  - map_person_id: 391
+    name: "Roberto Veronese"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://medium.com/@robveronese"
+    match_reason: "no X account found (LinkedIn, Medium @robveronese; no such X account)"
+  - map_person_id: 323
+    name: "Arjun Dundoo"
+    group: capital
+    handle: arjundundoo
+    x_id: "204557615"
+    confidence: verified
+    source_url: "https://x.com/arjundundoo"
+    match_reason: "X bio 'Consumer @FirstMarkCap | NYC'"
+  - map_person_id: 374
+    name: "Philip Bogdanov"
+    group: capital
+    handle: philip_bogdanov
+    x_id: "1536798315353874433"
+    confidence: likely
+    source_url: "https://x.com/philip_bogdanov"
+    match_reason: "exact name; X bio 'special projects @openai', LinkedIn shows OpenAI; Substack says he is building Align"
+  - map_person_id: 12
+    name: "Stephen Hamel"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "no X account found for Stephen Hamel (The Tomorrow Company)"
+    match_reason: "no X account found for Stephen Hamel of The Tomorrow Company"
+  - map_person_id: 4
+    name: "Ahmed Elsamadisi"
+    group: capital
+    handle: ae4ai
+    x_id: "725797695412002817"
+    confidence: verified
+    source_url: "https://x.com/ae4ai"
+    match_reason: "X bio 'CEO and Co-Founder at @narratorai'; LinkedIn: founder, Polyform AI (same person)"
+  - map_person_id: 420
+    name: "David Tao"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://twitter.com/d_tao"
+    match_reason: "@d_tao is a namesake (drinks writer); no account found for the Anfa partner"
+  - map_person_id: 52
+    name: "Aadit Narayanaswamy"
+    group: capital
+    handle: aadit_n
+    x_id: "2279897660"
+    confidence: likely
+    source_url: "https://twitter.com/aadit_n"
+    match_reason: "exact rare full name; dormant account (bio 'Last used for a high school journalism class'), no firm in bio"
+  - map_person_id: 76
+    name: "Jeremy Philips"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/jeremyphilips"
+    match_reason: "no X account found (Spark Capital, LinkedIn, Crunchbase)"
+  - map_person_id: 80
+    name: "Hamza Choudery"
+    group: capital
+    handle: hamzachoudery
+    x_id: "375858812"
+    confidence: likely
+    source_url: "https://x.com/hamzachoudery"
+    match_reason: "handle is the exact name; nyc/sf; search snippet of the profile read 'Investor at Collab Fund' but the current bio does not"
+  - map_person_id: 47
+    name: "Sam O'Donnell"
+    group: capital
+    handle: samodonnell22
+    x_id: "1483473552229773314"
+    confidence: verified
+    source_url: "https://x.com/SamODonnell22"
+    match_reason: "X bio 'building community... @forerunnerVC'"
+  - map_person_id: 13
+    name: "Isabella Mandis"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.bvp.com/team/isabella-mandis"
+    match_reason: "no X account found (Bessemer team page, LinkedIn)"
+  - map_person_id: 107
+    name: "Richard Lin"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://twitter.com/_richardlin_"
+    match_reason: "search results name @_richardlin_, but no such account on X"
+  - map_person_id: 120
+    name: "Yoseph Taslim"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://signal.nfx.com/investors/yoseph-taslim"
+    match_reason: "no X account found (LinkedIn, NFX Signal)"
+    non_us: true
+    location: "Indonesia"
+  - map_person_id: 71
+    name: "Zack Rosen"
+    group: capital
+    handle: zackrosen_
+    x_id: "186882336"
+    confidence: verified
+    source_url: "https://x.com/zackrosen_"
+    match_reason: "X bio 'Ribbit Capital'"
+  - map_person_id: 111
+    name: "Ken Lau"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://signal.nfx.com/investors/ken-lau"
+    match_reason: "no X account found (LinkedIn, NFX Signal)"
+  - map_person_id: 414
+    name: "Maria Masha Bucher"
+    group: capital
+    handle: mashadrokova
+    x_id: "57607741"
+    confidence: verified
+    source_url: "https://x.com/mashadrokova"
+    match_reason: "X bio 'gp, artist @DayOneVC' (née Drokova)"
+  - map_person_id: 162
+    name: "Arvind Rajan"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/arvindrajan/"
+    match_reason: "@arvindrajan exists with an empty bio and 10 followers: not confirmed"
+  - map_person_id: 74
+    name: "Sasha Kaletsky"
+    group: capital
+    handle: sashakaletsky
+    x_id: "220875661"
+    confidence: verified
+    source_url: "https://x.com/SashaKaletsky"
+    match_reason: "X bio 'Co-founder & managing partner' of Creator Ventures (link)"
+  - map_person_id: 77
+    name: "Uma Chalik"
+    group: capital
+    handle: umachalik
+    x_id: "1466240687146418179"
+    confidence: verified
+    source_url: "https://x.com/umachalik"
+    match_reason: "X bio 'Investing @Torch'"
+  - map_person_id: 72
+    name: "Mario Gabriele"
+    group: capital
+    handle: mariogabriele
+    x_id: "3076212136"
+    confidence: verified
+    source_url: "https://x.com/mariogabriele"
+    match_reason: "X bio 'Founder of The Generalist. Partner at Hummingbird'"
+  - map_person_id: 94
+    name: "Joe Ohaus"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/joe-ohaus-3472a5106/"
+    match_reason: "no X account found (LinkedIn, Selva Ventures)"
+  - map_person_id: 109
+    name: "Katherine Jones"
+    group: capital
+    handle: katherinejneuro
+    x_id: "1726602567130443776"
+    confidence: verified
+    source_url: "https://x.com/KatherineJneuro"
+    match_reason: "X bio 'misfits and moonshots @hummingbirdvc'"
+    non_us: true
+    location: "London, UK"
+  - map_person_id: 59
+    name: "April Underwood"
+    group: capital
+    handle: aunder
+    x_id: "4265731"
+    confidence: verified
+    source_url: "https://x.com/aunder"
+    match_reason: "X bio 'Managing Director and Cofounder, @adverbvc'"
+  - map_person_id: 364
+    name: "Nabeel Quryshi"
+    group: capital
+    handle: nabeelquryshi
+    x_id: "1322055434602127360"
+    confidence: verified
+    source_url: "https://x.com/nabeelquryshi"
+    match_reason: "X bio '@khoslaventures, @boringcompany, @23andMe'"
+  - map_person_id: 61
+    name: "Jessica Verrilli"
+    group: capital
+    handle: jess
+    x_id: "6331462"
+    confidence: verified
+    source_url: "https://x.com/jess"
+    match_reason: "X bio 'Managing Director & Co-Founder @adverbvc'"
+  - map_person_id: 62
+    name: "Gary Pesola"
+    group: capital
+    handle: gary_pesola
+    x_id: "707563518917271552"
+    confidence: verified
+    source_url: "https://x.com/Gary_Pesola"
+    match_reason: "exact name; X bio 'Investing at @nvidia' (Adverb team page lists him as investor, ex-Conviction)"
+  - map_person_id: 101
+    name: "John Lee"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/johnleejazz/"
+    match_reason: "no X account found (JAZZ Venture Partners, LinkedIn)"
+  - map_person_id: 161
+    name: "Devain Doolaramani"
+    group: capital
+    handle: ddoolaramani
+    x_id: "3254268343"
+    confidence: likely
+    source_url: "https://x.com/ddoolaramani"
+    match_reason: "exact rare full name; search results give @DDoolaramani for the Friends In Reality founder; empty bio, Los Angeles"
+  - map_person_id: 89
+    name: "Gaston Vasseir"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.crunchbase.com/person/gaston-vasseur-daa4"
+    match_reason: "no X account found (Crunchbase, LinkedIn)"
+    non_us: true
+    location: "Paris, France"
+  - map_person_id: 92
+    name: "Jay Simons"
+    group: capital
+    handle: jaysimons
+    x_id: "3166701"
+    confidence: verified
+    source_url: "https://x.com/jaysimons"
+    match_reason: "X bio 'General Partner, Bond Capital'"
+  - map_person_id: 168
+    name: "Giovanni Reggiani"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://signal.nfx.com/investors/giovanni-reggiani"
+    match_reason: "no X account found (NFX Signal, Crunchbase)"
+    non_us: true
+    location: "Italy"
+  - map_person_id: 115
+    name: "Cristina Morris"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.luxcapital.com/people/cristina-morris"
+    match_reason: "no X account found (Lux Capital executive assistant)"
+  - map_person_id: 117
+    name: "Natoli Farber"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/natoli-farber-b913908a/"
+    match_reason: "no X account found (LinkedIn, Mangusta Capital)"
+  - map_person_id: 208
+    name: "Sarah Dempsey"
+    group: capital
+    handle: sarahsidequest
+    x_id: "238299882"
+    confidence: verified
+    source_url: "https://x.com/SarahSideQuest"
+    match_reason: "X bio 'Cofounder of @GoldenEggMedia'"
+  - map_person_id: 131
+    name: "Zefy Hennessy Holland"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/zefihh/"
+    match_reason: "no X account found (Sequoia page, Clubhouse @zefi; @zefihh does not exist)"
+  - map_person_id: 166
+    name: "Richard Armstrong"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://x.com/MalaysiaBCW/status/2069631602049601711"
+    match_reason: "@RichieArms22178 is tagged by an event as him, but the display name 'Richie Armstrong(Real)', 160k followers and a generic bio look like an impersonation pattern: not accepted"
+  - map_person_id: 211
+    name: "Alexia Bonatsos"
+    group: capital
+    handle: alexia
+    x_id: "18327902"
+    confidence: likely
+    source_url: "https://x.com/alexia"
+    match_reason: "exact name, 147k followers; bio 'Scrolling saves.' has no firm (Dream Machine founder, ex-TechCrunch)"
+  - map_person_id: 382
+    name: "Paul Bernard"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.crunchbase.com/person/paul-bernard-98ff"
+    match_reason: "no X account found (Crunchbase, LinkedIn, Global Venturing)"
+  - map_person_id: 392
+    name: "Stefano Bernardi"
+    group: capital
+    handle: stefanobernardi
+    x_id: "5723512"
+    confidence: verified
+    source_url: "https://x.com/stefanobernardi"
+    match_reason: "X bio 'Investing in what's crazy before it's normal'"
+    non_us: true
+    location: "Italy/Europe"
+  - map_person_id: 416
+    name: "Laura McGinnis"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://x.com/_lauramcginnis"
+    match_reason: "search results name @_lauramcginnis, but no such account on X"
+    non_us: true
+    location: "London, UK"
+  - map_person_id: 290
+    name: "Sean Liu"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://foundersfund.com/team/sean-liu/"
+    match_reason: "no personal X account found (Founders Fund page, LinkedIn; only mentions by others)"
+  - map_person_id: 127
+    name: "Jacob Andreou"
+    group: capital
+    handle: jacobandreou
+    x_id: "33309098"
+    confidence: verified
+    source_url: "https://x.com/jacobandreou"
+    match_reason: "X bio 'Partner @ Greylock'"
+  - map_person_id: 249
+    name: "Patrick Chung"
+    group: capital
+    handle: patrickchung
+    x_id: "41380155"
+    confidence: verified
+    source_url: "https://x.com/patrickchung"
+    match_reason: "X bio 'Managing General Partner of Xfund'"
+  - map_person_id: 278
+    name: "Brian Schwarzbach"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/brianschwarzbach"
+    match_reason: "no X account found (LinkedIn, Medium, Cathay Innovation)"
+  - map_person_id: 91
+    name: "Vin Sachidananda"
+    group: capital
+    handle: vin_sachi
+    x_id: "1641863282096214018"
+    confidence: verified
+    source_url: "https://x.com/vin_sachi"
+    match_reason: "X bio 'Partner @RadicalVCFund'"
+  - map_person_id: 355
+    name: "Max Gomez"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://www.linkedin.com/in/maxwellggomez/"
+    match_reason: "no X account found (LinkedIn, Breathwrk)"
+  - map_person_id: 252
+    name: "Emma Kirst"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://x.com/theemma_kirst"
+    match_reason: "search results name @TheEmma_Kirst, but no such account on X"
+  - map_person_id: 790
+    name: "Emily Liu"
+    group: capital
+    handle: emilyathf0
+    x_id: "1671691821389586432"
+    confidence: verified
+    source_url: "https://x.com/EmilyatHF0"
+    match_reason: "X bio 'Co-founder at HF0'"
+  - map_person_id: 263
+    name: "Mark Beylin"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://x.com/markbeylin"
+    match_reason: "search results name @MarkBeylin, but the official lookup finds no such account (deactivated or renamed)"
+  - map_person_id: 220
+    name: "Bradley Horowitz"
+    group: capital
+    handle: elatable
+    x_id: "13041"
+    confidence: verified
+    source_url: "https://x.com/elatable"
+    match_reason: "X bio 'GP @ Wisdom Ventures'"
+  - map_person_id: 255
+    name: "Will Robbins"
+    group: capital
+    handle: whrobbins
+    x_id: "1888151281"
+    confidence: likely
+    source_url: "https://x.com/whrobbins"
+    match_reason: "exact name; VC Sheet, Bloomberg and search results give @whrobbins for the Contrary partner; empty bio"
+  - map_person_id: 360
+    name: "Josh Constine"
+    group: capital
+    handle: joshconstine
+    x_id: "19563366"
+    confidence: verified
+    source_url: "https://x.com/JoshConstine"
+    match_reason: "X bio 'Venture Partner @SignalFire, ex-Editor @TechCrunch'"
+  - map_person_id: 250
+    name: "Faraz Fatemi"
+    group: capital
+    handle: f_fatemi21
+    x_id: "185811039"
+    confidence: verified
+    source_url: "https://x.com/f_fatemi21"
+    match_reason: "X bio 'Partner @lightspeedvp'"
+  - map_person_id: 757
+    name: "Shuo Wang"
+    group: capital
+    handle: shuooo
+    x_id: "244772805"
+    confidence: verified
+    source_url: "https://x.com/shuooo"
+    match_reason: "X bio 'Co-Founder & CRO @Deel'"
+  - map_person_id: 387
+    name: "Dave Fontenot"
+    group: capital
+    handle: davefontenot
+    x_id: "470790728"
+    confidence: verified
+    source_url: "local x_users (monid crawl): bio 'building the residency for repeat founders @HF0'"
+    match_reason: "X bio 'building the residency for repeat founders @HF0'"
+  - map_person_id: 292
+    name: "Steve Jang"
+    group: capital
+    handle: stevejang
+    x_id: "13911852"
+    confidence: verified
+    source_url: "https://x.com/stevejang"
+    match_reason: "X bio 'founder & partner @kindredventures'"
+  - map_person_id: 119
+    name: "Kirsten Green"
+    group: capital
+    handle: kirstenagreen
+    x_id: "39191312"
+    confidence: verified
+    source_url: "https://x.com/kirstenagreen"
+    match_reason: "X bio 'Founder/Investor @ForerunnerVC'"
+  - map_person_id: 375
+    name: "Evan Stites-Clayton"
+    group: capital
+    handle: null
+    status: unknown
+    source_url: "https://x.com/escliu"
+    match_reason: "search results show posts by @escliu, but the official lookup finds no such account now"
+  - map_person_id: 419
+    name: "Paulo Passoni"
+    group: capital
+    handle: ptpassoni
+    x_id: "174368806"
+    confidence: likely
+    source_url: "https://x.com/ptpassoni"
+    match_reason: "exact name, New York; search results identify @ptpassoni as his (protected account, bio 'in Garden Leave')"
+  - map_person_id: 1417
+    name: "Mitchell Wakefield"
+    group: capital
+    handle: wakefield00
+    x_id: "1547241386"
+    confidence: verified
+    source_url: "local x_users (monid crawl): bio 'scout @a16z, building @goldeneggmedia'"
+    match_reason: "X bio 'building @goldeneggmedia' (display name 'Mitch')"

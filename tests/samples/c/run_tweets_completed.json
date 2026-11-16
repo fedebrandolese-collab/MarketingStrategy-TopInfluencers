@@ -1,0 +1,964 @@
+{
+ "runId": "01M3PAZDFMSJTDKG22P2FD7855",
+ "caller": "API_KEY#ykeFFP9I",
+ "owner": "user_3JztGZI2BhI2R0Z6Y3ViE3mxHXE",
+ "provider": "apify",
+ "providerName": "Apify",
+ "endpoint": "/apidojo/tweet-scraper",
+ "status": "COMPLETED",
+ "input": {
+  "body": {
+   "searchTerms": [
+    "\"smart ring\" voice"
+   ],
+   "maxItems": 10,
+   "sort": "Latest",
+   "tweetLanguage": "en"
+  }
+ },
+ "providerResponse": {
+  "httpStatus": 200
+ },
+ "price": {
+  "type": "PER_RESULT",
+  "amount": {
+   "value": 0.0006,
+   "currency": "USD"
+  },
+  "notes": [
+   "The limit parameter directly controls the maximum number of results returned and charged."
+  ]
+ },
+ "cost": {
+  "value": 0.006,
+  "currency": "USD"
+ },
+ "resultCount": 10,
+ "billedUnits": 10,
+ "createdAt": "2026-09-29T10:22:15.015Z",
+ "startedAt": "2026-09-29T10:22:15.185Z",
+ "completedAt": "2026-09-29T10:22:31.664Z",
+ "hints": {
+  "retrieve the response later": "curl http://api.monid.ai/v1/runs/01M3PAZDFMSJTDKG22P2FD7855 -H 'Authorization: Bearer [redacted-placeholder]'"
+ },
+ "output": [
+  {
+   "type": "tweet",
+   "id": "2103378967486992654",
+   "url": "https://x.com/grvgpta/status/2103378967486992654",
+   "twitterUrl": "https://twitter.com/grvgpta/status/2103378967486992654",
+   "text": "A striking new review for the Gabit Smart Ring! @bsindia   spent several weeks with the Gabit Smart Ring. \nThe verdict: a more useful health companion than expected, and one that fits into your routine without asking for attention.\n\nThe review highlights what we\u2019ve worked hard to get right: \nComfort. Battery life. Continuous tracking. Sleep. Women\u2019s health. Simplicity.\n\nHere\u2019s what stood out:\n\n\ud83c\udf19Sleep: Deep and REM sleep stages, sleep debt, and consistency, from a ring comfortable enough to actually sleep in.\n\ud83d\udd0bBattery: Exactly one week in testing, Wednesday to Wednesday.\n\ud83d\udccaAccuracy: Steps and heart rate were largely in line with other reliable devices.\n\ud83d\udca7Durability: 5ATM water resistance held up through showers and swims.\n\ud83d\udc8dDesign: Titanium, under 4g, and mistaken for a regular ring.\n\ud83c\udf38Women's Health: It\u2019s more than a period tracker, with a range of insights.\n\ud83e\udd57AI Voice Food Logging: simply say what you ate to log it to get calories and macros.\n\nFull review: https://t.co/lUyNkluWO6\n\n#Gabit #GabitSmartRing #HealthTech #Wearables #ProductReview",
+   "fullText": "A striking new review for the Gabit Smart Ring! @bsindia   spent several weeks with the Gabit Smart Ring. \nThe verdict: a more useful health companion than expected, and one that fits into your routine without asking for attention.\n\nThe review highlights what we\u2019ve worked hard to https://t.co/Mcl2OH22JY",
+   "source": "Twitter Web App",
+   "retweetCount": 1,
+   "replyCount": 2,
+   "likeCount": 0,
+   "quoteCount": 0,
+   "viewCount": 156,
+   "createdAt": "Fri Sep 25 06:59:59 +0000 2026",
+   "lang": "en",
+   "bookmarkCount": 0,
+   "isReply": false,
+   "conversationId": "2103378967486992654",
+   "possiblySensitive": false,
+   "isPinned": false,
+   "author": {
+    "type": "user",
+    "userName": "grvgpta",
+    "url": "https://x.com/grvgpta",
+    "twitterUrl": "https://twitter.com/grvgpta",
+    "id": "3252337926",
+    "name": "Gaurav Gupta",
+    "isVerified": false,
+    "isBlueVerified": false,
+    "profilePicture": "https://pbs.twimg.com/profile_images/1530947241514770432/QeARpJtH_normal.jpg",
+    "coverPicture": "https://pbs.twimg.com/profile_banners/3252337926/1705673651",
+    "description": "Building Gabit | @gabitlife\nFounder, @Zomato",
+    "location": "",
+    "followers": 4797,
+    "following": 66,
+    "protected": false,
+    "status": "",
+    "canDm": false,
+    "canMediaTag": true,
+    "createdAt": "Mon Jun 22 06:14:05 +0000 2015",
+    "entities": {
+     "description": {},
+     "url": {
+      "urls": [
+       {
+        "display_url": "gabit.com",
+        "expanded_url": "http://gabit.com",
+        "indices": [
+         0,
+         23
+        ],
+        "url": "https://t.co/0tWSmRFvkW"
+       }
+      ]
+     }
+    },
+    "fastFollowersCount": 0,
+    "favouritesCount": 105,
+    "hasCustomTimelines": true,
+    "isTranslator": false,
+    "mediaCount": 217,
+    "statusesCount": 505,
+    "affiliatesHighlightedLabel": {},
+    "possiblySensitive": false,
+    "pinnedTweetIds": [
+     "1748339192499700171"
+    ]
+   },
+   "extendedEntities": {
+    "media": [
+     {
+      "display_url": "pic.x.com/Mcl2OH22JY",
+      "expanded_url": "https://x.com/grvgpta/status/2103378967486992654/photo/1",
+      "ext_media_availability": {
+       "status": "Available"
+      },
+      "features": {
+       "large": {
+        "faces": [
+         {
+          "h": 56,
+          "w": 56,
+          "x": 606,
+          "y": 942
+         }
+        ]
+       },
+       "medium": {
+        "faces": [
+         {
+          "h": 49,
+          "w": 49,
+          "x": 538,
+          "y": 837
+         }
+        ]
+       },
+       "orig": {
+        "faces": [
+         {
+          "h": 56,
+          "w": 56,
+          "x": 606,
+          "y": 942
+         }
+        ]
+       },
+       "small": {
+        "faces": [
+         {
+          "h": 28,
+          "w": 28,
+          "x": 305,
+          "y": 474
+         }
+        ]
+       }
+      },
+      "id_str": "2103378604856057856",
+      "indices": [
+       281,
+       304
+      ],
+      "media_key": "3_2103378604856057856",
+      "media_results": {
+       "result": {
+        "media_key": "3_2103378604856057856"
+       }
+      },
+      "media_url_https": "https://pbs.twimg.com/media/HTCzsmqaIAAY2nz.jpg",
+      "original_info": {
+       "focus_rects": [
+        {
+         "h": 605,
+         "w": 1080,
+         "x": 0,
+         "y": 1
+        },
+        {
+         "h": 1080,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1231,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 675,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        }
+       ],
+       "height": 1350,
+       "width": 1080
+      },
+      "sizes": {
+       "large": {
+        "h": 1350,
+        "resize": "fit",
+        "w": 1080
+       },
+       "medium": {
+        "h": 1200,
+        "resize": "fit",
+        "w": 960
+       },
+       "small": {
+        "h": 680,
+        "resize": "fit",
+        "w": 544
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "photo",
+      "url": "https://t.co/Mcl2OH22JY"
+     },
+     {
+      "display_url": "pic.x.com/Mcl2OH22JY",
+      "expanded_url": "https://x.com/grvgpta/status/2103378967486992654/photo/1",
+      "ext_media_availability": {
+       "status": "Available"
+      },
+      "features": {
+       "large": {
+        "faces": [
+         {
+          "h": 177,
+          "w": 177,
+          "x": 374,
+          "y": 437
+         }
+        ]
+       },
+       "medium": {
+        "faces": [
+         {
+          "h": 157,
+          "w": 157,
+          "x": 332,
+          "y": 388
+         }
+        ]
+       },
+       "orig": {
+        "faces": [
+         {
+          "h": 177,
+          "w": 177,
+          "x": 374,
+          "y": 437
+         }
+        ]
+       },
+       "small": {
+        "faces": [
+         {
+          "h": 89,
+          "w": 89,
+          "x": 188,
+          "y": 220
+         }
+        ]
+       }
+      },
+      "id_str": "2103378604847738880",
+      "indices": [
+       281,
+       304
+      ],
+      "media_key": "3_2103378604847738880",
+      "media_results": {
+       "result": {
+        "media_key": "3_2103378604847738880"
+       }
+      },
+      "media_url_https": "https://pbs.twimg.com/media/HTCzsmobMAA7w8C.jpg",
+      "original_info": {
+       "focus_rects": [
+        {
+         "h": 605,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1080,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1231,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 675,
+         "x": 371,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        }
+       ],
+       "height": 1350,
+       "width": 1080
+      },
+      "sizes": {
+       "large": {
+        "h": 1350,
+        "resize": "fit",
+        "w": 1080
+       },
+       "medium": {
+        "h": 1200,
+        "resize": "fit",
+        "w": 960
+       },
+       "small": {
+        "h": 680,
+        "resize": "fit",
+        "w": 544
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "photo",
+      "url": "https://t.co/Mcl2OH22JY"
+     },
+     {
+      "display_url": "pic.x.com/Mcl2OH22JY",
+      "expanded_url": "https://x.com/grvgpta/status/2103378967486992654/photo/1",
+      "ext_media_availability": {
+       "status": "Available"
+      },
+      "features": {
+       "large": {
+        "faces": [
+         {
+          "h": 183,
+          "w": 183,
+          "x": 387,
+          "y": 954
+         }
+        ]
+       },
+       "medium": {
+        "faces": [
+         {
+          "h": 162,
+          "w": 162,
+          "x": 344,
+          "y": 848
+         }
+        ]
+       },
+       "orig": {
+        "faces": [
+         {
+          "h": 183,
+          "w": 183,
+          "x": 387,
+          "y": 954
+         }
+        ]
+       },
+       "small": {
+        "faces": [
+         {
+          "h": 92,
+          "w": 92,
+          "x": 194,
+          "y": 480
+         }
+        ]
+       }
+      },
+      "id_str": "2103378606034710528",
+      "indices": [
+       281,
+       304
+      ],
+      "media_key": "3_2103378606034710528",
+      "media_results": {
+       "result": {
+        "media_key": "3_2103378606034710528"
+       }
+      },
+      "media_url_https": "https://pbs.twimg.com/media/HTCzsrDa8AARPaf.jpg",
+      "original_info": {
+       "focus_rects": [
+        {
+         "h": 605,
+         "w": 1080,
+         "x": 0,
+         "y": 1
+        },
+        {
+         "h": 1080,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1231,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 675,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        }
+       ],
+       "height": 1350,
+       "width": 1080
+      },
+      "sizes": {
+       "large": {
+        "h": 1350,
+        "resize": "fit",
+        "w": 1080
+       },
+       "medium": {
+        "h": 1200,
+        "resize": "fit",
+        "w": 960
+       },
+       "small": {
+        "h": 680,
+        "resize": "fit",
+        "w": 544
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "photo",
+      "url": "https://t.co/Mcl2OH22JY"
+     },
+     {
+      "display_url": "pic.x.com/Mcl2OH22JY",
+      "expanded_url": "https://x.com/grvgpta/status/2103378967486992654/photo/1",
+      "ext_media_availability": {
+       "status": "Available"
+      },
+      "features": {
+       "large": {
+        "faces": []
+       },
+       "medium": {
+        "faces": []
+       },
+       "orig": {
+        "faces": []
+       },
+       "small": {
+        "faces": []
+       }
+      },
+      "id_str": "2103378604847710208",
+      "indices": [
+       281,
+       304
+      ],
+      "media_key": "3_2103378604847710208",
+      "media_results": {
+       "result": {
+        "media_key": "3_2103378604847710208"
+       }
+      },
+      "media_url_https": "https://pbs.twimg.com/media/HTCzsmoawAA14Ir.jpg",
+      "original_info": {
+       "focus_rects": [
+        {
+         "h": 605,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1080,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1231,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 675,
+         "x": 0,
+         "y": 0
+        },
+        {
+         "h": 1350,
+         "w": 1080,
+         "x": 0,
+         "y": 0
+        }
+       ],
+       "height": 1350,
+       "width": 1080
+      },
+      "sizes": {
+       "large": {
+        "h": 1350,
+        "resize": "fit",
+        "w": 1080
+       },
+       "medium": {
+        "h": 1200,
+        "resize": "fit",
+        "w": 960
+       },
+       "small": {
+        "h": 680,
+        "resize": "fit",
+        "w": 544
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "photo",
+      "url": "https://t.co/Mcl2OH22JY"
+     }
+    ]
+   },
+   "card": {},
+   "place": {},
+   "entities": {
+    "hashtags": [
+     {
+      "indices": [
+       992,
+       998
+      ],
+      "text": "Gabit"
+     },
+     {
+      "indices": [
+       999,
+       1014
+      ],
+      "text": "GabitSmartRing"
+     },
+     {
+      "indices": [
+       1015,
+       1026
+      ],
+      "text": "HealthTech"
+     },
+     {
+      "indices": [
+       1027,
+       1037
+      ],
+      "text": "Wearables"
+     },
+     {
+      "indices": [
+       1038,
+       1052
+      ],
+      "text": "ProductReview"
+     }
+    ],
+    "symbols": [],
+    "urls": [
+     {
+      "display_url": "business-standard.com/technology/tec\u2026",
+      "expanded_url": "https://www.business-standard.com/technology/tech-reviews/gabit-smart-ring-review-the-case-for-tracking-health-on-your-finger-126090800927_1.html",
+      "indices": [
+       967,
+       990
+      ],
+      "url": "https://t.co/lUyNkluWO6"
+     }
+    ],
+    "user_mentions": [
+     {
+      "id_str": "43855487",
+      "indices": [
+       48,
+       56
+      ],
+      "name": "Business Standard",
+      "screen_name": "bsindia"
+     }
+    ]
+   },
+   "isRetweet": false,
+   "isQuote": false,
+   "media": [
+    "https://pbs.twimg.com/media/HTCzsmqaIAAY2nz.jpg",
+    "https://pbs.twimg.com/media/HTCzsmobMAA7w8C.jpg",
+    "https://pbs.twimg.com/media/HTCzsrDa8AARPaf.jpg",
+    "https://pbs.twimg.com/media/HTCzsmoawAA14Ir.jpg"
+   ],
+   "videos": [],
+   "isConversationControlled": false
+  },
+  {
+   "type": "tweet",
+   "id": "2102121034799562762",
+   "url": "https://x.com/FOUNTAINbuildai/status/2102121034799562762",
+   "twitterUrl": "https://twitter.com/FOUNTAINbuildai/status/2102121034799562762",
+   "text": "Watching our portfolio company Spark Ring take off \u2014 nearly $100K on Kickstarter in 3 days.\ud83e\udd73\n\nIt's a 2.8g AI voice ring. Double-tap, speak, and fleeting thoughts become notes and tasks. No screen, no subscription.\n\nhttps://t.co/GUvKf0JhEf",
+   "fullText": "Watching our portfolio company Spark Ring take off \u2014 nearly $100K on Kickstarter in 3 days.\ud83e\udd73\n\nIt's a 2.8g AI voice ring. Double-tap, speak, and fleeting thoughts become notes and tasks. No screen, no subscription.\n\nhttps://t.co/GUvKf0JhEf",
+   "source": "Twitter Web App",
+   "retweetCount": 1,
+   "replyCount": 0,
+   "likeCount": 3,
+   "quoteCount": 0,
+   "viewCount": 58,
+   "createdAt": "Mon Sep 21 19:41:24 +0000 2026",
+   "lang": "en",
+   "bookmarkCount": 0,
+   "isReply": false,
+   "conversationId": "2102121034799562762",
+   "possiblySensitive": false,
+   "author": {
+    "type": "user",
+    "userName": "FOUNTAINbuildai",
+    "url": "https://x.com/FOUNTAINbuildai",
+    "twitterUrl": "https://twitter.com/FOUNTAINbuildai",
+    "id": "2030254042820263936",
+    "name": "FOUNTAIN",
+    "isVerified": false,
+    "isBlueVerified": true,
+    "profilePicture": "https://pbs.twimg.com/profile_images/2030264097263202304/s903WKUk_normal.jpg",
+    "coverPicture": "https://pbs.twimg.com/profile_banners/2030254042820263936/1772885948",
+    "description": "IT'S TIME TO BUILD AI.\n\nPhysical AI Accelerator | Silicon Valley \u00d7 Shenzhen\nWe bring AI into the physical world, with builders.",
+    "location": "San Francisco",
+    "followers": 18,
+    "following": 46,
+    "protected": false,
+    "status": "",
+    "canDm": false,
+    "canMediaTag": true,
+    "createdAt": "Sat Mar 07 12:07:49 +0000 2026",
+    "entities": {
+     "description": {},
+     "url": {
+      "urls": [
+       {
+        "display_url": "FountainBuild.ai",
+        "expanded_url": "http://FountainBuild.ai",
+        "indices": [
+         0,
+         23
+        ],
+        "url": "https://t.co/3VMFdbqxjS"
+       }
+      ]
+     }
+    },
+    "fastFollowersCount": 0,
+    "favouritesCount": 10,
+    "hasCustomTimelines": false,
+    "isTranslator": false,
+    "mediaCount": 6,
+    "statusesCount": 10,
+    "affiliatesHighlightedLabel": {},
+    "possiblySensitive": false
+   },
+   "extendedEntities": {},
+   "card": {
+    "rest_id": "https://t.co/GUvKf0JhEf"
+   },
+   "place": {},
+   "entities": {
+    "urls": [
+     {
+      "display_url": "kickstarter.com/projects/spark\u2026",
+      "expanded_url": "https://www.kickstarter.com/projects/sparkring/spark-ring-the-smart-ring-built-to-capture-ideas-instantly?ref=project_tweet",
+      "indices": [
+       215,
+       238
+      ],
+      "url": "https://t.co/GUvKf0JhEf"
+     }
+    ]
+   },
+   "isRetweet": false,
+   "isQuote": false,
+   "media": [],
+   "videos": [],
+   "isConversationControlled": false
+  },
+  {
+   "type": "tweet",
+   "id": "2098041362545520776",
+   "url": "https://x.com/notsocoolyogi/status/2098041362545520776",
+   "twitterUrl": "https://twitter.com/notsocoolyogi/status/2098041362545520776",
+   "text": "Someone should make a smart ring partnership with DC to make a green lantern themed ring which charges through a dock that looks like a lantern with voice command being the green lantern oath",
+   "fullText": "Someone should make a smart ring partnership with DC to make a green lantern themed ring which charges through a dock that looks like a lantern with voice command being the green lantern oath",
+   "source": "Twitter for Android",
+   "retweetCount": 0,
+   "replyCount": 1,
+   "likeCount": 2,
+   "quoteCount": 0,
+   "viewCount": 41,
+   "createdAt": "Thu Sep 10 13:30:15 +0000 2026",
+   "lang": "en",
+   "bookmarkCount": 0,
+   "isReply": false,
+   "conversationId": "2098041362545520776",
+   "isPinned": false,
+   "author": {
+    "type": "user",
+    "userName": "notsocoolyogi",
+    "url": "https://x.com/notsocoolyogi",
+    "twitterUrl": "https://twitter.com/notsocoolyogi",
+    "id": "1358624002793631745",
+    "name": "Yogi",
+    "isVerified": false,
+    "isBlueVerified": false,
+    "profilePicture": "https://pbs.twimg.com/profile_images/1660636234316931073/W6bNVeyk_normal.jpg",
+    "coverPicture": "https://pbs.twimg.com/profile_banners/1358624002793631745/1684761506",
+    "description": "average twitter enjoyer",
+    "location": "",
+    "followers": 48,
+    "following": 64,
+    "protected": false,
+    "status": "",
+    "canDm": false,
+    "canMediaTag": true,
+    "createdAt": "Mon Feb 08 03:50:04 +0000 2021",
+    "entities": {
+     "description": {}
+    },
+    "fastFollowersCount": 0,
+    "favouritesCount": 445,
+    "hasCustomTimelines": true,
+    "isTranslator": false,
+    "mediaCount": 1186,
+    "statusesCount": 6138,
+    "affiliatesHighlightedLabel": {},
+    "possiblySensitive": false,
+    "pinnedTweetIds": [
+     "1377953893535997955"
+    ]
+   },
+   "extendedEntities": {},
+   "card": {},
+   "place": {},
+   "entities": {},
+   "isRetweet": false,
+   "isQuote": false,
+   "media": [],
+   "videos": [],
+   "isConversationControlled": false
+  },
+  {
+   "type": "tweet",
+   "id": "2096145096261480664",
+   "url": "https://x.com/voiceaispace/status/2096145096261480664",
+   "twitterUrl": "https://twitter.com/voiceaispace/status/2096145096261480664",
+   "text": "Here are the latest products added to the VoiceAISpace Library:\n\nAto AI - Screen-free AI companion designed to keep seniors connected with families.\n\nplotweaverapp  - Unified voice AI platform transforming content into multilingual audio experiences.\n\ntelavox  - White-label conversational operating system for telecom operators and service providers.\n\nPatter - Open-source SDK connecting voice AI agents to real phone calls.\n\nVoibe  - Fast, private voice dictation application for Mac and Windows computers.\n\nBoldVoice - Accent training app combining Hollywood coach lessons and AI feedback.\n\nSay It Labs - AI-powered, voice-activated video games for speech therapy and early literacy.\n\nSpark Ring - AI smart ring that instantly captures and organizes voice notes.\nRecombine AI - Self-hosted conversational AI platform for enterprise voice and text agents.\n\nLEXIA - Sovereign speech-to-text technology providing secure, enterprise-grade voice integration solutions.\n\nSpecker AI - AI English speaking coach named Stella that calls you daily.\nSee more cool Voice AI startups here\n\nSee all in by checking the link in the comments",
+   "fullText": "Here are the latest products added to the VoiceAISpace Library:\n\nAto AI - Screen-free AI companion designed to keep seniors connected with families.\n\nplotweaverapp  - Unified voice AI platform transforming content into multilingual audio experiences.\n\ntelavox  - White-label https://t.co/dD6fCGRszq",
+   "source": "Twitter Web App",
+   "retweetCount": 0,
+   "replyCount": 1,
+   "likeCount": 3,
+   "quoteCount": 0,
+   "viewCount": 303,
+   "createdAt": "Sat Sep 05 07:55:10 +0000 2026",
+   "lang": "en",
+   "bookmarkCount": 0,
+   "isReply": false,
+   "conversationId": "2096145096261480664",
+   "possiblySensitive": false,
+   "author": {
+    "type": "user",
+    "userName": "voiceaispace",
+    "url": "https://x.com/voiceaispace",
+    "twitterUrl": "https://twitter.com/voiceaispace",
+    "id": "1544694085365207041",
+    "name": "Thibault | T-Bot",
+    "isVerified": false,
+    "isBlueVerified": true,
+    "profilePicture": "https://pbs.twimg.com/profile_images/1946027569741955072/AQCu6Nt8_normal.jpg",
+    "coverPicture": "https://pbs.twimg.com/profile_banners/1544694085365207041/1748292736",
+    "description": "Voice AI Space Explorer",
+    "location": "Space",
+    "followers": 453,
+    "following": 2277,
+    "protected": false,
+    "status": "",
+    "canDm": true,
+    "canMediaTag": true,
+    "createdAt": "Wed Jul 06 14:46:37 +0000 2022",
+    "entities": {
+     "description": {},
+     "url": {
+      "urls": [
+       {
+        "display_url": "voiceaispace.com",
+        "expanded_url": "https://www.voiceaispace.com/",
+        "indices": [
+         0,
+         23
+        ],
+        "url": "https://t.co/mlrTvyi6fG"
+       }
+      ]
+     }
+    },
+    "fastFollowersCount": 0,
+    "favouritesCount": 2245,
+    "hasCustomTimelines": false,
+    "isTranslator": false,
+    "mediaCount": 263,
+    "statusesCount": 1348,
+    "affiliatesHighlightedLabel": {},
+    "possiblySensitive": false
+   },
+   "extendedEntities": {
+    "media": [
+     {
+      "allow_download_status": {
+       "allow_download": true
+      },
+      "display_url": "pic.x.com/dD6fCGRszq",
+      "expanded_url": "https://x.com/thetoolists/status/2096145096261480664/photo/1",
+      "ext_media_availability": {
+       "status": "Available"
+      },
+      "id_str": "2096144953885806593",
+      "indices": [
+       275,
+       298
+      ],
+      "media_key": "16_2096144953885806593",
+      "media_results": {
+       "result": {
+        "media_key": "16_2096144953885806593"
+       }
+      },
+      "media_url_https": "https://pbs.twimg.com/tweet_video_thumb/HRcAus4XUAECfCZ.jpg",
+      "original_info": {
+       "focus_rects": [],
+       "height": 1080,
+       "width": 1920
+      },
+      "sizes": {
+       "large": {
+        "h": 1080,
+        "resize": "fit",
+        "w": 1920
+       },
+       "medium": {
+        "h": 675,
+        "resize": "fit",
+        "w": 1200
+       },
+       "small": {
+        "h": 383,
+        "resize": "fit",
+        "w": 680
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "animated_gif",
+      "url": "https://t.co/dD6fCGRszq",
+      "video_info": {
+       "aspect_ratio": [
+        16,
+        9
+       ],
+       "variants": [
+        {
+         "bitrate": 0,
+         "content_type": "video/mp4",
+         "url": "https://video.twimg.com/tweet_video/HRcAus4XUAECfCZ.mp4"
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "card": {},
+   "place": {},
+   "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "urls": [],
+    "user_mentions": []
+   },
+   "isRetweet": false,
+   "isQuote": false,
+   "media": [
+    "https://pbs.twimg.com/tweet_video_thumb/HRcAus4XUAECfCZ.jpg"
+   ],
+   "videos": [
+    {
+     "durationMillis": null,
+     "aspectRatio": [
+      16,
+      9
+     ],
+     "variants": [
+      {
+       "bitrate": 0,
+       "contentType": "video/mp4",
+       "url": "https://video.twimg.com/tweet_video/HRcAus4XUAECfCZ.mp4"
+      }
+     ]
+    }
+   ],
+   "isConversationControlled": false
+  }
+ ]
+}

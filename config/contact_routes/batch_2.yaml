@@ -1,0 +1,61 @@
+# Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
+# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+checked: 2026-09-29
+people:
+  - handle: snazzylabs
+    name: "Quinn Nelson"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://snazzylabs.com/work"
+        note: "Snazzy Labs inbox for partnerships and general inquiries; site is his X link"
+    reason: "His own site, linked from his X profile, publishes this inbox for working together, sponsorships and general inquiries."
+
+  - handle: andrewwarner
+    name: "Andrew Warner"
+    verdict: contactable
+    routes:
+      - type: contact_form
+        detail: "https://mixergy.com/contact/"
+        source_url: "https://mixergy.com/contact/"
+        note: "Mixergy form signed by him; pick topic General. No email published"
+      - type: contact_form
+        detail: "https://thenextnewthing.ai/l/sponsor"
+        source_url: "https://thenextnewthing.ai/l/sponsor"
+        note: "Sponsor inquiry form on his current show's site, the domain in his X link"
+    reason: "Both forms are on his own sites named in his X bio and link; no email address is published on either."
+
+  - handle: jaykapoornyc
+    name: "Jay Kapoor"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://dirtyjobs.ai/faq"
+        note: "Sponsor inbox of his Dirty Jobs summit; site is his X link"
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/jaykapoor/"
+        source_url: "https://www.linkedin.com/in/jaykapoor/"
+        note: "Weak: matched by name and GP at VSC Ventures title, not linked"
+    reason: "Only published inbox is the summit's sponsor address on his X-linked site; VSC Ventures contact page lists no email."
+
+  - handle: bran_don_gell
+    name: "Brandon Gell"
+    verdict: contactable
+    routes:
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/brandongell/"
+        source_url: "https://every.to/on-every/brandon-gell-joins-every-as-our-first-entrepreneur-in-residence"
+        note: "Weak route; linked from Every's own post announcing him"
+    reason: "LinkedIn only. X has no link; Every's author and team pages list no contact; its consulting form doesn't name him."
+
+  - handle: signulll
+    name: "signüll"
+    verdict: contactable
+    routes:
+      - type: press_office
+        detail: "[redacted-email]"
+        source_url: "https://skyeapp.ai/"
+        note: "Press inbox of Signull Labs, maker of Skye (@skye in his X bio)"
+    reason: "His X bio names @skye; skyeapp.ai (Signull Labs) publishes this press inbox. Substack about page lists no email."

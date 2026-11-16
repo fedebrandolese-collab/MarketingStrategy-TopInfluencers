@@ -1,0 +1,65 @@
+# Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
+# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+checked: 2026-09-29
+people:
+  - handle: joannastern
+    name: "Joanna Stern"
+    verdict: contactable
+    routes:
+      - type: contact_form
+        detail: "https://joannastern.com/contact"
+        source_url: "https://joannastern.com/contact"
+        note: "General message form on her site, linked from thenewthings.com (her X link)."
+      - type: agent
+        detail: "UTA Speakers, https://www.unitedtalent.com/speakers/"
+        source_url: "https://joannastern.com/contact"
+        note: "Her named route for speaking or lecture requests."
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://joannastern.com/contact"
+        note: "Published for New Things video and newsletter sponsorships only."
+    reason: "Her own site, linked from her X link thenewthings.com, invites messages through its contact form."
+  - handle: benspringwater
+    name: "Ben Springwater"
+    verdict: contactable
+    routes:
+      - type: email
+        detail: "[redacted-email]"
+        source_url: "https://www.getmatter.com/"
+        note: "Matter's 'Say hello' company inbox, not personal; he is co-founder and CEO."
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/benspringwater/"
+        source_url: "https://www.ycombinator.com/companies/matter"
+        note: "Linked beside his X account on Matter's YC founder listing."
+    reason: "Matter, named in his X bio, publishes a general inbox for the small team he leads. No personal email; his Substack is empty."
+  - handle: clairevo
+    name: "Claire Vo"
+    verdict: contactable
+    routes:
+      - type: contact_form
+        detail: "https://www.clairevo.com/contact"
+        source_url: "https://www.clairevo.com/contact"
+        note: "Invites 'speaking, investing, a podcast, or something you're building'; assistants screen it."
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/clairevo/"
+        source_url: "https://www.clairevo.com/contact"
+        note: "Linked from her own contact page."
+    reason: "Her site, the link in her X profile, has a contact form inviting pitches about something you're building."
+  - handle: iam_agg
+    name: "Adam Gastineau"
+    verdict: not_contactable
+    routes: []
+    reason: "X DMs closed, no warm path, no published email or site; his only linked channel (Mastodon) has been silent since Feb 2024."
+  - handle: bryan_johnson
+    name: "Bryan Johnson"
+    verdict: contactable
+    routes:
+      - type: press_office
+        detail: "https://www.bryanjohnson.com/c"
+        source_url: "https://www.bryanjohnson.com/c"
+        note: "Press Inquiries email, obscured by Cloudflare; visible when the page opens in a browser."
+      - type: linkedin
+        detail: "https://www.linkedin.com/in/bryanrjohnson"
+        source_url: "https://www.bryanjohnson.com/"
+        note: "Linked from his own site."
+    reason: "His site, which links his X account, lists a Press Inquiries email. His Komi link page did not load; no partnership line found."

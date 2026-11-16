@@ -1,0 +1,30 @@
+# Score weights (src/ring_wishlist/weights.py, SCORING.md 'Tuning the weights live'). Written by the dashboard's
+# 'Manual weights' switch (Save weights). `default:` sets the weights of scheduled runs; without it they use the built-in
+# defaults (today's formula).
+presets:
+  Today's formula:
+    accept: 1.0
+    wear: 1.0
+    love: 1.0
+    impact: 1.0
+    engagement: 1.0
+    connection: 0.0
+    affinity: 0.0
+    x_voice: 1.0
+    media: 1.0
+    vc: 1.0
+    founder_angel: 1.0
+    other: 1.0
+  Warm paths count (reach term as before 30 Sep):
+    accept: 1.0
+    wear: 1.0
+    love: 1.0
+    impact: 1.0
+    engagement: 1.0
+    connection: 1.0
+    affinity: 0.0
+    x_voice: 1.0
+    media: 1.0
+    vc: 1.0
+    founder_angel: 1.0
+    other: 1.0

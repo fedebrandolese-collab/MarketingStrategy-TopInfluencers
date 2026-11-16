@@ -1,0 +1,173 @@
+# Competitor ties not in Carlo's map. score.py reads funds (matched in company field / bio like the map's list) and people.
+# Found by web search, 2026-09-29. Funds: the LEAD (or co-lead) of a priced round of one of the 14 competitors in the brief
+# (config.COMPETITORS), plus notable funds that led a round. Angels and small participants are left out. Funds already in
+# Carlo's map list (Kindred Ventures led Humane's seed and Series C; Sandbar's and Ultrahuman's investors) are not repeated.
+# One row per fund and competitor, so a fund that led rounds of two competitors has two rows.
+# Not found / left out (no sourced lead): Plaud (no venture round; the 2025 Tencent report was denied by both sides),
+# Omi ($2M seed "from Tim Draper", an individual), Friend (angels and small funds, no named lead), Oasis Devices (no
+# disclosed round), 4ff (company not identified on the web).
+# People: founders and CEOs whose X handle a web page ties to the person. Unconfirmed handles are left out
+# (Humane's founders, Oura's CEO, Bee's CEO, Plaud's CEO).
+checked: 2026-09-29
+funds:
+  - fund: "Andreessen Horowitz"
+    aliases: ["a16z"]
+    competitor: "Sesame"
+    round: "led Series A ($47.5M), Feb 2025"
+    source_url: "https://a16z.com/announcement/investing-in-sesame-ai/"
+  - fund: "Andreessen Horowitz"
+    aliases: ["a16z"]
+    competitor: "Limitless"
+    round: "led seed ($10M, as Rewind), Nov 2022"
+    source_url: "https://techcrunch.com/2022/11/01/rewind-wants-to-revamp-how-you-remember-with-millions-from-a16z/"
+  - fund: "New Enterprise Associates"
+    aliases: ["NEA"]
+    competitor: "Limitless"
+    round: "led Series A ($12M at $350M, as Rewind), May 2023"
+    source_url: "https://fortune.com/2023/05/26/a-i-startup-founder-trend/"
+  - fund: "Sequoia Capital"
+    aliases: ["Sequoia"]
+    competitor: "Sesame"
+    round: "co-led Series B ($250M), Oct 2025"
+    source_url: "https://roadtovr.com/former-oculus-ai-smart-glasses-startup-sesame-raises-250m/"
+  - fund: "Spark Capital"
+    competitor: "Sesame"
+    round: "co-led Series B ($250M), Oct 2025"
+    source_url: "https://roadtovr.com/former-oculus-ai-smart-glasses-startup-sesame-raises-250m/"
+  - fund: "Tiger Global Management"
+    aliases: ["Tiger Global"]
+    competitor: "Humane"
+    round: "led Series B ($100M), Sep 2021"
+    source_url: "https://techcrunch.com/2021/09/01/humane-a-stealthy-hardware-and-software-startup-co-founded-by-an-ex-apple-designer-and-engineer-raises-100m/"
+  - fund: "Khosla Ventures"
+    competitor: "Rabbit"
+    round: "led $20M round, Oct 2023, and the $10M Series A that followed, Dec 2023"
+    source_url: "https://www.rabbit.tech/newsroom/rabbit-raises-20m"
+  - fund: "Exor Ventures"
+    aliases: ["Exor"]
+    competitor: "Bee"
+    round: "led seed ($7M), Jul 2024"
+    source_url: "https://techcrunch.com/2024/07/29/former-squad-and-twitter-execs-raise-7m-to-build-a-hardware-ai-assistant/"
+  - fund: "Menlo Ventures"
+    competitor: "Wispr Flow"
+    round: "led Series A ($30M), Jun 2025, and Series B ($280M), Aug 2026"
+    # Series A: https://techcrunch.com/2025/06/24/wispr-flow-raises-30m-from-menlo-ventures-for-its-ai-powered-dictation-app/
+    source_url: "https://techcrunch.com/2026/08/17/wispr-raises-280m-at-2b-valuation-as-it-looks-beyond-dictation/"
+  - fund: "Fidelity Management & Research"
+    aliases: ["Fidelity"]
+    competitor: "Oura"
+    round: "led Series E ($900M), Oct 2025"
+    source_url: "https://www.digitalhealthnews.com/oura-secures-900m-in-series-e-funding-amid-surge-in-smart-ring-sales"
+  - fund: "The Chernin Group"
+    aliases: ["Chernin Group"]
+    competitor: "Oura"
+    round: "co-led Series C ($100M), May 2021"
+    source_url: "https://techcrunch.com/2021/05/04/fitness-ring-maker-oura-raises-100m/amp"
+  - fund: "Elysian Park Ventures"
+    aliases: ["Elysian Park"]
+    competitor: "Oura"
+    round: "co-led Series C ($100M), May 2021"
+    source_url: "https://techcrunch.com/2021/05/04/fitness-ring-maker-oura-raises-100m/amp"
+people:
+  - handle: kodjima33
+    name: "Nik Shevchenko"
+    competitor: "Omi"
+    kind: founder
+    source_url: "https://www.omi.me/blogs/news/omi-raises-2m"
+  - handle: tankots
+    name: "Tanay Kothari"
+    competitor: "Wispr Flow"
+    kind: founder             # co-founder and CEO; LinkedIn slug is the same handle, X profile links wisprflow.ai
+    source_url: "https://www.linkedin.com/in/tankots/"
+  - handle: ericmigi
+    name: "Eric Migicovsky"
+    competitor: "Pebble (not in the brief's list)"
+    kind: founder             # Pebble Index 01, a $75-99 voice-note ring; his site links twitter.com/ericmigi
+    source_url: "https://ericmigi.com/"
+  - handle: dsiroker
+    name: "Dan Siroker"
+    competitor: "Limitless"
+    kind: founder             # co-founder and CEO; Limitless was acquired by Meta, Dec 2025
+    source_url: "https://x.com/RewindAI/status/1755620572715741672"
+  - handle: brendaniribe
+    name: "Brendan Iribe"
+    competitor: "Sesame"
+    kind: founder             # co-founder and CEO
+    source_url: "https://x.com/brendaniribe/status/1900306296236040392"
+  - handle: AviSchiffmann
+    name: "Avi Schiffmann"
+    competitor: "Friend"
+    kind: founder
+    source_url: "https://x.com/AviSchiffmann/status/1818284595902922884"
+  - handle: minafahmi
+    name: "Mina Fahmi"
+    competitor: "Sandbar"
+    kind: founder             # co-founder and CEO; X bio "@sandbar"
+    source_url: "https://x.com/WSJ/status/1987143708001685785"
+  - handle: deeppurpled
+    name: "Mohit Kumar"
+    competitor: "Ultrahuman"
+    kind: founder             # founder and CEO; X bio "Founder @UltrahumanHQ"
+    source_url: "https://x.com/deeppurpled/status/1406139487206350851"
+  - handle: jesselyu
+    name: "Jesse Lyu"
+    competitor: "Rabbit"
+    kind: founder             # founder and CEO. Web pages show @jessechenglyu; the account in the DB (x_id 1454334880679010309,
+                              # fetched 2026-09-29) is @jesselyu with url rabbit.tech and bio "founder and ceo @rabbit_hmi"
+    source_url: "https://x.com/jessechenglyu"
+  # QA of run 30 (docs/QA_TOP.md). A fund tie in a founder's bio is missed when the category is not 'vc' (score.py checks
+  # funds for VCs only, and single-word fund names case-sensitively: '@betaworks' misses 'Betaworks').
+  - handle: borthwick
+    name: "John Borthwick"
+    competitor: "Sandbar"
+    kind: investor            # CEO of betaworks, which backed Sandbar's $3M pre-seed (2024, with Upfront); X bio "@betaworks";
+                              # he posts that he loves his Stream ring (May 2026)
+    source_url: "https://techcrunch.com/2026/03/10/sandbar-secures-23m-series-a-for-its-ai-note-taking-ring/"
+  # Voice-dictation software, Wispr Flow's category (not companies in the brief's list): flagged for Carlo, never rejected.
+  # classify.builds_voice_rival catches founders whose summary names "a dictation app"; these two it cannot see.
+  - handle: kai_brokering
+    name: "Kai Brokering"
+    competitor: "Wispr Flow rival (VoiceOS, not in the brief's list)"
+    kind: founder             # X bio "founder @VoiceOSApp YC P25"; VoiceOS is a desktop voice layer beyond dictation
+    source_url: "https://www.ycombinator.com/launches/PP3-voiceos-the-siri-for-productivity"
+  - handle: bran_don_gell
+    name: "Brandon Gell"
+    competitor: "Wispr Flow rival (Monologue by Every, not in the brief's list)"
+    kind: executive           # X bio "COO @every"; he posts "Get paid to breakup with wispr flow. Go off and Monologue."
+    source_url: "https://x.com/bran_don_gell"
+  # Ties the hand reviews found and the flag missed (docs/QA_TOP.md, runs 39 and 54). Added 30 Sep: competitor ties are
+  # flagged, never removed.
+  - handle: kirstenagreen
+    name: "Kirsten Green"
+    competitor: "Oura"
+    kind: investor            # founder of Forerunner, which holds 9.3% of Oura and sells it at the IPO; X bio "@ForerunnerVC"
+    source_url: "https://dealroom.co/news/155264-ouras-ipo-set-to-raise-up-to-2-2b-with-forerunner-selling-its-entire-sta"
+  - handle: alexisohanian
+    name: "Alexis Ohanian"
+    competitor: "Wispr Flow rival (Willow Voice, not in the brief's list)"
+    kind: investor            # angel in Willow Voice, a dictation keyboard; he dictates with it
+    source_url: "https://techcrunch.com/2025/11/12/willows-voice-keyboard-lets-you-type-across-all-your-ios-apps-and-actually-edit-what-you-said/"
+  - handle: danshipper
+    name: "Dan Shipper"
+    competitor: "Wispr Flow rival (Monologue by Every, not in the brief's list)"
+    kind: executive           # X bio "ceo @every"; Every sells Monologue, a dictation app
+    source_url: "https://x.com/danshipper"
+  - handle: brianroemmele
+    name: "Brian Roemmele"
+    competitor: "own voice device (GrokPod, not in the brief's list)"
+    kind: founder             # "my GrokPod invented by me for voice control"
+    source_url: "https://x.com/BrianRoemmele/status/2103185018797641744"
+  # Step C review (run 71, docs/QA_TOP.md).
+  - handle: _seanliu
+    name: "Xiaoan (Sean) Liu"
+    competitor: "Sesame"
+    kind: former employee     # X bio "prev. Multimodal AI @Google @Sesame"
+    source_url: "https://x.com/_seanliu"
+  # Hand-off check, 30 Sep. The fund matcher reads "@a16z" in a bio but not the bare word: @omooretweets ("Partner
+  # @a16z") is flagged, @illscience ("AI Apps investing @ A16Z", with a space) was not. QA of run 30 already said to
+  # add the flag. a16z also led Limitless's seed (as Rewind, 2022; both rounds are in `funds:` above).
+  - handle: illscience
+    name: "Anish Acharya"
+    competitor: "Sesame"
+    kind: investor            # GP at a16z, which led Sesame's Series A ($47.5M, Feb 2025); X bio "AI Apps investing @ A16Z"
+    source_url: "https://a16z.com/announcement/investing-in-sesame-ai/"

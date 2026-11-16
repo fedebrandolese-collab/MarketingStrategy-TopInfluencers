@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "77", "name": "Marwan Refaat", "username": "marwanrefaat", "created_at": "2013-04-02T10:00:00.000Z",
+      "description": "Building things. Previously at a16z.", "location": "San Francisco", "url": "", "verified": true, "verified_type": "blue",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/77/m_normal.jpg",
+      "public_metrics": {"followers_count": 15000, "following_count": 700, "tweet_count": 2100, "listed_count": 80}
+    },
+    {
+      "id": "78", "name": "Marwan R. (parody)", "username": "notmarwan", "created_at": "2024-11-11T10:00:00.000Z",
+      "description": "parody account", "verified": false, "verified_type": "none",
+      "public_metrics": {"followers_count": 12, "following_count": 3, "tweet_count": 40, "listed_count": 0}
+    }
+  ],
+  "meta": {"result_count": 2}
+}

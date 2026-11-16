@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": "4", "name": "Vera Capital", "username": "vc_test", "created_at": "2011-01-01T00:00:00.000Z",
+      "description": "Partner @ExampleVentures.", "location": "Palo Alto, CA", "verified": true, "verified_type": "blue",
+      "profile_image_url": "https://pbs.twimg.com/profile_images/4/vera_normal.jpg",
+      "public_metrics": {"followers_count": 30000, "following_count": 900, "tweet_count": 8000, "listed_count": 300}
+    }
+  ],
+  "meta": {"result_count": 1, "previous_token": "77qp8mxvv0kxbl9ba6d9m8j0edb"}
+}
