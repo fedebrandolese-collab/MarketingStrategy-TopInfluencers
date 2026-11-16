@@ -1,8 +1,8 @@
 """Handle overrides (config/handle_overrides.yaml) in resolve_handles. Offline: fixture map + FixtureSource, tmp files."""
 import yaml
 
-from ring_wishlist import db
-from ring_wishlist.resolve_handles import (HANDLE_OVERRIDES_FILE, OVERRIDE_CONFIDENCE, load_overrides, run_resolve_handles)
+from wearable_wishlist import db
+from wearable_wishlist.resolve_handles import (HANDLE_OVERRIDES_FILE, OVERRIDE_CONFIDENCE, load_overrides, run_resolve_handles)
 
 from test_paths import SpySource, _add_map_person, _candidate
 

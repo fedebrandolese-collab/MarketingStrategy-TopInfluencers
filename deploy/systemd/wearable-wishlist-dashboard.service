@@ -1,0 +1,19 @@
+# The wearable_wishlist wishlist dashboard: streamlit on localhost:8501, the same command line as `make dashboard`
+# (.streamlit/config.toml keeps it headless and on localhost). the operator's network data stays on the machine: reach it through
+# an SSH tunnel (ssh -L 8501:localhost:8501 <server>) or a reverse proxy with authentication, never a public port.
+# Paths assume the repo in /opt/wearable_wishlist, run by a `wearable_wishlist` user: edit them to match. Install: deploy/README.md.
+[Unit]
+Description=wearable_wishlist wishlist dashboard (streamlit on localhost:8501)
+After=network.target
+
+[Service]
+Type=simple
+User=wearable_wishlist
+WorkingDirectory=/opt/wearable_wishlist
+Environment=PYTHONPATH=/opt/wearable_wishlist/src
+ExecStart=/opt/wearable_wishlist/.venv/bin/streamlit run app/dashboard.py --server.address localhost --browser.gatherUsageStats false
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

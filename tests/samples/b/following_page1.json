@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "id": "2", "name": "Rina Ring", "username": "ringnerd_test", "created_at": "2015-06-01T00:00:00.000Z",
+      "id": "2", "name": "Rina Wearable", "username": "wearablenerd_test", "created_at": "2015-06-01T00:00:00.000Z",
       "description": "Reviewing wearables since 2019.", "location": "Austin, TX", "verified": true, "verified_type": "blue",
       "profile_image_url": "https://pbs.twimg.com/profile_images/1/rina_normal.jpg",
       "public_metrics": {"followers_count": 48000, "following_count": 1200, "tweet_count": 12000, "listed_count": 210}

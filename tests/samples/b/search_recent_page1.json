@@ -2,27 +2,27 @@
   "data": [
     {
       "id": "1841000000000000101", "author_id": "2", "created_at": "2026-09-20T15:00:00.000Z",
-      "text": "Unboxing the new Oura Ring 5 with @vc_test. Day one impressions: thinner, and the voice notes feature is finally usable. https://t.co/unb0x",
+      "text": "Unboxing the new Oura Wearable 5 with @vc_test. Day one impressions: thinner, and the voice notes feature is finally usable. https://t.co/unb0x",
       "edit_history_tweet_ids": ["1841000000000000101"],
       "public_metrics": {"retweet_count": 60, "reply_count": 35, "like_count": 420, "quote_count": 8, "bookmark_count": 50, "impression_count": 90000},
       "entities": {
         "mentions": [{"start": 34, "end": 42, "username": "vc_test", "id": "4"}],
-        "urls": [{"start": 118, "end": 141, "url": "https://t.co/unb0x", "expanded_url": "https://ringnerd.example/oura5", "display_url": "ringnerd.example/oura5"}]
+        "urls": [{"start": 118, "end": 141, "url": "https://t.co/unb0x", "expanded_url": "https://wearablenerd.example/oura5", "display_url": "wearablenerd.example/oura5"}]
       }
     },
     {
       "id": "1841000000000000102", "author_id": "3", "created_at": "2026-09-21T12:00:00.000Z",
-      "text": "@ringnerd_test @Carlo_Test agreed, smart rings plus a voice agent is the form factor",
+      "text": "@wearablenerd_test @Seed_Test agreed, smart wearables plus a voice agent is the form factor",
       "edit_history_tweet_ids": ["1841000000000000102"],
       "in_reply_to_user_id": "2",
       "referenced_tweets": [{"type": "replied_to", "id": "1841000000000000101"}],
       "public_metrics": {"retweet_count": 2, "reply_count": 1, "like_count": 30, "quote_count": 0, "bookmark_count": 1, "impression_count": 4000},
-      "entities": {"mentions": [{"start": 0, "end": 14, "username": "ringnerd_test", "id": "2"}, {"start": 15, "end": 26, "username": "Carlo_Test", "id": "1"}]}
+      "entities": {"mentions": [{"start": 0, "end": 14, "username": "wearablenerd_test", "id": "2"}, {"start": 15, "end": 26, "username": "Seed_Test", "id": "1"}]}
     }
   ],
   "includes": {
     "users": [
-      {"id": "2", "name": "Rina Ring", "username": "ringnerd_test", "created_at": "2015-06-01T00:00:00.000Z", "description": "Reviewing wearables since 2019.",
+      {"id": "2", "name": "Rina Wearable", "username": "wearablenerd_test", "created_at": "2015-06-01T00:00:00.000Z", "description": "Reviewing wearables since 2019.",
        "location": "Austin, TX", "verified": true, "verified_type": "blue", "profile_image_url": "https://pbs.twimg.com/profile_images/1/rina_normal.jpg",
        "public_metrics": {"followers_count": 48000, "following_count": 1200, "tweet_count": 12000, "listed_count": 210}},
       {"id": "3", "name": "Tom Writer", "username": "TechWriter_Test", "created_at": "2010-01-01T00:00:00.000Z", "description": "Senior editor @GadgetDaily.",

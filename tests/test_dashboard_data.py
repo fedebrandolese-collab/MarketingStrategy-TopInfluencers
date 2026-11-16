@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import check, config, contacts, db, weights  # noqa: E402
+from wearable_wishlist import check, config, contacts, db, weights  # noqa: E402
 from app import data  # noqa: E402
 from scripts.seed_demo_db import seed  # noqa: E402
 
@@ -102,10 +102,10 @@ def test_ranked_table_shape_and_order(conn):
 
 def test_ranked_table_rows(conn):
     df = data.ranked_table(conn, 2)
-    rina = _by_handle(df, "ringnerd_test")
+    rina = _by_handle(df, "wearablenerd_test")
     assert rina["rank"] == 1 and rina["section"] == "X voices" and rina["status"] == "approved"
     assert rina["best_path"].startswith("via Marwan Refaat")
-    assert rina["x_url"] == "https://x.com/ringnerd_test"
+    assert rina["x_url"] == "https://x.com/wearablenerd_test"
     assert "Wearables reviewer" in rina["summary"]
     cora = _by_handle(df, "competitor_test")
     assert cora["flags"] == ["competitor:Oura"] and cora["flags_text"] == "competitor:Oura"
@@ -175,9 +175,9 @@ def test_default_view_is_the_scheduled_ranking(conn, tmp_path):
     assert int(_by_handle(on["ranked"], "techwriter_test")["rank"]) == len(on["ranked"])     # media weight 0: last
     tv = data.table_view(on["top"])
     assert list(tv.columns[:2]) == ["rank", "change"] and all(c in ("=", "new") or c[0] in "↑↓" for c in tv["change"])
-    weights.save_preset("Carlo", {"impact": 2.0}, as_default=True, path=no_file)
+    weights.save_preset("the operator", {"impact": 2.0}, as_default=True, path=no_file)
     saved = data.rank_list(df, {}, no_file)                           # a saved default is what the list shows
-    assert saved["weights"]["impact"] == 2.0 and not saved["differs"] and "Carlo" in saved["default_label"]
+    assert saved["weights"]["impact"] == 2.0 and not saved["differs"] and "the operator" in saved["default_label"]
     assert list(saved["ranked"]["candidate_id"]) == list(
         weights.rerank(df, saved["weights"], weights.DEFAULT_FILTERS)["candidate_id"])
 
@@ -241,7 +241,7 @@ def test_ranked_table_wear_evidence_and_the_bar(tmp_path):
         df = data.ranked_table(conn, 2)
         assert df["wear_evidence"].map(type).eq(bool).all()
         got = {h: (bool(w), r) for h, w, r in zip(df["handle"], df["wear_evidence"], df["bar_reason"])}
-        assert got["ringnerd_test"] == (True, "") and got["vc_test"] == (True, "") and got["techwriter_test"] == (True, "")
+        assert got["wearablenerd_test"] == (True, "") and got["vc_test"] == (True, "") and got["techwriter_test"] == (True, "")
         assert got["competitor_test"] == (True, weights.BAR_NOT_PERSON)          # a brand's account: not a person
         assert got["founder_test"] == (False, weights.BAR_NO_EVIDENCE)           # prior only
         assert got["eu_test"] == (True, "")                                      # meets the bar; US only hides them
@@ -258,7 +258,7 @@ def test_ranked_table_wear_evidence_and_the_bar(tmp_path):
         conn.commit()
         assert not _by_handle(data.ranked_table(conn, 2), "vc_test")["wear_evidence"]
         run1 = data.ranked_table(conn, 1, precise=True)
-        assert set(run1.loc[run1["wear_evidence"], "handle"]) == {"ringnerd_test", "vc_test", "techwriter_test", "competitor_test"}
+        assert set(run1.loc[run1["wear_evidence"], "handle"]) == {"wearablenerd_test", "vc_test", "techwriter_test", "competitor_test"}
     finally:
         conn.close()
 
@@ -269,10 +269,10 @@ def test_filters(conn):
     assert "X voices" in opts["sections"] and "competitor:Oura" in opts["flags"] and "approved" in opts["statuses"]
     assert set(data.apply_filters(df, sections=["Media"])["handle"]) == {"techwriter_test"}
     assert set(data.apply_filters(df, flags=["not_us", "unverified_handle"])["handle"]) == {"eu_test", "parody_test"}
-    assert set(data.apply_filters(df, statuses=["approved"])["handle"]) == {"ringnerd_test"}
+    assert set(data.apply_filters(df, statuses=["approved"])["handle"]) == {"wearablenerd_test"}
     assert len(data.apply_filters(df, min_confidence=0.9)) == 2
     assert set(data.apply_filters(df, query="oura")["handle"]) >= {"competitor_test"}
-    assert set(data.apply_filters(df, query="Marwan")["handle"]) == {"ringnerd_test"}
+    assert set(data.apply_filters(df, query="Marwan")["handle"]) == {"wearablenerd_test"}
     assert len(data.apply_filters(df)) == 8
 
 
@@ -281,7 +281,7 @@ def test_filters(conn):
 def test_ranked_table_includes_affinity(conn):
     assert data.RANKED_COLUMNS.index("affinity") == data.RANKED_COLUMNS.index("p_love") + 1
     df = data.ranked_table(conn, 2)
-    assert _by_handle(df, "ringnerd_test")["affinity"] == 0.82
+    assert _by_handle(df, "wearablenerd_test")["affinity"] == 0.82
     assert _by_handle(df, "founder_test")["affinity"] == 0.71
     assert pd.isna(_by_handle(df, "adrianaoun_test")["affinity"])        # no posts stored: unknown, not 0
     assert df["affinity"].dropna().between(0, 1).all() and df["affinity"].notna().sum() == 7
@@ -293,20 +293,20 @@ def test_ranked_table_includes_affinity(conn):
 
 def test_affinity_filter(conn):
     df = data.ranked_table(conn, 2)
-    assert set(data.apply_filters(df, min_affinity=0.6)["handle"]) == {"ringnerd_test", "vc_test", "founder_test"}
+    assert set(data.apply_filters(df, min_affinity=0.6)["handle"]) == {"wearablenerd_test", "vc_test", "founder_test"}
     assert len(data.apply_filters(df, min_affinity=0.0)) == 8              # 0 keeps the unknowns
     assert "adrianaoun_test" not in set(data.apply_filters(df, min_affinity=0.05)["handle"])
     assert len(data.apply_filters(data.ranked_table(conn, 1), min_affinity=0.1)) == 0
-    assert set(data.apply_filters(df, min_affinity=0.5, sections=["X voices"])["handle"]) == {"ringnerd_test", "eu_test"}
+    assert set(data.apply_filters(df, min_affinity=0.5, sections=["X voices"])["handle"]) == {"wearablenerd_test", "eu_test"}
 
 
 def test_person_detail_affinity(conn):
     df = data.ranked_table(conn, 2)
-    rina = data.person_detail(conn, 2, int(_by_handle(df, "ringnerd_test")["candidate_id"]))
+    rina = data.person_detail(conn, 2, int(_by_handle(df, "wearablenerd_test")["candidate_id"]))
     a = rina["affinity"]
     assert a["value"] == 0.82 and a["measured"] and a["source_label"] == "own posts + classifier"
     assert a["reason"].startswith("3 of her posts since July")
-    assert [p["url"] for p in a["top_posts"]] == [f"https://x.com/ringnerd_test/status/{i}" for i in ("102", "103", "101")]
+    assert [p["url"] for p in a["top_posts"]] == [f"https://x.com/wearablenerd_test/status/{i}" for i in ("102", "103", "101")]
     assert a["top_posts"][0]["date"] == "2026-08-02" and "voice agent" in a["top_posts"][0]["text"]
     assert a["top_posts"][0]["replies"] == 140 and not a["posts_from_evidence"]
     assert a["classifier"] is True and "personal agents" in a["topics"]
@@ -314,7 +314,7 @@ def test_person_detail_affinity(conn):
     adrian = data.person_detail(conn, 2, int(_by_handle(df, "adrianaoun_test")["candidate_id"]))
     assert adrian["affinity"]["value"] is None and not adrian["affinity"]["measured"]
     assert "unknown" in adrian["affinity"]["reason"] and adrian["affinity"]["top_posts"] == []
-    old = data.person_detail(conn, 1, int(_by_handle(df, "ringnerd_test")["candidate_id"]))   # run without affinity
+    old = data.person_detail(conn, 1, int(_by_handle(df, "wearablenerd_test")["candidate_id"]))   # run without affinity
     assert old["affinity"]["value"] is None and old["affinity"]["reason"] is None and old["affinity"]["top_posts"] == []
 
 
@@ -355,15 +355,15 @@ def test_affinity_is_null_safe(tmp_path):
     try:
         legacy.execute("ALTER TABLE scores DROP COLUMN affinity")
         df = data.ranked_table(legacy, 2)
-        assert len(df) == 8 and _by_handle(df, "ringnerd_test")["affinity"] == 0.82   # from the stored factor
-        assert data.person_detail(legacy, 2, int(_by_handle(df, "ringnerd_test")["candidate_id"]))["affinity"]["value"] == 0.82
+        assert len(df) == 8 and _by_handle(df, "wearablenerd_test")["affinity"] == 0.82   # from the stored factor
+        assert data.person_detail(legacy, 2, int(_by_handle(df, "wearablenerd_test")["candidate_id"]))["affinity"]["value"] == 0.82
     finally:
         legacy.close()
 
 
 # ---------------------------------------------------------------- community engagement
 
-# reasons_json factor "engagement" as score.py stores it (the data contract), for @ringnerd_test in run 2
+# reasons_json factor "engagement" as score.py stores it (the data contract), for @wearablenerd_test in run 2
 ENGAGEMENT = {
     "value": 0.746, "short": "ER 0.44% · 2.0× peers",
     "reasons": ["Average post over 20 latest posts (1 Jul to 28 Sep, 2 left out at each end of each count).",
@@ -387,7 +387,7 @@ def _with_engagement(p: Path, column: float | None = 0.746, factor: dict | None 
     conn = db.connect(p)
     try:
         df = data.ranked_table(conn, 2)
-        rina, vera = (int(_by_handle(df, h)["candidate_id"]) for h in ("ringnerd_test", "vc_test"))
+        rina, vera = (int(_by_handle(df, h)["candidate_id"]) for h in ("wearablenerd_test", "vc_test"))
         stored = db.jloads(db.one(conn, "SELECT reasons_json FROM scores WHERE run_id=2 AND candidate_id=?", (rina,))["reasons_json"])
         stored["factors"]["engagement"] = ENGAGEMENT if factor is None else factor
         conn.execute("UPDATE scores SET engagement=?, reasons_json=? WHERE run_id=2 AND candidate_id=?",
@@ -405,12 +405,12 @@ def test_ranked_table_includes_engagement(tmp_path, monkeypatch):
     conn = db.connect(p)
     try:
         df = data.ranked_table(conn, 2)
-        r = _by_handle(df, "ringnerd_test")
+        r = _by_handle(df, "wearablenerd_test")
         assert (r["engagement"], r["engagement_short"], r["er"], r["er_vs_size"]) == (0.75, "ER 0.44% · 2.0× peers", 0.00444, 1.98)
         rest = df[df["candidate_id"] != rina]                       # no factor stored: unknown, not 0
         assert rest["engagement"].isna().all() and set(rest["engagement_short"]) == {"unknown"}
         assert rest["er"].isna().all() and rest["er_vs_size"].isna().all()
-        assert _by_handle(data.ranked_table(conn, 2, precise=True), "ringnerd_test")["engagement"] == 0.746
+        assert _by_handle(data.ranked_table(conn, 2, precise=True), "wearablenerd_test")["engagement"] == 0.746
         old = data.ranked_table(conn, 1)                            # run 1 predates it
         assert old["engagement"].isna().all() and set(old["engagement_short"]) == {"unknown"}
         tv = data.table_view(df)
@@ -419,7 +419,7 @@ def test_ranked_table_includes_engagement(tmp_path, monkeypatch):
         assert data.table_view(df.drop(columns="engagement_short"))["engagement_short"].eq("unknown").all()
         conn.execute("UPDATE scores SET engagement=NULL WHERE run_id=2 AND candidate_id=?", (rina,))
         conn.commit()                                               # column NULL: the stored factor carries the value
-        assert _by_handle(data.ranked_table(conn, 2), "ringnerd_test")["engagement"] == 0.75
+        assert _by_handle(data.ranked_table(conn, 2), "wearablenerd_test")["engagement"] == 0.75
         precise = data.ranked_table(conn, 2, precise=True)
     finally:
         conn.close()
@@ -441,13 +441,13 @@ def test_engagement_is_null_safe(tmp_path):
                                                         "kpis": {"value": None, "why": TOO_FEW, "n": 3}})
     conn = db.connect(p)
     try:
-        r = _by_handle(data.ranked_table(conn, 2), "ringnerd_test")
+        r = _by_handle(data.ranked_table(conn, 2), "wearablenerd_test")
         assert pd.isna(r["engagement"]) and r["engagement_short"] == "unknown" and pd.isna(r["er"])
         e = data.person_detail(conn, 2, rina)["engagement"]
         assert not e["known"] and e["unknown"] == f"Community engagement unknown: {TOO_FEW}" and e["table"] is None
         conn.execute("UPDATE scores SET engagement=0.5, reasons_json='{}' WHERE run_id=2 AND candidate_id=?", (rina,))
         conn.commit()
-        r = _by_handle(data.ranked_table(conn, 2), "ringnerd_test")
+        r = _by_handle(data.ranked_table(conn, 2), "wearablenerd_test")
         assert r["engagement"] == 0.5 and r["engagement_short"] == "unknown"   # no summary stored for it
         e = data.person_detail(conn, 2, rina)["engagement"]
         assert e["known"] and e["headline"] == "score factor 0.50 (0.50 = typical for their size)" and e["table"] is None
@@ -459,7 +459,7 @@ def test_engagement_is_null_safe(tmp_path):
     legacy.row_factory = sqlite3.Row
     try:
         legacy.execute("ALTER TABLE scores DROP COLUMN engagement")
-        r = _by_handle(data.ranked_table(legacy, 2), "ringnerd_test")
+        r = _by_handle(data.ranked_table(legacy, 2), "wearablenerd_test")
         assert r["engagement"] == 0.75 and r["engagement_short"] == "ER 0.44% · 2.0× peers"
     finally:
         legacy.close()
@@ -533,14 +533,14 @@ def test_changes_since_previous(conn):
     assert ch["previous_run_id"] == 1
     assert ch["counts"] == {"up": 2, "down": 3, "new": 1, "other": 0}
     assert ch["summary"] == "since last run: 2 up · 3 down · 1 new"
-    assert {e["handle"] for e in ch["up"]} == {"ringnerd_test", "founder_test"}
+    assert {e["handle"] for e in ch["up"]} == {"wearablenerd_test", "founder_test"}
     assert {e["handle"] for e in ch["down"]} == {"techwriter_test", "competitor_test", "parody_test"}
     assert [e["handle"] for e in ch["new"]] == ["eu_test"]
     for group in ("up", "down", "new"):
         for e in ch[group]:
             assert e["reasons"] and all(isinstance(r, str) and r for r in e["reasons"])
     rina = ch["up"][0]
-    assert rina["handle"] == "ringnerd_test" and rina["delta_total"] > 0
+    assert rina["handle"] == "wearablenerd_test" and rina["delta_total"] > 0
     assert any("unboxing" in r.lower() for r in rina["reasons"])
     cora = next(e for e in ch["down"] if e["handle"] == "competitor_test")
     assert "flags" in cora["changed_fields"] and cora["old_rank"] == 6 and cora["new_rank"] == 7
@@ -574,14 +574,14 @@ def test_changes_first_run(conn):
 
 def test_person_detail_rina(conn):
     df = data.ranked_table(conn, 2)
-    cid = int(_by_handle(df, "ringnerd_test")["candidate_id"])
+    cid = int(_by_handle(df, "wearablenerd_test")["candidate_id"])
     d = data.person_detail(conn, 2, cid)
-    assert d["name"] == "Rina Ring" and d["rank"] == 1 and d["section"] == "X voices"
+    assert d["name"] == "Rina Wearable" and d["rank"] == 1 and d["section"] == "X voices"
     assert d["summary"].startswith("Wearables reviewer")
     assert d["unknowns"] == ["whether they accept free devices"]
     assert len(d["evidence"]) == 8 and all(e["url"].startswith("https://") for e in d["evidence"])
     assert [p["how"] for p in d["paths"]] == ["via", "x_direct", "open_dm"]
-    assert d["paths"][0]["line"].startswith("you → Marwan Refaat → Rina Ring")
+    assert d["paths"][0]["line"].startswith("you → Marwan Refaat → Rina Wearable")
     assert "strength 0.55" in d["paths"][0]["line"]
     assert d["best_path"].startswith("via Marwan Refaat")
     for f in ("p_accept", "p_wear", "p_love"):
@@ -589,7 +589,7 @@ def test_person_detail_rina(conn):
         assert 0 <= d["factors"][f]["value"] <= 1
     assert d["factors"]["p_wear"]["evidence_ids"]
     assert d["reasons"]
-    assert [e["kind"] for e in d["events"]] == ["ring_unboxing", "device_review"]
+    assert [e["kind"] for e in d["events"]] == ["wearable_unboxing", "device_review"]
     assert d["flags"] == []
     assert d["status"]["status"] == "approved" and d["status"]["note"]
     assert any(c["field"] == "total" for c in d["changes"])
@@ -664,8 +664,8 @@ def test_set_status_persists(tmp_path):
     try:
         df = data.ranked_table(conn, 2)
         cid = int(_by_handle(df, "founder_test")["candidate_id"])
-        row = data.set_status(conn, cid, "ring_sent", note="Sent via Max", owner="federico")
-        assert row["status"] == "ring_sent" and row["note"] == "Sent via Max" and row["owner"] == "federico"
+        row = data.set_status(conn, cid, "wearable_sent", note="Sent via Max", owner="federico")
+        assert row["status"] == "wearable_sent" and row["note"] == "Sent via Max" and row["owner"] == "federico"
         assert row["updated_at"] and row["updated_at"].endswith("Z")
         row2 = data.set_status(conn, cid, "wearing")              # None keeps note/owner
         assert row2["note"] == "Sent via Max" and row2["owner"] == "federico"
@@ -703,12 +703,12 @@ def test_table_view_and_labels(conn):
     df = data.ranked_table(conn, 2)
     tv = data.table_view(df)
     assert list(tv.columns) == data.TABLE_COLUMNS and len(tv) == 8 and list(tv.index) == list(range(8))
-    rina = tv[tv["person"] == "Rina Ring · @ringnerd_test ✓"].iloc[0]
+    rina = tv[tv["person"] == "Rina Wearable · @wearablenerd_test ✓"].iloc[0]
     assert rina["p_wear"] == 85 and rina["p_accept"] == 70 and rina["p_love"] == 70   # probabilities in whole percents
     assert rina["status_label"] == "approved" and rina["flags_short"] == "" and rina["category_label"] == "X voice"
     assert rina["why"].startswith("Wearables reviewer")
     assert tv[tv["person"].str.startswith("Cora")].iloc[0]["flags_short"] == "⚑ Oura"
-    assert "Rina Ring (parody) · @parody_test (suspicious)" in set(tv["person"])
+    assert "Rina Wearable (parody) · @parody_test (suspicious)" in set(tv["person"])
     assert "Adrian Aoun · @adrianaoun_test (likely real)" in set(tv["person"])
     assert "intro asked" in set(tv["status_label"])
     no_path = df.copy()
@@ -719,7 +719,7 @@ def test_table_view_and_labels(conn):
     assert data.category_label("founder_angel") == "Founder / angel" and data.category_label(None) == "Not classified"
     assert data.flag_short("not_us") == "not US" and data.flag_short("unverified_handle") == "unverified handle"
     assert data.flag_short("no_path") == "cold (no warm intro)" and data.flag_short("competitor") == "⚑ competitor"
-    assert data.status_label("ring_sent") == "ring sent" and data.status_label(None) == "candidate"
+    assert data.status_label("wearable_sent") == "wearable sent" and data.status_label(None) == "candidate"
     assert list(data.table_view(df.iloc[0:0]).columns) == data.TABLE_COLUMNS
 
 
@@ -749,7 +749,7 @@ def test_no_flag_filter_option(conn):
     df = data.ranked_table(conn, 2)
     assert data.filter_options(df)["flags"][-1] == data.NO_FLAG
     clean = data.apply_filters(df, flags=[data.NO_FLAG])
-    assert set(clean["handle"]) == {"ringnerd_test", "vc_test", "adrianaoun_test", "founder_test", "techwriter_test"}
+    assert set(clean["handle"]) == {"wearablenerd_test", "vc_test", "adrianaoun_test", "founder_test", "techwriter_test"}
     assert len(data.apply_filters(df, flags=[data.NO_FLAG, "not_us"])) == 6
 
 
@@ -769,7 +769,7 @@ def test_path_view_every_kind():
 def test_change_headlines(conn):
     ch = data.changes_since_previous(conn, 2)
     rina = data.change_headline(ch["up"][0])
-    assert rina.startswith("Rina Ring (@ringnerd_test) · score ") and "(+" in rina and "wear" in rina
+    assert rina.startswith("Rina Wearable (@wearablenerd_test) · score ") and "(+" in rina and "wear" in rina
     tom = data.change_headline(next(e for e in ch["down"] if e["handle"] == "techwriter_test"))
     assert "rank #4 → #5" in tom
     assert data.change_headline(ch["new"][0]) == "Elke Uropa (@eu_test) · new, enters at #6"
@@ -793,7 +793,7 @@ def test_history_in_plain_words(conn):
     assert data.plain_reason("Reviewed a device (event #91, weight 0.58): +0.35 (#605, #607).") \
         == "Reviewed a device (weight 0.58): +0.35."
     df = data.ranked_table(conn, 2)
-    rina = data.person_detail(conn, 2, int(_by_handle(df, "ringnerd_test")["candidate_id"]))
+    rina = data.person_detail(conn, 2, int(_by_handle(df, "wearablenerd_test")["candidate_id"]))
     assert rina["history"][0]["run_id"] == 2 and rina["history"][0]["when"] == "2026-09-29 07:00 UTC"
     lines = rina["history"][0]["lines"]
     assert lines[0].startswith("Score ") and ":" not in lines[0]       # the factor lines below explain the score
@@ -805,7 +805,7 @@ def test_history_in_plain_words(conn):
 
 def test_evidence_groups(conn):
     df = data.ranked_table(conn, 2)
-    d = data.person_detail(conn, 2, int(_by_handle(df, "ringnerd_test")["candidate_id"]))
+    d = data.person_detail(conn, 2, int(_by_handle(df, "wearablenerd_test")["candidate_id"]))
     g = data.evidence_groups(d["evidence"])
     assert set(g) >= {"accept", "wear", "love"} and sum(len(v) for v in g.values()) <= len(d["evidence"])
     dup = [{"supports": "wear", "text": "I wear it", "url": "u"}, {"supports": "wear", "text": "I  wear it", "url": "u"},
@@ -863,7 +863,7 @@ def _app(monkeypatch, db_path, person: int | None = None, bar: bool | None = Fal
 
 def test_dashboard_page_runs(demo_path, monkeypatch):
     at = _app(monkeypatch, demo_path, bar=None)   # the page as it opens: the brief's bar on
-    assert at.title[0].value == "ring_wishlist ring wishlist"
+    assert at.title[0].value == "wearable_wishlist wearable wishlist"
     assert [t.label for t in at.tabs] == ["Wishlist", "Check an account", "System"]
     assert at.toggle(key="tf_bar").value is True and at.toggle(key="tf_bar").label == (
         "Meets the brief's bar: a person who wears a device or uses a voice tool, and can be contacted")
@@ -876,7 +876,7 @@ def test_dashboard_page_runs(demo_path, monkeypatch):
                for c in at.caption)
     assert not any(s.key and s.key.startswith("tw_") for s in at.slider)   # the weights stay hidden by default
     table = at.dataframe[0].value
-    assert len(table) == 3 and table.iloc[0]["person"] == "Rina Ring · @ringnerd_test ✓"   # the bar and US only
+    assert len(table) == 3 and table.iloc[0]["person"] == "Rina Wearable · @wearablenerd_test ✓"   # the bar and US only
     assert set(table["category_label"]) <= {"X voice", "Media", "VC", "Founder / angel"}
     assert table.iloc[0]["why"].startswith("Wearables reviewer") and table.iloc[0]["contact"] == "Intro via Marwan Refaat"
     assert any(c.value.startswith("**3 people who meet the bar** · hidden: 1 not US, 4 below the bar · ") for c in at.caption)
@@ -885,11 +885,11 @@ def test_dashboard_page_runs(demo_path, monkeypatch):
     slider = next(s for s in at.slider if s.label == "Minimum topic affinity")
     slider.set_value(0.7).run()
     assert not at.exception
-    assert set(at.dataframe[0].value["person"]) == {"Rina Ring · @ringnerd_test ✓"}   # Frank has no device evidence
+    assert set(at.dataframe[0].value["person"]) == {"Rina Wearable · @wearablenerd_test ✓"}   # Frank has no device evidence
     at.toggle(key="tf_bar").set_value(False).run()                                   # off: everyone ranked again
     assert not at.exception and any(c.value.startswith("**2 of 7 people** · 1 filter on · hidden: 1 not US · ")
                                     for c in at.caption)
-    assert set(at.dataframe[0].value["person"]) == {"Rina Ring · @ringnerd_test ✓", "Frank Founder · @founder_test (likely real)"}
+    assert set(at.dataframe[0].value["person"]) == {"Rina Wearable · @wearablenerd_test ✓", "Frank Founder · @founder_test (likely real)"}
 
 
 def test_dashboard_count_line_top_n_of_k_and_nobody_meets_the_bar(tmp_path, monkeypatch):
@@ -929,11 +929,11 @@ def test_dashboard_manual_weights(demo_path, monkeypatch):
     assert not any(s.key and s.key.startswith("tw_") for s in at.slider) and not any(m.delta for m in at.metric)
     at.toggle(key="manual_weights").set_value(True).run()                   # on again: the last slider values
     assert at.slider(key="tw_x_voice").value == 0.0 and list(at.dataframe[0].value["person"]) == list(table["person"])
-    rina = table[table["person"].str.contains("@ringnerd_test")].iloc[0]
+    rina = table[table["person"].str.contains("@wearablenerd_test")].iloc[0]
     assert int(rina["rank"]) > 1
     at.query_params["person"] = str(int(rina["candidate_id"]))
     at.run()
-    assert not at.exception and at.subheader[0].value == f"#{int(rina['rank'])} · Rina Ring"   # the list's rank
+    assert not at.exception and at.subheader[0].value == f"#{int(rina['rank'])} · Rina Wearable"   # the list's rank
     assert any(c.value.startswith("total = 100 x") and "Manual weights sliders" in c.value for c in at.caption)
 
 
@@ -968,7 +968,7 @@ def test_dashboard_us_only_toggle_brings_non_us_people_in_and_ranks_again(tmp_pa
     assert at.toggle(key="tf_us_only").value is True
     table = at.dataframe[0].value
     on_order = list(table["candidate_id"])
-    assert list(table["rank"]) == [1, 2, 3] and elke not in on_order and table.iloc[0]["person"].startswith("Rina Ring")
+    assert list(table["rank"]) == [1, 2, 3] and elke not in on_order and table.iloc[0]["person"].startswith("Rina Wearable")
     assert any(c.value.startswith("**3 people who meet the bar** · hidden: 1 not US, 4 below the bar · ") for c in at.caption)
     at.toggle(key="tf_us_only").set_value(False).run()
     assert not at.exception
@@ -1053,7 +1053,7 @@ def test_dashboard_flags_column_cards_filter_and_panel(tmp_path, monkeypatch):
 
 
 def test_dashboard_cold_people_are_shown_neutrally(tmp_path, monkeypatch):
-    """Rings can go outside the network: no warm intro is fine when another route reaches them (open X DMs here). It is
+    """Wearables can go outside the network: no warm intro is fine when another route reaches them (open X DMs here). It is
     never a flag box or a score factor."""
     p = tmp_path / "cold.db"
     seed(p, quiet=True)
@@ -1104,12 +1104,12 @@ def test_dashboard_cards_view(demo_path, monkeypatch):
     at.session_state["view_mode"] = "Cards"
     at.run()
     assert not at.exception and not at.dataframe
-    assert any("Rina Ring · @ringnerd\\_test ✓" in m.value for m in at.markdown)   # markdown-escaped
+    assert any("Rina Wearable · @wearablenerd\\_test ✓" in m.value for m in at.markdown)   # markdown-escaped
     opens = [b for b in at.button if b.label == "Open"]
     assert len(opens) == 7
     opens[0].click().run()
     assert not at.exception
-    assert at.subheader[0].value == "#1 · Rina Ring" and any(b.label == "← Back to the list" for b in at.button)
+    assert at.subheader[0].value == "#1 · Rina Wearable" and any(b.label == "← Back to the list" for b in at.button)
     next(b for b in at.button if b.label == "← Back to the list").click().run()
     assert not at.exception and not any(s.value.startswith("#") for s in at.subheader)
     assert len([b for b in at.button if b.label == "Open"]) == 7
@@ -1119,13 +1119,13 @@ def test_dashboard_topic_affinity_panel(demo_path, monkeypatch):
     conn = db.connect(demo_path)
     try:
         df = data.ranked_table(conn, 2)
-        rina, adrian = (int(_by_handle(df, h)["candidate_id"]) for h in ("ringnerd_test", "adrianaoun_test"))
+        rina, adrian = (int(_by_handle(df, h)["candidate_id"]) for h in ("wearablenerd_test", "adrianaoun_test"))
     finally:
         conn.close()
     at = _app(monkeypatch, demo_path, person=rina)
     text = "\n".join(m.value for m in at.markdown)
     assert "3 of her posts since July" in text
-    assert "(https://x.com/ringnerd_test/status/102)" in text and "Best posts" in text
+    assert "(https://x.com/wearablenerd_test/status/102)" in text and "Best posts" in text
     assert any("own posts + classifier" in c.value for c in at.caption)
     at = _app(monkeypatch, demo_path, person=adrian)
     assert "unknown, not guessed" in "\n".join(m.value for m in at.markdown)
@@ -1139,7 +1139,7 @@ def test_dashboard_runs_without_affinity(tmp_path, monkeypatch):
     try:
         conn.execute("UPDATE scores SET affinity=NULL, reasons_json='{}'")
         conn.commit()
-        cid = int(_by_handle(data.ranked_table(conn, 2), "ringnerd_test")["candidate_id"])
+        cid = int(_by_handle(data.ranked_table(conn, 2), "wearablenerd_test")["candidate_id"])
     finally:
         conn.close()
     at = _app(monkeypatch, p, person=cid)
@@ -1189,9 +1189,9 @@ def test_check_tab_shows_community_engagement(tmp_path, monkeypatch):
     seed(p, quiet=True)
     conn = db.connect(p)
     try:
-        conn.execute("UPDATE x_posts SET fetched_at=? WHERE x_id='2'", (db.utcnow(),))   # a free Show for @ringnerd_test
+        conn.execute("UPDATE x_posts SET fetched_at=? WHERE x_id='2'", (db.utcnow(),))   # a free Show for @wearablenerd_test
         conn.commit()
-        ids = [check.show_stored(conn, "ringnerd_test", table=data.ranked_table(conn, 2, precise=True))["check_id"]
+        ids = [check.show_stored(conn, "wearablenerd_test", table=data.ranked_table(conn, 2, precise=True))["check_id"]
                for _ in range(2)]
         for check_id, fac in zip(ids, (ENGAGEMENT, None)):
             ans = db.jloads(db.one(conn, "SELECT result_json FROM checks WHERE check_id=?", (check_id,))["result_json"])
@@ -1229,17 +1229,17 @@ def test_dashboard_detail_panel_and_status_persist(tmp_path, monkeypatch):
     assert at.subheader[0].value == "#4 · Frank Founder"
     status = next(s for s in at.selectbox if s.label == "Status")
     assert status.value == "candidate"
-    status.select("ring_sent").run()
+    status.select("wearable_sent").run()
     assert not at.exception
     next(t for t in at.text_area if t.label == "Note").input("Sent via Max").run()
     assert not at.exception
     conn = db.connect(p)
     try:
         row = data.get_status(conn, cid)
-        assert row["status"] == "ring_sent" and row["note"] == "Sent via Max" and row["updated_at"]
+        assert row["status"] == "wearable_sent" and row["note"] == "Sent via Max" and row["updated_at"]
     finally:
         conn.close()
-    assert "ring sent" in list(at.dataframe[0].value["status_label"])
+    assert "wearable sent" in list(at.dataframe[0].value["status_label"])
     at = _app(monkeypatch, p, person=cora)   # competitor ties are shown in a warning box, never hidden
     assert any(w.value.startswith("**⚑ Oura**: Tied to competitor Oura: product lead") for w in at.warning)
 

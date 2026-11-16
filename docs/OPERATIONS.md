@@ -1,6 +1,6 @@
 # Operations
 
-How to install, run, watch and hand over the wishlist system. For whoever runs it: Federico today, Carlo's team later.
+How to install, run, watch and hand over the wishlist system. For whoever runs it: Federico today, the operator's team later.
 Once installed it runs by itself once a day, spends within set caps, and contacts nobody.
 
 Check any install with `make doctor`: offline, read-only, no spend. Every line is ✓ (ok), ! (look at it) or ✗ (broken),
@@ -16,7 +16,7 @@ with 3 hours of slack. Free stages run every day, paid ones less often.
 | Stage | Every | Spends on |
 |---|---|---|
 | ingest | day | free: reads the map mirror in data/raw |
-| crawl | 7 days | monid: Carlo's follow graph |
+| crawl | 7 days | monid: the operator's follow graph |
 | resolve | 7 days | X API: handles of new map contacts |
 | discover | 7 days | monid: the topic, competitor and author searches |
 | expand | 14 days | monid: who the best people follow |
@@ -53,11 +53,11 @@ Needs git, make and [uv](https://docs.astral.sh/uv/) (`brew install uv`). With `
 no bill), Claude Code must be installed and logged in (`claude`, then `/login`) as the user who runs the schedule.
 
 ```bash
-git clone <repo> ring_wishlist && cd ring_wishlist
+git clone <repo> wearable_wishlist && cd wearable_wishlist
 make setup                                # .venv with Python 3.12 and the dependencies
 cp .env.example .env && chmod 600 .env    # fill it in: each line says whether it is required
 make doctor                               # no ✗ allowed
-make schedule                             # installs the launchd agents com.ring-wishlist.wishlist and com.ring-wishlist.dashboard
+make schedule                             # installs the launchd agents com.wearable-wishlist.wishlist and com.wearable-wishlist.dashboard
 make schedule-on                          # loads them: the run every day at daily_at, the dashboard always on
 make status                               # what ran, what is due, this month's spend against the caps
 ```
@@ -73,20 +73,20 @@ set the server's timezone (`timedatectl set-timezone Europe/Rome`) or, in Docker
 ### With Docker compose
 
 Needs Docker with the compose plugin. One image, two containers ([docker-compose.yml](../docker-compose.yml)):
-`dashboard` and `scheduler` (`python -m ring_wishlist.ops serve`). Code and pinned dependencies are in the image; `./data` and
+`dashboard` and `scheduler` (`python -m wearable_wishlist.ops serve`). Code and pinned dependencies are in the image; `./data` and
 `./config` are mounted; the keys come from `.env`. The containers use the Anthropic API whatever `.env` says: a server has
 no Claude Code login.
 
 ```bash
-git clone <repo> ring_wishlist && cd ring_wishlist
+git clone <repo> wearable_wishlist && cd wearable_wishlist
 cp .env.example .env && chmod 600 .env     # fill it in, with ANTHROPIC_API_KEY
 # put the database in place first: First run, below
 sudo chown -R 1000:1000 data config        # the container user; or build as yourself:
-                                           # RING_WISHLIST_UID=$(id -u) RING_WISHLIST_GID=$(id -g) docker compose build
+                                           # WEARABLE_WISHLIST_UID=$(id -u) WEARABLE_WISHLIST_GID=$(id -g) docker compose build
 docker compose build                       # make docker-build
 docker compose up -d                       # make docker-up; both restart by themselves after a reboot
 docker compose ps                          # both "healthy" after a few minutes
-docker compose exec dashboard python -m ring_wishlist.doctor
+docker compose exec dashboard python -m wearable_wishlist.doctor
 docker compose logs -f scheduler
 ```
 
@@ -98,25 +98,25 @@ by git: commit or discard them before a pull. `make lock` regenerates requiremen
 
 ### With systemd
 
-Needs Python 3.12, make and uv on the service user's PATH. The units are `deploy/systemd/ring_wishlist-scheduler.service` and
-`ring_wishlist-dashboard.service`. Read them first: they name the user and the checkout path.
+Needs Python 3.12, make and uv on the service user's PATH. The units are `deploy/systemd/wearable_wishlist-scheduler.service` and
+`wearable_wishlist-dashboard.service`. Read them first: they name the user and the checkout path.
 
 ```bash
-sudo useradd --system --create-home --shell /usr/sbin/nologin ring_wishlist
-sudo install -d -o ring_wishlist -g ring_wishlist /opt/ring_wishlist                 # the path the units name
-sudo -u ring_wishlist git clone <repo> /opt/ring_wishlist && cd /opt/ring_wishlist
-sudo -u ring_wishlist make setup
-sudo -u ring_wishlist cp .env.example .env && sudo chmod 600 .env      # LLM_BACKEND=anthropic and ANTHROPIC_API_KEY
-sudo -u ring_wishlist make doctor
-sudo cp deploy/systemd/ring_wishlist-*.service /etc/systemd/system/
+sudo useradd --system --create-home --shell /usr/sbin/nologin wearable_wishlist
+sudo install -d -o wearable_wishlist -g wearable_wishlist /opt/wearable_wishlist                 # the path the units name
+sudo -u wearable_wishlist git clone <repo> /opt/wearable_wishlist && cd /opt/wearable_wishlist
+sudo -u wearable_wishlist make setup
+sudo -u wearable_wishlist cp .env.example .env && sudo chmod 600 .env      # LLM_BACKEND=anthropic and ANTHROPIC_API_KEY
+sudo -u wearable_wishlist make doctor
+sudo cp deploy/systemd/wearable_wishlist-*.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now ring_wishlist-scheduler ring_wishlist-dashboard
-journalctl -u ring_wishlist-scheduler -f
+sudo systemctl enable --now wearable_wishlist-scheduler wearable_wishlist-dashboard
+journalctl -u wearable_wishlist-scheduler -f
 ```
 
 ## First run on a fresh machine
 
-The database holds work that cannot be bought again: the statuses Carlo sets, the 135 hand rejections, the change
+The database holds work that cannot be bought again: the statuses the operator sets, the 135 hand rejections, the change
 history, the cost ledger. Restore a backup; rebuild only when there is none.
 
 **From a backup (the normal way)**
@@ -125,8 +125,8 @@ history, the cost ledger. Restore a backup; rebuild only when there is none.
 2. Copy it to the new machine over a secure channel: `scp`, or company storage with access control. Never email.
    Copy `data/raw` too if the map mirror was refreshed after the repository's copy (`make doctor` prints its export
    date). Optional: `data/cache`, so the last week's follow lists and searches are not bought again.
-3. On the new machine, before the schedule starts: `python -m ring_wishlist.ops restore data/backups/<file>`.
-   Docker: `docker compose run --rm scheduler python -m ring_wishlist.ops restore data/backups/<file>`.
+3. On the new machine, before the schedule starts: `python -m wearable_wishlist.ops restore data/backups/<file>`.
+   Docker: `docker compose run --rm scheduler python -m wearable_wishlist.ops restore data/backups/<file>`.
 4. `make doctor`: the database line shows the latest run.
 
 **From scratch**
@@ -143,7 +143,7 @@ the monthly caps allow it. The hand reviews and statuses are lost: they live onl
 | The repository | code, config, the map mirror (data/raw), the latest exports | a **private** repository on the company's GitHub (`git remote add origin <url>`, `git push -u origin main`). CI runs the tests there (.github/workflows/tests.yml) |
 | `.env` | keys and the map passphrase | a shared vault in a password manager, or an encrypted file. Never email, chat or the repository |
 | A database backup | the list, evidence, statuses, hand reviews, costs | `make backup`, then `scp` or company storage with access control |
-| data/raw | the read-only mirror of Carlo's map | in the repository; copy the current machine's if it is newer |
+| data/raw | the read-only mirror of the operator's map | in the repository; copy the current machine's if it is newer |
 | Accounts | monid wallet, X developer app (pay-per-use credits), Anthropic API or a Claude subscription | the company's own accounts, so top-ups and invoices go to the company. Then rotate Federico's keys out ([Rotating keys](#rotating-keys)) |
 
 ## Monitoring
@@ -151,11 +151,11 @@ the monthly caps allow it. The hand reviews and statuses are lost: they live onl
 | Where | What |
 |---|---|
 | The dashboard's System tab | the last runs, what is due next, this month's spend against the caps |
-| `make status` | the same in the terminal. Docker: `docker compose exec scheduler python -m ring_wishlist.ops plan` |
+| `make status` | the same in the terminal. Docker: `docker compose exec scheduler python -m wearable_wishlist.ops plan` |
 | `data/logs/alerts.log` | every alert the scheduler raises, one line each |
 | `NOTIFY_WEBHOOK_URL` in `.env` | each alert is also sent there, for example a Slack or Teams channel |
-| macOS notifications | alerts show on the Mac too (`RING_WISHLIST_NO_DESKTOP_NOTIFY=1` turns them off) |
-| `python -m ring_wishlist.ops health` | exits 0 when healthy, 1 when not. The Docker healthcheck uses it; any monitor can |
+| macOS notifications | alerts show on the Mac too (`WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY=1` turns them off) |
+| `python -m wearable_wishlist.ops health` | exits 0 when healthy, 1 when not. The Docker healthcheck uses it; any monitor can |
 | `docker compose ps` | Docker: each container's health |
 | `make doctor` | the install itself: keys, database, config, disk |
 
@@ -167,10 +167,10 @@ A look once a week is enough: the System tab, alerts.log, COSTS.md.
   `stages` in days between runs (0 = by hand only), `budget.month_usd` per provider. Then `make doctor`: it catches an
   unquoted time (YAML reads 17:30 as the number 1050, which runs at 10:50), a misspelled stage, a cap that is not a number.
 * After changing `daily_at`, restart the scheduler so the trigger moves. Mac: `make schedule-off`, `make schedule`,
-  `make schedule-on`. Docker: `docker compose restart scheduler`. systemd: `sudo systemctl restart ring_wishlist-scheduler`.
+  `make schedule-on`. Docker: `docker compose restart scheduler`. systemd: `sudo systemctl restart wearable_wishlist-scheduler`.
 * Per-run caps: `BUDGET_*_USD` in `.env`.
 * One run above the monthly cap: by hand only, e.g. `BUDGET_IGNORE_MONTH=1 make discover`. Docker:
-  `docker compose run --rm -e BUDGET_IGNORE_MONTH=1 scheduler python -m ring_wishlist.pipeline run --stage discover`. Scheduled
+  `docker compose run --rm -e BUDGET_IGNORE_MONTH=1 scheduler python -m wearable_wishlist.pipeline run --stage discover`. Scheduled
   runs ignore the switch on purpose (they log a warning), so it can never lift the caps every day. Never leave it in `.env`.
 * One stage by hand: `make discover`, `make enrich`... They print the projected cost first. The per-run caps and the
   monthly caps both apply.
@@ -183,14 +183,14 @@ A look once a week is enough: the System tab, alerts.log, COSTS.md.
 | `X_BEARER_TOKEN` | console.x.com, the app's keys and tokens: regenerate the bearer token |
 | `ANTHROPIC_API_KEY` | console.anthropic.com, API keys |
 | The claude CLI login | `claude`, then `/login` (Mac) |
-| `MAP_PASSPHRASE` | Carlo, the map's owner |
+| `MAP_PASSPHRASE` | the operator, the map's owner |
 | `DASHBOARD_PASSWORD`, `NOTIFY_WEBHOOK_URL` | your choice; the chat tool's webhook settings (a webhook URL is a secret too) |
 
 1. Make the new key and put it in `.env`.
 2. `make doctor`.
 3. Restart what keeps the old value in memory. The dashboard everywhere (Mac:
-   `launchctl kickstart -k gui/$(id -u)/com.ring-wishlist.dashboard`). Docker: `docker compose up -d --force-recreate`.
-   systemd: `sudo systemctl restart ring_wishlist-scheduler ring_wishlist-dashboard`. The Mac's daily run reads `.env` each time.
+   `launchctl kickstart -k gui/$(id -u)/com.wearable-wishlist.dashboard`). Docker: `docker compose up -d --force-recreate`.
+   systemd: `sudo systemctl restart wearable_wishlist-scheduler wearable_wishlist-dashboard`. The Mac's daily run reads `.env` each time.
 4. Revoke the old key.
 5. Check the next run in the System tab.
 
@@ -199,12 +199,12 @@ Rotate when someone who had `.env` leaves, and after the handover.
 ## Backups and restore
 
 * Every scheduled run with work to do takes a backup first (`data/backups/wishlist-YYYYMMDD-HHMM.db`, the 14 newest kept,
-  about 240 MB each today). `make backup` (`python -m ring_wishlist.ops backup`) takes one now. Take one before anything risky:
+  about 240 MB each today). `make backup` (`python -m wearable_wishlist.ops backup`) takes one now. Take one before anything risky:
   a big manual run, a restore, an upgrade.
 * A backup on the same disk does not survive the disk. Once a week, copy the newest one to company storage (encrypted,
   access-controlled). Backups take space: `make doctor` fails under 1 GB free.
 * Restore: stop the schedule and the dashboard (`make schedule-off`, `docker compose down`, or `systemctl stop`), then
-  `python -m ring_wishlist.ops restore data/backups/<file>`, then `make doctor`, then start again.
+  `python -m wearable_wishlist.ops restore data/backups/<file>`, then `make doctor`, then start again.
 
 ## Troubleshooting
 
@@ -222,7 +222,7 @@ people wait unscored. On the Mac, run `claude` and `/login` as the schedule's us
 `make doctor`.
 
 **Map passphrase changed.** Nothing breaks at once: ingest reads data/raw every day and never logs in. A refresh
-(`python -m ring_wishlist.ingest_map --refresh`) fails with a login error ending in `wrong passphrase?`. Ask Carlo for the new
+(`python -m wearable_wishlist.ingest_map --refresh`) fails with a login error ending in `wrong passphrase?`. Ask the operator for the new
 one, put it in `MAP_PASSPHRASE`, refresh again. The system only reads the map, never writes to it.
 
 **The Mac was asleep at the trigger.** launchd runs a missed job when the Mac wakes (several missed days count as one).
@@ -243,7 +243,7 @@ a server.
 ## Security and privacy
 
 * **Personal data stays inside the company.** The database, data/raw, data/exports and config/contact_routes hold personal
-  data: Carlo's contacts (names, companies, meetings, intros), people's X profiles and posts, researched contact routes
+  data: the operator's contacts (names, companies, meetings, intros), people's X profiles and posts, researched contact routes
   with some email addresses. Keep them on company machines and company storage, with encrypted disks.
 * **The repository carries personal data too** (data/raw and data/exports are tracked). Keep it private: never public,
   never a fork outside the company.
@@ -257,4 +257,4 @@ a server.
 * **Nobody is contacted by the system.** X access is read-only (an app-only token and scrapers, no write scopes): no DMs,
   no posts, no emails. The contact routes are for people to act on.
 * **Where data goes.** X data comes through monid (Apify, TikHub) and the official X API. Profiles and posts go to Claude
-  for classification, which Carlo approved.
+  for classification, which the operator approved.

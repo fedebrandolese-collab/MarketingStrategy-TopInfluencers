@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd agent: the dashboard, http://localhost:8501 (the same command line as `make dashboard`; .streamlit/config.toml
+  keeps it on localhost and headless). Started when loaded and at login, restarted whenever it stops.
+  __REPO__ is filled in by scripts/install_schedule.sh.
+  Disabled is true on purpose: installing the file starts nothing. `make schedule-on` enables and loads it (and the daily
+  run), `make schedule-off` stops both.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.wearable-wishlist.dashboard</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__REPO__/.venv/bin/streamlit</string>
+    <string>run</string>
+    <string>app/dashboard.py</string>
+    <string>--server.address</string>
+    <string>localhost</string>
+    <string>--browser.gatherUsageStats</string>
+    <string>false</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>__REPO__</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>Disabled</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>__REPO__/data/logs/dashboard.log</string>
+  <key>StandardErrorPath</key>
+  <string>__REPO__/data/logs/dashboard.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>PYTHONPATH</key>
+    <string>__REPO__/src</string>
+  </dict>
+</dict>
+</plist>

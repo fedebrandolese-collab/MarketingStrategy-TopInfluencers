@@ -3,11 +3,11 @@ import json
 
 import pytest
 
-from ring_wishlist import db, discover, expand, pipeline
-from ring_wishlist.discover import persist_users_batch
-from ring_wishlist.sources import monid
-from ring_wishlist.sources.base import XUser
-from ring_wishlist.sources.monid import MonidSource, to_web_query
+from wearable_wishlist import db, discover, expand, pipeline
+from wearable_wishlist.discover import persist_users_batch
+from wearable_wishlist.sources import monid
+from wearable_wishlist.sources.base import XUser
+from wearable_wishlist.sources.monid import MonidSource, to_web_query
 
 SAMPLES = monid.config.ROOT / "tests" / "samples" / "c"
 
@@ -45,13 +45,13 @@ SEEDS = [f"s{i}" for i in range(13)]
 
 
 def world(conn, n_seeds=13, following=None):
-    """A scored run whose top rows fail one seed filter each, then seeds s0..s12 (ranks 6..18), plus Carlo and a known
+    """A scored run whose top rows fail one seed filter each, then seeds s0..s12 (ranks 6..18), plus the operator and a known
     candidate. Returns the scored run id."""
     excluded = [("notus", ["not_us"], None, 1.0, 50_000), ("comp", ["competitor:Oura"], None, 1.0, 50_000),
                 ("rej", [], "rejected", 1.0, 50_000), ("lowconf", [], None, 0.667, 50_000), ("small", [], None, 1.0, 4000)]
     rows = excluded + [(h, [], None, 1.0, 10_000) for h in SEEDS[:n_seeds]]
     persist_users_batch(conn, [U(h, followers=f, following=following) for h, _, _, _, f in rows]
-                        + [U("carlo"), U("known1")], "fixture")
+                        + [U("the operator"), U("known1")], "fixture")
     rid = db.new_run(conn, "score")
     for rank, (h, flags, status, conf, _) in enumerate(rows, 1):
         cid, _ = discover.upsert_candidate(conn, f"id_{h}", h, h, "seed")
@@ -89,9 +89,9 @@ def test_cofollow_counts_thresholds_and_filters(conn, capsys):
     src = FakeSource(follows([
         (U("alice"), 5), (U("bob"), 2), (U("carol", followers=3000), 3), (U("jester", bio="Parody account"), 4),
         (U("acmehq", name="Acme", bio="The official account of Acme"), 4), (U("coins", bio="NFT giveaways daily"), 4),
-        (U("ouraring", name="Oura"), 6), (U("known1"), 6), (U("carlo"), 12), (U("simonw", followers=227_000), 4),
+        (U("ouraring", name="Oura"), 6), (U("known1"), 6), (U("the operator"), 12), (U("simonw", followers=227_000), 4),
         (U("s3"), 7)]))
-    st = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="carlo")
+    st = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="the operator")
     assert src.calls == SEEDS[:12] and st["lists"] == 12 and st["threshold"] == 3
     assert st["candidates_new"] == 2 and set(st["new"]) == {"@alice 5/12", "@simonw 4/12"}
     assert st["skipped"] == {"small_audience": 1, "parody": 1, "org": 1, "spam": 1, "brand": 1}
@@ -100,7 +100,7 @@ def test_cofollow_counts_thresholds_and_filters(conn, capsys):
     assert a["discovered_via"] == "cofollow:5/12" and a["notes"] == "cofollow:5/12 seeds:@s0,@s1,@s2,@s3,@s4"
     k = db.one(conn, "SELECT discovered_via, notes FROM candidates WHERE handle='known1'")
     assert k["discovered_via"] == "query:x" and "cofollow:6/12" in k["notes"]
-    assert db.one(conn, "SELECT 1 AS x FROM candidates WHERE handle IN ('bob','carlo','jester','acmehq')") is None
+    assert db.one(conn, "SELECT 1 AS x FROM candidates WHERE handle IN ('bob','the operator','jester','acmehq')") is None
     w = st["watch"]["simonw"]
     assert (w["cofollows"], w["of_seeds"], w["would_be_found"]) == (4, 12, True)
     assert db.one(conn, "SELECT COUNT(*) AS n FROM x_follows WHERE src_x_id='id_s0'")["n"] == 11   # follows persisted
@@ -110,9 +110,9 @@ def test_cofollow_counts_thresholds_and_filters(conn, capsys):
 def test_idempotent(conn):
     world(conn)
     src = FakeSource(follows([(U("alice"), 5), (U("dave"), 3)]))
-    first = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="carlo", watch=())
+    first = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="the operator", watch=())
     before = db.rows(conn, "SELECT candidate_id, handle, discovered_via, first_seen, notes FROM candidates ORDER BY 1")
-    second = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="carlo", watch=())
+    second = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="the operator", watch=())
     after = db.rows(conn, "SELECT candidate_id, handle, discovered_via, first_seen, notes FROM candidates ORDER BY 1")
     assert first["candidates_new"] == 2 and second["candidates_new"] == 0 and before == after
 
@@ -120,7 +120,7 @@ def test_idempotent(conn):
 def test_watch_excludes_own_list_when_a_seed(conn):
     world(conn)
     src = FakeSource(follows([(U("s5"), 3)]))
-    st = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="carlo", watch=("s5",))
+    st = expand.run_expand(conn, db.new_run(conn, "expand"), src, seed_handle="the operator", watch=("s5",))
     assert st["watch"]["s5"]["of_seeds"] == 11 and st["watch"]["s5"]["cofollows"] == 3
 
 

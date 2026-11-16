@@ -1,8 +1,8 @@
-"""Dashboard tab "Check an account": would an account Carlo has in mind make the wishlist, and where would it rank?
+"""Dashboard tab "Check an account": would an account the operator has in mind make the wishlist, and where would it rank?
 
 Type an X handle (with or without @, or an x.com / twitter.com link) and press Preview cost: the itemised estimate comes
 from the adapters' own estimators and nothing is paid before "Accept $X.XX and run". The check then runs step by step in
-a status box; src/ring_wishlist/check.py does the work with the pipeline's own functions. A known account with recent posts and a
+a status box; src/wearable_wishlist/check.py does the work with the pipeline's own functions. A known account with recent posts and a
 classification can be shown for free from stored data instead.
 
 The answer reads in ten seconds: "@handle would rank #n of N" under the list's weights (weights.effective: the manual
@@ -26,7 +26,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from ring_wishlist import check, config, weights
+from wearable_wishlist import check, config, weights
 from app import data
 
 _MD_SPECIAL = re.compile(r"([\\`*_\[\]<>#|~$])")

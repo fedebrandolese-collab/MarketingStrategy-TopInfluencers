@@ -25,7 +25,7 @@
 
 ## B (x_api adapter) — notes for the lead, 2026-09-29
 
-* `XApiSource(conn=None, run_id=None, session=None)` in `src/ring_wishlist/sources/x_api.py`; `session` is test injection only.
+* `XApiSource(conn=None, run_id=None, session=None)` in `src/wearable_wishlist/sources/x_api.py`; `session` is test injection only.
   Errors: `XApiError`, `XApiAuthError` (401/403), `XApiCreditsError` (402, credits empty), `XApiRateLimited` (429 after 3 waits),
   plus `costs.BudgetExceeded` from the guard. All are `RuntimeError` subclasses. `RuntimeError("X_BEARER_TOKEN missing ...")` on first use.
 * Endpoint facts verified on docs.x.com (OpenAPI v2.168): page minimums are real -- recent search asks for >=10 posts, a user
@@ -44,35 +44,35 @@
   `x_api.estimate("search_posts", n)` rather than `n * X_PRICES["post_read"]`.
 * Caps: `.env` currently has `BUDGET_X_USD=5`. A single `get_following(h, max_users=1000)` projects $10.00 and is refused
   before any request; D's `run_crawl` defaults (2000 + 2000) need `BUDGET_X_USD>=40` or smaller `max_following/max_followers`.
-  `search_users(name, max_results=10)` is $0.10 per map person (150 people = $15). `python -m ring_wishlist.sources.x_api` prints the table.
+  `search_users(name, max_results=10)` is $0.10 per map person (150 people = $15). `python -m wearable_wishlist.sources.x_api` prints the table.
 * `can_dm` is always NULL from this adapter (X API v2 does not expose DM permission to app-only auth), so F's `open_dm`
   path can only come from monid data. `get_user_posts` excludes retweets (`exclude=retweets`) but keeps replies, which
-  paths needs for "replied to Carlo" (`in_reply_to_x_id` = the user id replied to, `mentions` = handles).
+  paths needs for "replied to the operator" (`in_reply_to_x_id` = the user id replied to, `mentions` = handles).
 * Cache: user lookups are served from `x_users` when `fetched_at` is within 7 days (`CACHE_DAYS`); follows and posts are
   always fetched (X deduplicates repeat resources within a UTC day, so re-runs on the same day are free on their side).
 * No new dependencies. Tests: `DRY_RUN=1 .venv/bin/python -m pytest -q tests/test_x_api.py` (23 tests, no network).
 
 ## G (dashboard + scheduler), notes and requests for the lead, 2026-09-29
 
-> Superseded on 30 Sep for the scheduler: `src/ring_wishlist/ops.py`, `config/schedule.yaml` and `docs/OPERATIONS.md`
+> Superseded on 30 Sep for the scheduler: `src/wearable_wishlist/ops.py`, `config/schedule.yaml` and `docs/OPERATIONS.md`
 > replace the 07:00 `make run` refresh and the exit codes below (`ops run`: 0 ok, 3 a stage failed or was stopped
 > by a budget, 75 locked, 2 crashed).
 
 * Files: `app/dashboard.py` (new), `app/data.py` (extended), `scripts/refresh.sh`, `scripts/install_schedule.sh`,
-  `scripts/com.ring-wishlist.wishlist.plist` (new), `scripts/seed_demo_db.py` (path variable renamed; the `p` shadowing was
+  `scripts/com.wearable-wishlist.wishlist.plist` (new), `scripts/seed_demo_db.py` (path variable renamed; the `p` shadowing was
   not live, it was confusing), `tests/test_dashboard_data.py` (24 tests, 3 of them run the page through Streamlit's AppTest).
 * **Request (pipeline.py): exit non-zero when a stage fails.** `pipeline.main` logs a failed or budget-stopped stage
   and returns 0, so `make run` always succeeds. `refresh.sh` works around it by scanning this run's log lines for
-  `ERROR ring_wishlist.pipeline: stage` or `{'error':` and then exits 3; a proper exit code would make that grep a fallback only.
+  `ERROR wearable_wishlist.pipeline: stage` or `{'error':` and then exits 3; a proper exit code would make that grep a fallback only.
 * **Request (Makefile or a new `.streamlit/config.toml`, both outside G): serve the dashboard on localhost only.**
   Streamlit listens on all interfaces by default (checked: `Uvicorn server started on :::8765`, plus a "Network URL"
-  and an "External URL", which means it looked up the public IP), so anyone on the same Wi-Fi can open Carlo's
+  and an "External URL", which means it looked up the public IP), so anyone on the same Wi-Fi can open the operator's
   network data. Suggested: `dashboard: .venv/bin/streamlit run app/dashboard.py --server.address localhost --browser.gatherUsageStats false`,
   or `.streamlit/config.toml` with `[server] address = "localhost"` and `[browser] gatherUsageStats = false`.
 * Optional Makefile targets: `refresh: bash scripts/refresh.sh` and `demo: $(PY) scripts/seed_demo_db.py`.
 * Scheduler behaviour, for the README: `make schedule` copies the plist to `~/Library/LaunchAgents` with the repo path
-  filled in and **`Disabled` set to true**, so nothing runs (not even at the next login) until Carlo runs the printed
-  `launchctl load -w ~/Library/LaunchAgents/com.ring-wishlist.wishlist.plist` (stop with `launchctl unload -w ...`). Reason:
+  filled in and **`Disabled` set to true**, so nothing runs (not even at the next login) until the operator runs the printed
+  `launchctl load -w ~/Library/LaunchAgents/com.wearable-wishlist.wishlist.plist` (stop with `launchctl unload -w ...`). Reason:
   with live keys in `.env`, every scheduled `make run` spends up to the budgets. The Linux cron line is at the top of
   `scripts/refresh.sh`. `refresh.sh` exit codes: 0 ok, 1 no `.venv`, 3 a stage logged an error, 75 skipped because
   another refresh holds the lock (`data/logs/.refresh.lock`; prevents double spend), otherwise the `make` exit code.
@@ -89,7 +89,7 @@
 
 ## D (discover + classify), notes and requests for the lead, 2026-09-29
 
-* Files: `src/ring_wishlist/discover.py`, `src/ring_wishlist/classify.py`, `src/ring_wishlist/prompts/classify.md`, `tests/test_discover.py`
+* Files: `src/wearable_wishlist/discover.py`, `src/wearable_wishlist/classify.py`, `src/wearable_wishlist/prompts/classify.md`, `tests/test_discover.py`
   (12 tests), `tests/test_classify.py` (9 tests). `DRY_RUN=1 .venv/bin/python -m pytest -q tests/test_discover.py tests/test_classify.py`.
 * Signatures (all extras are keyword arguments with defaults, so `pipeline._call` can pass only what it has):
   `run_crawl(conn, run_id, source, seed_handle, max_following=2000, max_followers=2000)`,
@@ -111,7 +111,7 @@
 * **Request (resolve_handles.py, F):** `upsert_map_candidate` overwrites `candidates.notes` on every run. discover keeps
   its bio hints, seed relation and the enrichment marker (`enriched:YYYY-MM-DD posts=N`) there as ' | '-separated
   `key:value` segments; overwriting them makes run_enrich pay again for map people it already enriched. Please merge
-  instead, e.g. `from ring_wishlist.discover import _merge_notes` and `notes=_merge_notes(existing["notes"], note)` (your
+  instead, e.g. `from wearable_wishlist.discover import _merge_notes` and `notes=_merge_notes(existing["notes"], note)` (your
   `map: ...` segment is replaced by key, other segments are kept).
 * Classification threading: `llm.complete_json` runs on a `ThreadPoolExecutor` (`workers`, default 4); dossiers are
   built and every SQLite write happens on the calling thread. llm.py receives a `_CostRelay` as `conn`: `costs.guard`'s
@@ -148,10 +148,10 @@
   (`deferred_to_seed_lists`): after the crawl they match free.
 * Trial on a copy of data/wishlist.db (DRY_RUN=1, no paid calls): 52 of 318 map people resolved for free: all 25 tagged,
   23 untagged (e.g. Julian Chokkattu, Devindra Hardawar, Chris Welch), 2 map_text (unconfirmed: @jasonhowell,
-  @swebster77), 1 local. Sabrina Ortiz, Tripp Mickle and Jason Howell are not in Carlo's lists, so paid lookups are the only
+  @swebster77), 1 local. Sabrina Ortiz, Tripp Mickle and Jason Howell are not in the operator's lists, so paid lookups are the only
   way to find them. 40 selected map people were linked to rows that discovery had already made (one row each, no duplicates).
 * **Request (pipeline, lead):** `_call(run_resolve_handles, conn, run_id, verify)` passes no `seed_handle`; the stage
-  falls back to `CARLO_X_HANDLE`. Pass `seed_handle=seed_handle` like paths if `--seed` should reach it too.
+  falls back to `SEED_X_HANDLE`. Pass `seed_handle=seed_handle` like paths if `--seed` should reach it too.
 * **Request (verify, lead):** map_text rows with `x_id` NULL (e.g. @jasonhowell) are waiting for an id check. One
   `get_users_by_handles` batch confirms them for $0.01 each. resolve does this within `max_paid_lookups` when budget is left.
 * Candidates: one row per map person. When discovery already has a row for the same `x_id`, it gets the `map_person_id`;

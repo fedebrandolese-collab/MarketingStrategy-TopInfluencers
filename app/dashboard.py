@@ -1,4 +1,4 @@
-"""ring_wishlist ring wishlist: the dashboard (Streamlit).
+"""wearable_wishlist wearable wishlist: the dashboard (Streamlit).
 
     make dashboard                                                  # data/wishlist.db, or DB_PATH
     DB_PATH=data/demo.db .venv/bin/streamlit run app/dashboard.py   # the demo built by scripts/seed_demo_db.py
@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import config, contacts, costs, export, weights  # noqa: E402
+from wearable_wishlist import config, contacts, costs, export, weights  # noqa: E402
 from app import data  # noqa: E402
 from app.check_tab import engagement_block, render_check_tab  # noqa: E402
 from app.system_tab import render_system_tab  # noqa: E402
@@ -60,7 +60,7 @@ WEIGHT_GROUPS = (("The three chances", ("accept", "wear", "love")),
                  ("Impact and extras", ("impact", "engagement", "affinity", "connection")),
                  ("Category mix", weights.CATEGORY_KEYS))
 LIST_N_MAX = 300
-PROB_LABELS = {"p_accept": "Accepts a ring", "p_wear": "Wears it daily", "p_love": "Loves it and says so"}
+PROB_LABELS = {"p_accept": "Accepts a wearable", "p_wear": "Wears it daily", "p_love": "Loves it and says so"}
 PROB_SUPPORT = {"p_accept": "accept", "p_wear": "wear", "p_love": "love"}
 AFFINITY_HELP = ("Topic affinity (0 to 1): discusses personal agents, voice, wearables or screen-free life, "
                  "and their community answers. Blank = not measured.")
@@ -72,7 +72,7 @@ BAR_HELP = ("The brief: a name nobody can reach, or someone who has never worn a
             "their X bio.")
 STRONG_FLAGS = ("competitor", "unverified_handle")   # shown in a warning box; the others in an info box
 
-st.set_page_config(page_title="ring_wishlist ring wishlist", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="wearable_wishlist wearable wishlist", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""<style>
 [data-testid="stMainBlockContainer"], .block-container {padding-top: 2.2rem; padding-bottom: 2rem;
   padding-left: 2rem; padding-right: 2rem;}
@@ -94,7 +94,7 @@ COLUMN_CONFIG = {
     "why": st.column_config.TextColumn("Why", width=388,
                                        help="The case in one line, with the main caveat. Click the row for the quotes."),
     "p_accept": st.column_config.ProgressColumn("Accepts", min_value=0, max_value=100, format="%d%%", width=74,
-                                                help="Chance they accept a ring."),
+                                                help="Chance they accept a wearable."),
     "p_wear": st.column_config.ProgressColumn("Wears daily", min_value=0, max_value=100, format="%d%%", width=76,
                                               help="Chance they wear it every day."),
     "p_love": st.column_config.ProgressColumn("Loves it", min_value=0, max_value=100, format="%d%%", width=76,
@@ -191,7 +191,7 @@ def empty_state(path: Path, last: dict | None, exists: bool) -> None:
         st.info(f"`{rel(path)}` is empty: no run yet.", icon=":material/database:")
     st.markdown(
         "**To fill it, from the repository root:**\n\n"
-        "1. `make ingest`: mirror Carlo's network map into SQLite (reads `data/raw`; nothing leaves the machine).\n"
+        "1. `make ingest`: mirror the operator's network map into SQLite (reads `data/raw`; nothing leaves the machine).\n"
         "2. `make run`: the whole pipeline (map, X crawl and discovery, classification, paths, scoring, export). "
         "Paid stages print their projected cost first and stop at the per-run budgets in `.env`.\n"
         "3. Reload this page. `make schedule` installs the daily run on macOS (`make schedule-on` turns it on); for a "
@@ -450,7 +450,7 @@ def status_editor(d: dict, db_path: Path, tag: str) -> None:
     st.selectbox("Status", statuses, index=statuses.index(cur["status"]) if cur.get("status") in statuses else 0,
                  key=k_status, format_func=data.status_label, on_change=save_status, args=args)
     st.text_area("Note", value=cur.get("note") or "", key=k_note, height=100, on_change=save_status, args=args,
-                 placeholder="Who asks for the intro, what was said, when the ring ships…",
+                 placeholder="Who asks for the intro, what was said, when the wearable ships…",
                  help="Saved when you click outside the box (or press Cmd/Ctrl+Enter).")
     if cur.get("updated_at"):
         st.caption(f"Saved {utc(cur['updated_at'])}" + (f" by {md(cur['owner'])}" if cur.get("owner") else ""))
@@ -760,7 +760,7 @@ def _save_preset() -> None:
 def keep_tune_state() -> None:
     """Streamlit drops a widget's value on a run where it is not drawn (the sliders while Manual weights is off, or the
     whole list while another tab shows): re-assigning the switch, the weights and the filters at the top of every run
-    keeps Carlo's settings. Other views read them only through weights.effective(st.session_state)."""
+    keeps the operator's settings. Other views read them only through weights.effective(st.session_state)."""
     for k in [k for k in st.session_state if str(k).startswith(("tw_", "tf_")) or k == "manual_weights"]:
         st.session_state[k] = st.session_state[k]
 
@@ -792,7 +792,7 @@ def weights_form(default_w: dict) -> None:
                 p1.selectbox("Preset", list(presets), key="tune_preset")
                 p2.button("Load", on_click=_load_preset, args=(presets,), width="stretch")
         with b3.popover("Save weights", icon=":material/save:", width="stretch"):
-            st.text_input("Name", key="tune_name", placeholder="e.g. Carlo, attention first")
+            st.text_input("Name", key="tune_name", placeholder="e.g. the operator, attention first")
             st.checkbox("Use as default for scheduled runs", key="tune_as_default",
                         help="Writes `default:` in config/weights.yaml: the daily scoring uses these weights from the next run.")
             st.button("Save", on_click=_save_preset, type="primary")
@@ -904,7 +904,7 @@ def password_gate() -> None:
     want = config.env("DASHBOARD_PASSWORD")
     if not want or st.session_state.get("gate_ok"):
         return
-    st.title("ring_wishlist ring wishlist")
+    st.title("wearable_wishlist wearable wishlist")
     given = st.text_input("Password", type="password", key="gate_password")
     if given and hmac.compare_digest(given.encode(), want.encode()):
         st.session_state["gate_ok"] = True
@@ -916,8 +916,8 @@ def password_gate() -> None:
 
 def main() -> None:
     password_gate()
-    st.title("ring_wishlist ring wishlist")
-    st.caption("Who gets one of the 100 prototype rings, best first: the chance they accept one, wear it every day and "
+    st.title("wearable_wishlist wearable wishlist")
+    st.caption("Who gets one of the 100 prototype wearables, best first: the chance they accept one, wear it every day and "
                "love it out loud, weighted by their impact if they do. Everyone on the list has at least one real way to be "
                "contacted; the best one is shown beside them, not scored.")
     sidebar_box = st.sidebar.container()

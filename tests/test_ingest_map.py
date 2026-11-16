@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from ring_wishlist import config, db, ingest_map
+from wearable_wishlist import config, db, ingest_map
 
 RAW = config.RAW_DIR
 SAMPLE = Path(__file__).parent / "samples" / "a" / "map_payload_small.json"

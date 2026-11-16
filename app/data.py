@@ -19,7 +19,7 @@ from typing import Any, Mapping
 
 import pandas as pd
 
-from ring_wishlist import config, contacts, costs, db, export, weights
+from wearable_wishlist import config, contacts, costs, db, export, weights
 
 RANKED_COLUMNS = [
     "rank", "candidate_id", "name", "handle", "section", "total",
@@ -31,7 +31,7 @@ RANKED_COLUMNS = [
 PROB_FIELDS = ("p_accept", "p_wear", "p_love")
 FACTOR_FIELDS = ("p_accept", "p_wear", "p_love", "impact", "reach")
 FACTOR_LABELS = {
-    "p_accept": "accepts a ring",
+    "p_accept": "accepts a wearable",
     "p_wear": "wears it every day",
     "p_love": "loves it and says so",
     "impact": "impact if they love it",
@@ -43,7 +43,7 @@ UNCLASSIFIED_SECTION = "Unclassified"
 NO_FLAG = "(no flags)"   # filter option: rows without any flag
 FIELD_SHORT = {"p_accept": "accept", "p_wear": "wear", "p_love": "love", "affinity": "topic", "engagement": "engagement",
                "new_candidate": "new"}
-# The ranked table as Carlo reads it: who, what kind, what to watch (a competitor tie: flagged, never removed), why in
+# The ranked table as the operator reads it: who, what kind, what to watch (a competitor tie: flagged, never removed), why in
 # one line, the three probabilities, impact and how their community answers (engagement_short), who reaches them, where
 # they stand. Score, reach, topic affinity and confidence live in the person panel.
 # "change" is the move against the default weights (shown only when the weights in use differ from the default).
@@ -57,14 +57,14 @@ NOT_RESEARCHED = "Not researched yet: no posts read, so the numbers are starting
 HANDLE_MARKS = {"verified": "✓", "likely_real": "(likely real)", "suspicious": "(suspicious)"}
 TABLE_HIDDEN_FLAGS = ("no_path",)   # not a problem: the path column already says "cold: no warm intro"
 SUPPORT_LABELS = {
-    "accept": "would accept a ring", "wear": "would wear it daily", "love": "would love it and say so",
+    "accept": "would accept a wearable", "wear": "would wear it daily", "love": "would love it and say so",
     "impact": "impact", "reach": "reach", "competitor": "competitor tie", "us": "US base",
     "authenticity": "the handle is really them", "affinity": "talks about the topic",
 }
 FIELD_LABELS = {"p_accept": "Accepts", "p_wear": "Wears daily", "p_love": "Loves + says so", "total": "Score",
                 "rank": "Rank", "impact": "Impact", "reach": "Path strength", "affinity": "Topic affinity", "flags": "Flags",
                 "confidence": "Confidence", "new_candidate": "New on the list", "engagement": "Community engagement"}
-TOPIC_LABELS = {"personal_agents": "personal agents", "voice": "voice interfaces", "wearables": "AI wearables and rings",
+TOPIC_LABELS = {"personal_agents": "personal agents", "voice": "voice interfaces", "wearables": "AI wearables and wearables",
                 "screen_free": "screen-free life"}
 AFFINITY_MAX_POSTS = 3
 ENGAGEMENT_UNKNOWN = "no sample of their latest posts yet"
@@ -81,7 +81,7 @@ PEOPLE = {"not US": "non-US {}", "competitor-tied": "competitor-tied {}", "rejec
           "below the bar": "{} below the bar", NO_CONTACT_WORD: "{} with no way to contact"}
 COMPETITOR_MARK = "⚑"   # a competitor tie in the Flags cell, the cards and the person panel: flagged, never removed
 STATUS_LABELS = {
-    "candidate": "candidate", "approved": "approved", "intro_asked": "intro asked", "ring_sent": "ring sent",
+    "candidate": "candidate", "approved": "approved", "intro_asked": "intro asked", "wearable_sent": "wearable sent",
     "wearing": "wearing", "posted": "posted", "rejected": "rejected",
 }
 
@@ -237,7 +237,7 @@ def path_short(p: dict | None) -> str:
 
 
 def strength_word(strength: float | None) -> str:
-    """0..1 path strength as a word Carlo can act on."""
+    """0..1 path strength as a word the operator can act on."""
     if strength is None:
         return "unknown strength"
     return "strong" if strength >= 0.7 else "good" if strength >= 0.45 else "weak" if strength >= 0.2 else "very weak"
@@ -566,7 +566,7 @@ def flag_explanation(flag: str, cand: dict | None = None, x_user: dict | None = 
         if which and detail.lower().startswith(which.lower()):   # "Oura: product lead ..." -> "product lead ..."
             detail = detail[len(which):].lstrip(" :-·")
         head = f"Tied to competitor {which}" if which else "Tied to a direct competitor"
-        return head + (f": {detail}" if detail else "") + ". The score stands; Carlo decides."
+        return head + (f": {detail}" if detail else "") + ". The score stands; the operator decides."
     if flag == "not_us":
         loc = x_user.get("location")
         return "Not US-based" + (f" ({loc})" if loc else "") + ": shipping and launch focus are US-first."
@@ -1024,7 +1024,7 @@ def _fmt_value(field: str, v: Any) -> str:
 
 
 def history_text(ch: dict, brief: bool = False) -> str:
-    """One change row as Carlo reads it: 'Wears daily 70% → 85%: new evidence: post ...'.
+    """One change row as the operator reads it: 'Wears daily 70% → 85%: new evidence: post ...'.
     brief=True keeps only the move ('Score 33.7 → 38.9'), for a total whose reasons the factor lines already give."""
     field = ch.get("field") or ""
     reason = " ".join(str(ch.get("reason") or "").split())

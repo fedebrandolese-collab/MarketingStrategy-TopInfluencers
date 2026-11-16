@@ -23,9 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from ring_wishlist import config, db  # noqa: E402
-from ring_wishlist.score import PRIORS  # noqa: E402
-from ring_wishlist.sources.base import FixtureSource, persist_follows, persist_posts, persist_users  # noqa: E402
+from wearable_wishlist import config, db  # noqa: E402
+from wearable_wishlist.score import PRIORS  # noqa: E402
+from wearable_wishlist.sources.base import FixtureSource, persist_follows, persist_posts, persist_users  # noqa: E402
 
 DEFAULT_PATH = config.DATA_DIR / "demo.db"
 
@@ -37,9 +37,9 @@ POST_URL = "https://x.com/{handle}/status/{post_id}"
 
 # ---------------------------------------------------------------- candidates (key -> row)
 CANDIDATES: dict[str, dict] = {
-    "rina": dict(x_id="2", handle="ringnerd_test", name="Rina Ring", category="x_voice", us_based=1, map_person_id=None,
+    "rina": dict(x_id="2", handle="wearablenerd_test", name="Rina Wearable", category="x_voice", us_based=1, map_person_id=None,
                  handle_verified="verified", handle_verification_method="x_verified+bio_link", competitor_flag=0, competitor_detail=None,
-                 discovered_via='query:"smart ring" (AI OR voice OR assistant OR agent) -is:retweet lang:en', first_seen=T1, last_seen=T2,
+                 discovered_via='query:"smart wearable" (AI OR voice OR assistant OR agent) -is:retweet lang:en', first_seen=T1, last_seen=T2,
                  notes=None),
     "tom": dict(x_id="3", handle="techwriter_test", name="Tom Writer", category="media", us_based=1, map_person_id=None,
                 handle_verified="verified", handle_verification_method="x_verified+outlet_bio", competitor_flag=0, competitor_detail=None,
@@ -58,13 +58,13 @@ CANDIDATES: dict[str, dict] = {
                  handle_verified="verified", handle_verification_method="x_verified", competitor_flag=1,
                  competitor_detail="Oura: product lead (bio: 'Product lead @ouraring')",
                  discovered_via='query:"Oura" (unboxing OR review OR "day one" OR "weeks with") -is:retweet lang:en', first_seen=T1, last_seen=T2, notes=None),
-    "parody": dict(x_id="6", handle="parody_test", name="Rina Ring (parody)", category="x_voice", us_based=None, map_person_id=None,
+    "parody": dict(x_id="6", handle="parody_test", name="Rina Wearable (parody)", category="x_voice", us_based=None, map_person_id=None,
                    handle_verified="suspicious", handle_verification_method="llm+created_at",
-                   competitor_flag=0, competitor_detail=None, discovered_via="following:ringnerd_test", first_seen=T1, last_seen=T2,
+                   competitor_flag=0, competitor_detail=None, discovered_via="following:wearablenerd_test", first_seen=T1, last_seen=T2,
                    notes="Bio says PARODY; account created 2025-11; 900 followers."),
     "elke": dict(x_id="7", handle="eu_test", name="Elke Uropa", category="x_voice", us_based=0, map_person_id=None,
                  handle_verified="likely_real", handle_verification_method="user_search+llm", competitor_flag=0, competitor_detail=None,
-                 discovered_via='query:"smart ring" (AI OR voice OR assistant OR agent) -is:retweet lang:en', first_seen=T2, last_seen=T2, notes=None),
+                 discovered_via='query:"smart wearable" (AI OR voice OR assistant OR agent) -is:retweet lang:en', first_seen=T2, last_seen=T2, notes=None),
 }
 ONLY_IN_RUN2 = {"elke"}
 
@@ -75,28 +75,28 @@ def _post(handle: str, post_id: str) -> str:
 
 EVIDENCE: dict[str, list[dict]] = {
     "rina": [
-        dict(ref="rina_unbox", kind="post", supports="wear", polarity=1, weight=0.9, url=_post("ringnerd_test", "101"), date="2026-09-20",
-             text="Unboxing the new Oura Ring 5. Day one impressions: thinner, and the voice notes feature is finally usable.", fetched_at=T2),
-        dict(ref="rina_voice", kind="post", supports="love", polarity=1, weight=0.8, url=_post("ringnerd_test", "102"), date="2026-08-02",
-             text="Hot take: the next great wearable has no screen. Smart rings plus a voice agent is the form factor.", fetched_at=T1),
-        dict(ref="rina_limitless", kind="post", supports="love", polarity=1, weight=0.7, url=_post("ringnerd_test", "103"), date="2026-07-11",
-             text="Three weeks with the Limitless pendant. Great transcripts, but I keep forgetting to wear it. Rings win on that.", fetched_at=T1),
-        dict(ref="rina_bio", kind="bio", supports="wear", polarity=1, weight=0.6, url="https://x.com/ringnerd_test", date="2026-09-15",
+        dict(ref="rina_unbox", kind="post", supports="wear", polarity=1, weight=0.9, url=_post("wearablenerd_test", "101"), date="2026-09-20",
+             text="Unboxing the new Oura Wearable 5. Day one impressions: thinner, and the voice notes feature is finally usable.", fetched_at=T2),
+        dict(ref="rina_voice", kind="post", supports="love", polarity=1, weight=0.8, url=_post("wearablenerd_test", "102"), date="2026-08-02",
+             text="Hot take: the next great wearable has no screen. Smart wearables plus a voice agent is the form factor.", fetched_at=T1),
+        dict(ref="rina_limitless", kind="post", supports="love", polarity=1, weight=0.7, url=_post("wearablenerd_test", "103"), date="2026-07-11",
+             text="Three weeks with the Limitless pendant. Great transcripts, but I keep forgetting to wear it. Wearables win on that.", fetched_at=T1),
+        dict(ref="rina_bio", kind="bio", supports="wear", polarity=1, weight=0.6, url="https://x.com/wearablenerd_test", date="2026-09-15",
              text="Reviewing wearables since 2019. Oura on one hand, Ultrahuman on the other. Voice-first believer.", fetched_at=T1),
-        dict(ref="rina_accept", kind="profile_signal", supports="accept", polarity=1, weight=0.5, url="https://x.com/ringnerd_test", date="2026-09-15",
-             text="Bio links to a review site (ringnerd.example): accepts devices to review.", fetched_at=T1),
-        dict(ref="rina_impact", kind="profile_signal", supports="impact", polarity=1, weight=0.7, url="https://x.com/ringnerd_test", date="2026-09-15",
+        dict(ref="rina_accept", kind="profile_signal", supports="accept", polarity=1, weight=0.5, url="https://x.com/wearablenerd_test", date="2026-09-15",
+             text="Bio links to a review site (wearablenerd.example): accepts devices to review.", fetched_at=T1),
+        dict(ref="rina_impact", kind="profile_signal", supports="impact", polarity=1, weight=0.7, url="https://x.com/wearablenerd_test", date="2026-09-15",
              text="48k followers; 1.2k likes on the voice-agent post.", fetched_at=T1),
-        dict(ref="rina_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/ringnerd_test", date="2026-09-15",
+        dict(ref="rina_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/wearablenerd_test", date="2026-09-15",
              text="location: Austin, TX", fetched_at=T1),
-        dict(ref="rina_auth", kind="profile_signal", supports="authenticity", polarity=1, weight=0.9, url="https://x.com/ringnerd_test", date="2026-09-15",
+        dict(ref="rina_auth", kind="profile_signal", supports="authenticity", polarity=1, weight=0.9, url="https://x.com/wearablenerd_test", date="2026-09-15",
              text="blue verified since 2015, 48k followers, bio links to review site", fetched_at=T1),
     ],
     "tom": [
         dict(ref="tom_review", kind="post", supports="love", polarity=1, weight=0.7, url=_post("techwriter_test", "201"), date="2026-09-10",
              text="Reviewed the Humane Pin successor for GadgetDaily. Voice-first computing is closer than the skeptics think.", fetched_at=T1),
         dict(ref="tom_ring", kind="post", supports="wear", polarity=1, weight=0.6, url=_post("techwriter_test", "202"), date="2026-06-01",
-             text="I tried a screen-free week. Kept the Oura ring and AirPods, ditched the phone after 6pm. Writing it up.", fetched_at=T1),
+             text="I tried a screen-free week. Kept the Oura wearable and AirPods, ditched the phone after 6pm. Writing it up.", fetched_at=T1),
         dict(ref="tom_bio", kind="bio", supports="impact", polarity=1, weight=0.9, url="https://x.com/techwriter_test", date="2026-09-15",
              text="Senior editor @GadgetDaily. Covers AI hardware, wearables, and the post-smartphone era. 120k followers.", fetched_at=T1),
         dict(ref="tom_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/techwriter_test", date="2026-09-15",
@@ -106,9 +106,9 @@ EVIDENCE: dict[str, list[dict]] = {
         dict(ref="vera_fund", kind="post", supports="impact", polarity=1, weight=0.8, url=_post("vc_test", "301"), date="2026-09-01",
              text="We just closed Fund IV. Doubling down on consumer hardware and personal AI agents. Founders building ambient devices, DMs open.", fetched_at=T1),
         dict(ref="vera_ring", kind="post", supports="wear", polarity=1, weight=0.7, url=_post("vc_test", "302"), date="2026-05-15",
-             text="Wearing a smart ring changed how I think about notifications. Fewer screens, more presence.", fetched_at=T1),
+             text="Wearing a smart wearable changed how I think about notifications. Fewer screens, more presence.", fetched_at=T1),
         dict(ref="vera_bio", kind="bio", supports="love", polarity=1, weight=0.5, url="https://x.com/vc_test", date="2026-09-15",
-             text="Partner @ExampleVentures. Consumer hardware, voice, agents. Wears a ring, talks to her AI.", fetched_at=T1),
+             text="Partner @ExampleVentures. Consumer hardware, voice, agents. Wears a wearable, talks to her AI.", fetched_at=T1),
         dict(ref="vera_accept", kind="profile_signal", supports="accept", polarity=1, weight=0.5, url=_post("vc_test", "301"), date="2026-09-01",
              text="'Founders building ambient devices, DMs open' - invites exactly this kind of approach.", fetched_at=T1),
         dict(ref="vera_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/vc_test", date="2026-09-15",
@@ -118,7 +118,7 @@ EVIDENCE: dict[str, list[dict]] = {
         dict(ref="frank_angel", kind="post", supports="accept", polarity=1, weight=0.8, url=_post("founder_test", "401"), date="2026-09-18",
              text="Angel-invested in a voice-first AI earbuds startup. The future is human, not artificial. Screens are the bug.", fetched_at=T2),
         dict(ref="frank_love", kind="post", supports="love", polarity=1, weight=0.7, url=_post("founder_test", "401"), date="2026-09-18",
-             text="'The future is human, not artificial' - ring_wishlist's own thesis, in his words.", fetched_at=T2),
+             text="'The future is human, not artificial' - wearable_wishlist's own thesis, in his words.", fetched_at=T2),
         dict(ref="frank_bio", kind="bio", supports="accept", polarity=1, weight=0.5, url="https://x.com/founder_test", date="2026-09-15",
              text="Founded VoiceThing (acq. 2024). Angel in 30 companies. Screen-free evangelist.", fetched_at=T1),
         dict(ref="frank_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/founder_test", date="2026-09-15",
@@ -134,11 +134,11 @@ EVIDENCE: dict[str, list[dict]] = {
     ],
     "cora": [
         dict(ref="cora_post", kind="post", supports="competitor", polarity=1, weight=0.9, url=_post("competitor_test", "701"), date="2026-09-15",
-             text="Proud of what the Oura team shipped this quarter. Rings are the wearable people actually keep on.", fetched_at=T2),
+             text="Proud of what the Oura team shipped this quarter. Wearables are the wearable people actually keep on.", fetched_at=T2),
         dict(ref="cora_bio", kind="bio", supports="competitor", polarity=1, weight=1.0, url="https://x.com/competitor_test", date="2026-09-15",
              text="Product lead @ouraring. Opinions my own.", fetched_at=T2),
         dict(ref="cora_wear", kind="post", supports="wear", polarity=1, weight=0.8, url=_post("competitor_test", "701"), date="2026-09-15",
-             text="Wears rings daily (Oura product lead).", fetched_at=T2),
+             text="Wears wearables daily (Oura product lead).", fetched_at=T2),
         dict(ref="cora_us", kind="profile_signal", supports="us", polarity=1, weight=0.8, url="https://x.com/competitor_test", date="2026-09-15",
              text="location: San Francisco, CA", fetched_at=T1),
     ],
@@ -148,18 +148,18 @@ EVIDENCE: dict[str, list[dict]] = {
     ],
     "elke": [
         dict(ref="elke_ring", kind="post", supports="wear", polarity=1, weight=0.8, url=_post("eu_test", "601"), date="2026-09-12",
-             text="Smart ring number six arrived in Berlin today. Comparing AI wearables all month.", fetched_at=T2),
+             text="Smart wearable number six arrived in Berlin today. Comparing AI wearables all month.", fetched_at=T2),
         dict(ref="elke_bio", kind="bio", supports="love", polarity=1, weight=0.5, url="https://x.com/eu_test", date="2026-09-29",
-             text="AI wearables enthusiast. Smart ring collector.", fetched_at=T2),
+             text="AI wearables enthusiast. Smart wearable collector.", fetched_at=T2),
         dict(ref="elke_us", kind="profile_signal", supports="us", polarity=-1, weight=0.9, url="https://x.com/eu_test", date="2026-09-29",
              text="location: Berlin, Germany", fetched_at=T2),
     ],
 }
 
 EVENTS: dict[str, list[dict]] = {
-    "rina": [dict(kind="ring_unboxing", date="2026-09-20", url=_post("ringnerd_test", "101"),
-                  text="Unboxed the Oura Ring 5 (voice notes 'finally usable').", source="fixture", fetched_at=T2),
-             dict(kind="device_review", date="2026-07-11", url=_post("ringnerd_test", "103"),
+    "rina": [dict(kind="wearable_unboxing", date="2026-09-20", url=_post("wearablenerd_test", "101"),
+                  text="Unboxed the Oura Wearable 5 (voice notes 'finally usable').", source="fixture", fetched_at=T2),
+             dict(kind="device_review", date="2026-07-11", url=_post("wearablenerd_test", "103"),
                   text="Three weeks with the Limitless pendant.", source="fixture", fetched_at=T1)],
     "tom": [dict(kind="device_review", date="2026-09-10", url=_post("techwriter_test", "201"),
                  text="Reviewed the Humane Pin successor for GadgetDaily.", source="fixture", fetched_at=T1)],
@@ -190,27 +190,27 @@ UNKNOWN = {"value": None, "evidence": []}
 
 CLASSIFICATIONS: dict[str, dict] = {
     "rina": _cls("x_voice", True, "location says Austin, TX",
-                 {"value": True, "evidence": [_ev(_post("ringnerd_test", "101"), "Unboxing the new Oura Ring 5", "2026-09-20")]},
-                 {"value": True, "evidence": [_ev(_post("ringnerd_test", "102"), "Smart rings plus a voice agent is the form factor", "2026-08-02")]},
-                 {"value": True, "evidence": [_ev(_post("ringnerd_test", "103"), "Three weeks with the Limitless pendant", "2026-07-11")]},
+                 {"value": True, "evidence": [_ev(_post("wearablenerd_test", "101"), "Unboxing the new Oura Wearable 5", "2026-09-20")]},
+                 {"value": True, "evidence": [_ev(_post("wearablenerd_test", "102"), "Smart wearables plus a voice agent is the form factor", "2026-08-02")]},
+                 {"value": True, "evidence": [_ev(_post("wearablenerd_test", "103"), "Three weeks with the Limitless pendant", "2026-07-11")]},
                  NO_TIE, 0.9, "verified", "blue verified since 2015, 48k followers, bio links to review site",
-                 [{"kind": "ring_unboxing", "date": "2026-09-20", "url": _post("ringnerd_test", "101"), "text": "Unboxing the new Oura Ring 5"}],
-                 "Wearables reviewer who already wears two rings and argues for screen-free voice devices.",
+                 [{"kind": "wearable_unboxing", "date": "2026-09-20", "url": _post("wearablenerd_test", "101"), "text": "Unboxing the new Oura Wearable 5"}],
+                 "Wearables reviewer who already wears two wearables and argues for screen-free voice devices.",
                  ["whether they accept free devices"]),
     "tom": _cls("media", True, "location says New York, NY",
-                {"value": True, "evidence": [_ev(_post("techwriter_test", "202"), "Kept the Oura ring and AirPods", "2026-06-01")]},
+                {"value": True, "evidence": [_ev(_post("techwriter_test", "202"), "Kept the Oura wearable and AirPods", "2026-06-01")]},
                 UNKNOWN,
                 {"value": True, "evidence": [_ev(_post("techwriter_test", "201"), "Reviewed the Humane Pin successor for GadgetDaily", "2026-09-10")]},
                 NO_TIE, 0.85, "verified", "blue verified, outlet named in bio, 120k followers",
                 [{"kind": "device_review", "date": "2026-09-10", "url": _post("techwriter_test", "201"), "text": "Reviewed the Humane Pin successor"}],
-                "Senior editor covering AI hardware who wore an Oura ring through a screen-free week.",
+                "Senior editor covering AI hardware who wore an Oura wearable through a screen-free week.",
                 ["whether GadgetDaily accepts pre-release units", "no voice-tool post found"]),
     "vera": _cls("vc", True, "location says Palo Alto, CA",
-                 {"value": True, "evidence": [_ev(_post("vc_test", "302"), "Wearing a smart ring changed how I think about notifications", "2026-05-15")]},
-                 {"value": True, "evidence": [_ev("https://x.com/vc_test", "Wears a ring, talks to her AI", "2026-09-15")]},
+                 {"value": True, "evidence": [_ev(_post("vc_test", "302"), "Wearing a smart wearable changed how I think about notifications", "2026-05-15")]},
+                 {"value": True, "evidence": [_ev("https://x.com/vc_test", "Wears a wearable, talks to her AI", "2026-09-15")]},
                  UNKNOWN, NO_TIE, 0.8, "verified", "blue verified, fund site links back",
                  [{"kind": "fund_raised", "date": "2026-09-01", "url": _post("vc_test", "301"), "text": "We just closed Fund IV"}],
-                 "Consumer-hardware VC who wears a ring, talks to her AI and just raised Fund IV for ambient devices.",
+                 "Consumer-hardware VC who wears a wearable, talks to her AI and just raised Fund IV for ambient devices.",
                  ["whether she posts product opinions publicly"]),
     "frank": _cls("founder_angel", True, "location says Boulder, CO",
                   UNKNOWN,
@@ -221,31 +221,31 @@ CLASSIFICATIONS: dict[str, dict] = {
                   ["whether he wears any device today"]),
     "adrian": _cls("founder_angel", None, "map has no location field", UNKNOWN, UNKNOWN, UNKNOWN, NO_TIE, 0.5,
                    "likely_real", "handle resolved by user search + bio match (Foundational Industries)", [],
-                   "Warm angel/advisor in Carlo's map (3 meetings, LP in ~100 funds); no device evidence yet.",
+                   "Warm angel/advisor in the operator's map (3 meetings, LP in ~100 funds); no device evidence yet.",
                    ["location", "whether he wears a wearable", "whether he uses voice tools"]),
     "cora": _cls("other", True, "location says San Francisco, CA",
-                 {"value": True, "evidence": [_ev(_post("competitor_test", "701"), "Rings are the wearable people actually keep on", "2026-09-15")]},
+                 {"value": True, "evidence": [_ev(_post("competitor_test", "701"), "Wearables are the wearable people actually keep on", "2026-09-15")]},
                  UNKNOWN, UNKNOWN,
                  {"value": True, "which": "Oura", "kind": "employee", "evidence": [_ev("https://x.com/competitor_test", "Product lead @ouraring", "2026-09-15")]},
                  0.5, "verified", "blue verified, employer in bio",
                  [{"kind": "joined_competitor", "date": "2026-09-15", "url": _post("competitor_test", "701"), "text": "Proud of what the Oura team shipped"}],
-                 "Oura product lead: wears rings daily but is a direct competitor employee.",
+                 "Oura product lead: wears wearables daily but is a direct competitor employee.",
                  []),
     "parody": _cls("x_voice", None, "no location", UNKNOWN, UNKNOWN, UNKNOWN, NO_TIE, 0.05,
-                   "suspicious", "bio says PARODY; account created 2025-11; 900 followers; impersonates ringnerd_test", [],
-                   "Parody of Rina Ring; not a real person to send a ring to.",
+                   "suspicious", "bio says PARODY; account created 2025-11; 900 followers; impersonates wearablenerd_test", [],
+                   "Parody of Rina Wearable; not a real person to send a wearable to.",
                    ["who runs the account"]),
     "elke": _cls("x_voice", False, "location says Berlin, Germany",
-                 {"value": True, "evidence": [_ev(_post("eu_test", "601"), "Smart ring number six arrived in Berlin today", "2026-09-12")]},
+                 {"value": True, "evidence": [_ev(_post("eu_test", "601"), "Smart wearable number six arrived in Berlin today", "2026-09-12")]},
                  UNKNOWN, {"value": None, "evidence": []}, NO_TIE, 0.6, "likely_real", "consistent bio and posting history since 2016", [],
-                 "Berlin-based smart-ring collector comparing AI wearables; not US-based.",
+                 "Berlin-based smart-wearable collector comparing AI wearables; not US-based.",
                  ["whether she reviews publicly or just collects", "reach: nobody in the map knows her"]),
 }
 
 # The classifier's topic verdict (classify.py "topic_voice"), latest classification only.
 TOPIC_VOICE: dict[str, dict] = {
     "rina": {"value": True, "topics": ["voice", "wearables", "personal_agents"],
-             "evidence": [_ev(_post("ringnerd_test", "102"), "Smart rings plus a voice agent is the form factor", "2026-08-02")]},
+             "evidence": [_ev(_post("wearablenerd_test", "102"), "Smart wearables plus a voice agent is the form factor", "2026-08-02")]},
     "frank": {"value": True, "topics": ["screen_free", "voice"],
               "evidence": [_ev(_post("founder_test", "401"), "Screens are the bug", "2026-09-18")]},
     "vera": {"value": None, "topics": [], "evidence": []},
@@ -276,7 +276,7 @@ SCORES_RUN2: dict[str, tuple] = {
 # Topic affinity, latest run only: key -> (value | None, source | None, reason, [(post_id, replies)] best posts first).
 # Shape of score.py's reasons_json factor "affinity": {"value", "source", "reason", "top_posts": [{"url", "date", "text", ...}]}.
 AFFINITY_RUN2: dict[str, tuple] = {
-    "rina": (0.82, "computed+classifier", "3 of her posts since July argue for rings plus a voice agent; they draw 2.4x her usual "
+    "rina": (0.82, "computed+classifier", "3 of her posts since July argue for wearables plus a voice agent; they draw 2.4x her usual "
              "engagement and 90+ replies each.", [("102", 140), ("103", 90), ("101", 35)]),
     "frank": (0.71, "computed+classifier", "Screen-free evangelist: backs voice-first devices in public and his replies fill up "
               "with founders asking how.", [("401", 60)]),
@@ -284,11 +284,11 @@ AFFINITY_RUN2: dict[str, tuple] = {
              [("301", 200), ("302", 50)]),
     "tom": (0.58, "computed", "Writes about voice-first computing and a screen-free week; readers argue back in the replies.",
             [("202", 300), ("201", 110)]),
-    "elke": (0.52, "computed", "Compares AI wearables and smart rings all month; replies are mostly other collectors.",
+    "elke": (0.52, "computed", "Compares AI wearables and smart wearables all month; replies are mostly other collectors.",
              [("601", 25)]),
     "cora": (0.30, "computed+classifier", "Posts about Oura's roadmap, not about agents or voice: the classifier says no, capped at 0.30.",
              [("701", 80)]),
-    "parody": (0.05, "computed", "No topical post of its own: one joke about rings, 2 replies.", [("501", 2)]),
+    "parody": (0.05, "computed", "No topical post of its own: one joke about wearables, 2 replies.", [("501", 2)]),
     "adrian": (None, None, "No posts of his are stored and the classifier had nothing to judge: unknown, not guessed.", []),
 }
 
@@ -296,24 +296,24 @@ AFFINITY_RUN2: dict[str, tuple] = {
 REASONS: dict[str, dict[str, tuple[list[str], list[str]]]] = {
     "rina": {
         "p_accept": (["Bio links to a review site: accepts devices to review"], ["rina_accept"]),
-        "p_wear": (["Unboxed the Oura Ring 5 on 2026-09-20", "Wears Oura and Ultrahuman rings (bio)"], ["rina_unbox", "rina_bio"]),
-        "p_love": (["Argues rings + voice agent is the form factor (1.2k likes)", "Reviewed the Limitless pendant publicly"], ["rina_voice", "rina_limitless"]),
+        "p_wear": (["Unboxed the Oura Wearable 5 on 2026-09-20", "Wears Oura and Ultrahuman wearables (bio)"], ["rina_unbox", "rina_bio"]),
+        "p_love": (["Argues wearables + voice agent is the form factor (1.2k likes)", "Reviewed the Limitless pendant publicly"], ["rina_voice", "rina_limitless"]),
         "impact": (["48k followers, high engagement on wearable posts"], ["rina_impact"]),
         "reach": (["Best path: via Marwan Refaat (replied to each other on X)"], []),
     },
     "tom": {
         "p_accept": (["Prior for media (0.5): no explicit signal about accepting units"], []),
-        "p_wear": (["Kept the Oura ring through a screen-free week (2026-06-01, fading with 90-day decay)"], ["tom_ring"]),
+        "p_wear": (["Kept the Oura wearable through a screen-free week (2026-06-01, fading with 90-day decay)"], ["tom_ring"]),
         "p_love": (["Reviews devices publicly for GadgetDaily"], ["tom_review"]),
         "impact": (["Senior editor at GadgetDaily, 120k followers"], ["tom_bio"]),
         "reach": (["Best path: via Tammy Rogers (press, weak)"], []),
     },
     "vera": {
         "p_accept": (["'Founders building ambient devices, DMs open'"], ["vera_accept"]),
-        "p_wear": (["Wears a smart ring (post 2026-05-15, bio)"], ["vera_ring", "vera_bio"]),
+        "p_wear": (["Wears a smart wearable (post 2026-05-15, bio)"], ["vera_ring", "vera_bio"]),
         "p_love": (["'Talks to her AI' (bio); fund thesis is personal AI agents"], ["vera_bio"]),
         "impact": (["Closed Fund IV for consumer hardware and personal AI agents"], ["vera_fund"]),
-        "reach": (["Best path: via Adrian Aoun (X conversation) and mutual follow with Carlo"], []),
+        "reach": (["Best path: via Adrian Aoun (X conversation) and mutual follow with the operator"], []),
     },
     "frank": {
         "p_accept": (["Angel-invested in a voice-first AI earbuds startup (2026-09-18)", "Screen-free evangelist (bio)"], ["frank_angel", "frank_bio"]),
@@ -327,14 +327,14 @@ REASONS: dict[str, dict[str, tuple[list[str], list[str]]]] = {
         "p_wear": (["Prior (0.45): no wearable evidence"], []),
         "p_love": (["Prior (0.45): no public device opinions found"], []),
         "impact": (["LP in ~100 funds; co-founder Foundational Industries"], ["adrian_impact"]),
-        "reach": (["Direct: Carlo knows him"], ["adrian_reach"]),
+        "reach": (["Direct: the operator knows him"], ["adrian_reach"]),
     },
     "cora": {
-        "p_accept": (["Oura employee: unlikely to accept a competitor's ring"], ["cora_bio"]),
-        "p_wear": (["Wears rings daily (Oura product lead)"], ["cora_wear"]),
+        "p_accept": (["Oura employee: unlikely to accept a competitor's wearable"], ["cora_bio"]),
+        "p_wear": (["Wears wearables daily (Oura product lead)"], ["cora_wear"]),
         "p_love": (["Prior lowered: competitor tie"], ["cora_post"]),
-        "impact": (["18k followers, strong engagement inside the ring community"], []),
-        "reach": (["Mutual follow with Carlo on X"], []),
+        "impact": (["18k followers, strong engagement inside the wearable community"], []),
+        "reach": (["Mutual follow with the operator on X"], []),
     },
     "parody": {
         "p_accept": (["Prior (0.3): parody account"], ["parody_bio"]),
@@ -344,8 +344,8 @@ REASONS: dict[str, dict[str, tuple[list[str], list[str]]]] = {
         "reach": (["DMs open only"], []),
     },
     "elke": {
-        "p_accept": (["Collects smart rings (sixth ring, 2026-09-12)"], ["elke_ring"]),
-        "p_wear": (["Smart ring collector (bio and post)"], ["elke_ring", "elke_bio"]),
+        "p_accept": (["Collects smart wearables (sixth wearable, 2026-09-12)"], ["elke_ring"]),
+        "p_wear": (["Smart wearable collector (bio and post)"], ["elke_ring", "elke_bio"]),
         "p_love": (["Prior (0.5): compares AI wearables publicly, no review found yet"], []),
         "impact": (["22k followers; not US-based"], []),
         "reach": (["No path: DMs open only"], []),
@@ -353,19 +353,19 @@ REASONS: dict[str, dict[str, tuple[list[str], list[str]]]] = {
 }
 
 CHANGE_REASONS: dict[str, str] = {
-    "rina": "Posted an Oura Ring 5 unboxing on 2026-09-20 ('voice notes finally usable'): wear and love evidence added",
+    "rina": "Posted an Oura Wearable 5 unboxing on 2026-09-20 ('voice notes finally usable'): wear and love evidence added",
     "frank": "Angel-invested in a voice-first AI earbuds startup on 2026-09-18 ('the future is human')",
     "tom": "No wearable post since 2026-06-01: the screen-free-week evidence is fading (90-day decay)",
     "cora": "Bio and 2026-09-15 post confirm product lead at Oura: competitor flag set",
     "parody": "Handle classified suspicious: bio says PARODY, account created 2025-11, 900 followers",
-    "elke": 'New candidate from query "smart ring" (AI OR voice ...): sixth smart ring arrived in Berlin on 2026-09-12',
+    "elke": 'New candidate from query "smart wearable" (AI OR voice ...): sixth smart wearable arrived in Berlin on 2026-09-12',
 }
 
 # ---------------------------------------------------------------- paths (key -> list in rank order), contract shape
 PATHS: dict[str, list[dict]] = {
     "rina": [
         dict(how="via", strength=0.55, via_person_id=254, via_name="Marwan Refaat", you_rel="met · 16 intros made · warm · last 103d ago",
-             target_rel="replied to each other on X (3 posts)", evidence="x_posts: 3 replies between marwanrefaat and ringnerd_test in 2026"),
+             target_rel="replied to each other on X (3 posts)", evidence="x_posts: 3 replies between marwanrefaat and wearablenerd_test in 2026"),
         dict(how="x_direct", strength=0.45, via_person_id=None, via_name=None, you_rel="follow each other", target_rel="follow each other on X",
              evidence="x_follows: 1->2 and 2->1"),
         dict(how="open_dm", strength=0.15, via_person_id=None, via_name=None, you_rel=None, target_rel="DMs open", evidence="x_users.can_dm = 1"),
@@ -413,14 +413,14 @@ MAP_X_HANDLES = [
 ]
 
 STATUS_ROWS = [
-    dict(key="rina", status="approved", owner="carlo", note="Send with the launch batch; ask Marwan for the intro.", updated_at="2026-09-28T16:20:00Z"),
-    dict(key="adrian", status="intro_asked", owner="carlo", note="Mentioned at Thursday's meeting; he is in.", updated_at="2026-09-26T10:00:00Z"),
+    dict(key="rina", status="approved", owner="the operator", note="Send with the launch batch; ask Marwan for the intro.", updated_at="2026-09-28T16:20:00Z"),
+    dict(key="adrian", status="intro_asked", owner="the operator", note="Mentioned at Thursday's meeting; he is in.", updated_at="2026-09-26T10:00:00Z"),
 ]
 
 COSTS = {
     1: [("x_api", "users/search", 40, 0.010, "resolve handles for 40 map people"),
         ("x_api", "tweets/search/recent", 300, 0.005, "19 discovery queries, 300 posts"),
-        ("x_api", "users/:id/following", 500, 0.010, "seed crawl: Carlo's following"),
+        ("x_api", "users/:id/following", 500, 0.010, "seed crawl: the operator's following"),
         ("anthropic", "messages", 7, 0.012, "classify 7 dossiers (~4k in / 1k out tokens each, claude-sonnet-5-5)")],
     2: [("x_api", "users/search", 12, 0.010, "resolve 12 new map handles"),
         ("x_api", "tweets/search/recent", 140, 0.005, "19 discovery queries, 140 new posts"),

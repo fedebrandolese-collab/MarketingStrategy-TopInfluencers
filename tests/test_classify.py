@@ -6,15 +6,15 @@ import time
 
 import pytest
 
-from ring_wishlist import classify, config, costs, db, discover, llm
-from ring_wishlist.sources.base import FixtureSource, XPost, persist_posts
+from wearable_wishlist import classify, config, costs, db, discover, llm
+from wearable_wishlist.sources.base import FixtureSource, XPost, persist_posts
 
 FIXTURE = json.loads((config.FIXTURES_DIR / "llm_classification.json").read_text())
 
 
 @pytest.fixture(autouse=True)
 def _seed_env(monkeypatch):
-    monkeypatch.setenv("CARLO_X_HANDLE", "carlo_test")
+    monkeypatch.setenv("SEED_X_HANDLE", "seed_test")
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def world(conn):
     """Crawl + discovery on the fixture graph: candidates with profiles and topical posts."""
     run_id = db.new_run(conn, "setup")
     src = FixtureSource()
-    discover.run_crawl(conn, run_id, src, "carlo_test")
+    discover.run_crawl(conn, run_id, src, "seed_test")
     discover.run_discover(conn, run_id, src)
     return conn
 
@@ -34,18 +34,18 @@ def cid(conn, handle):
 def with_events(**extra):
     out = json.loads(json.dumps(FIXTURE))
     out["events"] = [
-        {"kind": "ring_unboxing", "date": "2026-09-20", "url": "https://x.com/ringnerd_test/status/101", "text": "Unboxing the new Oura Ring 5"},
-        {"kind": "device_review", "date": "2026-09-01", "url": "https://x.com/ringnerd_test/status/999999", "text": "invented"},
+        {"kind": "wearable_unboxing", "date": "2026-09-20", "url": "https://x.com/wearablenerd_test/status/101", "text": "Unboxing the new Oura Wearable 5"},
+        {"kind": "device_review", "date": "2026-09-01", "url": "https://x.com/wearablenerd_test/status/999999", "text": "invented"},
     ]
     out.update(extra)
     return out
 
 
-def test_classify_ringnerd_writes_evidence_events_and_updates_candidate(world, monkeypatch):
+def test_classify_wearablenerd_writes_evidence_events_and_updates_candidate(world, monkeypatch):
     conn = world
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: with_events())
     run_id = db.new_run(conn, "classify")
-    rid = cid(conn, "ringnerd_test")
+    rid = cid(conn, "wearablenerd_test")
     stats = classify.run_classify(conn, run_id, candidate_ids=[rid])
     assert stats["classified"] == 1 and stats["errors"] == 0
     c = db.one(conn, "SELECT * FROM candidates WHERE candidate_id=?", (rid,))
@@ -53,13 +53,13 @@ def test_classify_ringnerd_writes_evidence_events_and_updates_candidate(world, m
     assert c["handle_verified"] == "verified" and c["handle_verification_method"] == "llm+signals"
     ev = db.rows(conn, "SELECT * FROM evidence WHERE candidate_id=?", (rid,))
     posts = {(e["supports"], e["url"]) for e in ev if e["kind"] == "post"}
-    assert ("wear", "https://x.com/ringnerd_test/status/101") in posts
-    assert ("love", "https://x.com/ringnerd_test/status/102") in posts and ("wear", "https://x.com/ringnerd_test/status/102") in posts
-    assert ("love", "https://x.com/ringnerd_test/status/103") in posts
+    assert ("wear", "https://x.com/wearablenerd_test/status/101") in posts
+    assert ("love", "https://x.com/wearablenerd_test/status/102") in posts and ("wear", "https://x.com/wearablenerd_test/status/102") in posts
+    assert ("love", "https://x.com/wearablenerd_test/status/103") in posts
     assert {"us", "authenticity", "impact", "reach"} <= {e["supports"] for e in ev if e["kind"] == "profile_signal"}
     assert all(e["text"] for e in ev)
     events = db.rows(conn, "SELECT * FROM events WHERE candidate_id=?", (rid,))
-    assert [(e["kind"], e["url"], e["date"]) for e in events] == [("ring_unboxing", "https://x.com/ringnerd_test/status/101", "2026-09-20")]
+    assert [(e["kind"], e["url"], e["date"]) for e in events] == [("wearable_unboxing", "https://x.com/wearablenerd_test/status/101", "2026-09-20")]
     k = json.loads(db.one(conn, "SELECT json FROM classifications WHERE candidate_id=? AND run_id=?", (rid, run_id))["json"])
     assert k["summary"] and k["_meta"]["dropped_events"][0]["why"] == "url not in dossier"
     assert k["_meta"]["posts_in_db"] == 3
@@ -73,7 +73,7 @@ def test_evidence_whose_url_is_not_in_the_dossier_is_dropped(world, monkeypatch)
     conn = world
     run_id = db.new_run(conn, "classify")
     vid = cid(conn, "vc_test")
-    # the fixture backend answers every candidate with ringnerd's posts: none of those urls is in vc_test's dossier
+    # the fixture backend answers every candidate with wearablenerd's posts: none of those urls is in vc_test's dossier
     stats = classify.run_classify(conn, run_id, candidate_ids=[vid])
     assert stats["classified"] == 1 and stats["evidence_dropped"] == 5          # 3 device fields + 2 topic_voice
     assert not db.rows(conn, "SELECT * FROM evidence WHERE candidate_id=? AND kind IN ('post','bio')", (vid,))
@@ -83,8 +83,8 @@ def test_evidence_whose_url_is_not_in_the_dossier_is_dropped(world, monkeypatch)
     # mixed answer: its own post survives (twitter.com spelling tolerated), the invented url does not
     mixed = json.loads(json.dumps(FIXTURE))
     mixed["wearable_user"] = {"value": True, "evidence": [
-        {"url": "https://twitter.com/vc_test/status/302", "quote": "Wearing a smart ring changed how I think", "date": "2026-05-15"},
-        {"url": "https://x.com/vc_test/status/4242", "quote": "I love my ring", "date": "2026-09-01"}]}
+        {"url": "https://twitter.com/vc_test/status/302", "quote": "Wearing a smart wearable changed how I think", "date": "2026-05-15"},
+        {"url": "https://x.com/vc_test/status/4242", "quote": "I love my wearable", "date": "2026-09-01"}]}
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: mixed)
     run2 = db.new_run(conn, "classify")
     classify.run_classify(conn, run2, candidate_ids=[vid])
@@ -103,7 +103,7 @@ def test_failing_llm_call_is_logged_and_skipped(world, monkeypatch, caplog):
 
     monkeypatch.setattr(llm, "complete_json", flaky)
     run_id = db.new_run(conn, "classify")
-    with caplog.at_level(logging.ERROR, logger="ring_wishlist.classify"):
+    with caplog.at_level(logging.ERROR, logger="wearable_wishlist.classify"):
         stats = classify.run_classify(conn, run_id, workers=3)
     assert stats["errors"] == 1
     assert stats["classified"] == stats["selected"] - 1 >= 5
@@ -159,7 +159,7 @@ def test_priority_order_and_skip_unchanged(world, monkeypatch):
     r2 = classify.run_classify(conn, db.new_run(conn, "classify"), workers=2)
     assert r2["classified"] == 0 and r2["skipped_unchanged"] == len(expected) and seen == []
     # a new post for one person: only that person is classified again
-    persist_posts(conn, [XPost(post_id="777", x_id="4", handle="vc_test", text="Day 3 with my new ring", likes=5)], "fixture")
+    persist_posts(conn, [XPost(post_id="777", x_id="4", handle="vc_test", text="Day 3 with my new wearable", likes=5)], "fixture")
     r3 = classify.run_classify(conn, db.new_run(conn, "classify"))
     assert seen == ["vc_test"] and r3["classified"] == 1
     seen.clear()
@@ -169,19 +169,19 @@ def test_priority_order_and_skip_unchanged(world, monkeypatch):
 
 def test_dossier_is_compact_and_ranks_evidence_first(world):
     conn = world
-    rid = cid(conn, "ringnerd_test")
-    long_text = "My smart ring review. " + "x" * 5000
-    posts = [XPost(post_id="8000", x_id="2", handle="ringnerd_test", text=long_text, likes=1)]
-    posts += [XPost(post_id=str(8100 + i), x_id="2", handle="ringnerd_test", text=f"lunch {i}", likes=0,
-                    created_at=f"2026-08-{1 + i % 28:02d}T00:00:00Z", query="from:ringnerd_test -is:retweet") for i in range(40)]
-    posts += [XPost(post_id="8200", x_id="2", handle="ringnerd_test", text="Dictating this with Wispr while walking", likes=2,
-                    query=discover.enrich_queries("ringnerd_test")[0])]
+    rid = cid(conn, "wearablenerd_test")
+    long_text = "My smart wearable review. " + "x" * 5000
+    posts = [XPost(post_id="8000", x_id="2", handle="wearablenerd_test", text=long_text, likes=1)]
+    posts += [XPost(post_id=str(8100 + i), x_id="2", handle="wearablenerd_test", text=f"lunch {i}", likes=0,
+                    created_at=f"2026-08-{1 + i % 28:02d}T00:00:00Z", query="from:wearablenerd_test -is:retweet") for i in range(40)]
+    posts += [XPost(post_id="8200", x_id="2", handle="wearablenerd_test", text="Dictating this with Wispr while walking", likes=2,
+                    query=discover.enrich_queries("wearablenerd_test")[0])]
     persist_posts(conn, posts, "fixture")
     d = classify.build_dossier(conn, rid)
     assert len(d["posts"]) == classify.MAX_DOSSIER_POSTS and d["posts_in_db"] == 45
     assert all(len(p["text"]) <= classify.MAX_POST_CHARS for p in d["posts"])
     by_url = {p["url"]: p for p in d["posts"]}
-    assert by_url["https://x.com/ringnerd_test/status/8000"]["text"].endswith("…")
+    assert by_url["https://x.com/wearablenerd_test/status/8000"]["text"].endswith("…")
     # device/voice search hits and topic-query hits lead, recent context fills the rest
     leading = [p["found_by"] for p in d["posts"][:4]]
     assert leading.count("device/voice search") == 1 and leading.count("topic search") == 3
@@ -205,7 +205,7 @@ def test_location_and_badge_are_not_overridden_by_the_model(world):
 def test_parody_account_never_gets_a_real_category(world):
     conn = world
     run_id = db.new_run(conn, "classify")
-    pid, _ = discover.upsert_candidate(conn, "6", "parody_test", "Rina Ring (parody)", "manual")
+    pid, _ = discover.upsert_candidate(conn, "6", "parody_test", "Rina Wearable (parody)", "manual")
     conn.commit()
     classify.run_classify(conn, run_id, candidate_ids=[pid])
     c = db.one(conn, "SELECT * FROM candidates WHERE candidate_id=?", (pid,))
@@ -250,34 +250,34 @@ def test_schema_and_prompt_ask_for_topic_voice():
     template = classify.load_prompt()[1]
     assert "`topic_voice`" in template and '"topic_voice": {"value": true|false|null' in template
     assert "at least two evidence items from two different posts" in template
-    assert FIXTURE["topic_voice"]["value"] is True        # the fixture reviewer talks about voice agents and rings
+    assert FIXTURE["topic_voice"]["value"] is True        # the fixture reviewer talks about voice agents and wearables
 
 
 def test_topic_voice_writes_affinity_evidence_and_is_stored(world, monkeypatch):
     conn = world
-    rid = cid(conn, "ringnerd_test")
+    rid = cid(conn, "wearablenerd_test")
     run_id = db.new_run(conn, "classify")
     stats = classify.run_classify(conn, run_id, candidate_ids=[rid])      # fixture backend (DRY_RUN=1)
     assert stats["topic_voice"] == {"true": 1, "false": 0, "null": 0, "missing": 0}
     rows = affinity_rows(conn, rid)
     assert [(r["kind"], r["polarity"], r["weight"], r["url"]) for r in rows] == [
-        ("post", 1, 1.0, "https://x.com/ringnerd_test/status/102"), ("post", 1, 1.0, "https://x.com/ringnerd_test/status/103")]
+        ("post", 1, 1.0, "https://x.com/wearablenerd_test/status/102"), ("post", 1, 1.0, "https://x.com/wearablenerd_test/status/103")]
     k = json.loads(db.one(conn, "SELECT json FROM classifications WHERE candidate_id=? AND run_id=?", (rid, run_id))["json"])
     assert k["topic_voice"]["value"] is True and k["topic_voice"]["topics"] == ["voice", "wearables"]
-    assert [e["url"] for e in k["topic_voice"]["evidence"]] == ["https://x.com/ringnerd_test/status/102",
-                                                               "https://x.com/ringnerd_test/status/103"]
+    assert [e["url"] for e in k["topic_voice"]["evidence"]] == ["https://x.com/wearablenerd_test/status/102",
+                                                               "https://x.com/wearablenerd_test/status/103"]
 
     # a bio quote is kind 'bio' at 0.8; topics are normalised and ordered personal agents first
     answer = with_topic_voice(True, [
-        {"url": "https://x.com/ringnerd_test/status/101", "quote": "the voice notes feature is finally usable", "date": "2026-09-20"},
-        {"url": "https://x.com/ringnerd_test/status/102", "quote": "Smart rings plus a voice agent is the form factor", "date": "2026-08-02"},
-        {"url": "https://x.com/ringnerd_test", "quote": "Voice-first believer", "date": "2026-09-29"}],
+        {"url": "https://x.com/wearablenerd_test/status/101", "quote": "the voice notes feature is finally usable", "date": "2026-09-20"},
+        {"url": "https://x.com/wearablenerd_test/status/102", "quote": "Smart wearables plus a voice agent is the form factor", "date": "2026-08-02"},
+        {"url": "https://x.com/wearablenerd_test", "quote": "Voice-first believer", "date": "2026-09-29"}],
         topics=["voice", "Personal agents", "telepathy"])
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: answer)
     run2 = db.new_run(conn, "classify")
     classify.run_classify(conn, run2, candidate_ids=[rid])
     bio = [r for r in affinity_rows(conn, rid) if r["kind"] == "bio"]
-    assert [(r["polarity"], r["weight"], r["url"], r["text"]) for r in bio] == [(1, 0.8, "https://x.com/ringnerd_test", "Voice-first believer")]
+    assert [(r["polarity"], r["weight"], r["url"], r["text"]) for r in bio] == [(1, 0.8, "https://x.com/wearablenerd_test", "Voice-first believer")]
     k2 = json.loads(db.one(conn, "SELECT json FROM classifications WHERE candidate_id=? AND run_id=?", (rid, run2))["json"])
     assert k2["topic_voice"]["topics"] == ["personal_agents", "voice"]
     assert any("telepathy" in n for n in k2["_meta"]["notes"])
@@ -300,7 +300,7 @@ def test_topic_voice_evidence_outside_the_dossier_is_dropped(world, monkeypatch)
     vid = cid(conn, "vc_test")
     # one real post, one invented: the invented one is dropped, and one post is not enough for 'true'
     answer = with_topic_voice(True, [
-        {"url": "https://x.com/vc_test/status/302", "quote": "Wearing a smart ring changed how I think", "date": "2026-05-15"},
+        {"url": "https://x.com/vc_test/status/302", "quote": "Wearing a smart wearable changed how I think", "date": "2026-05-15"},
         {"url": "https://x.com/vc_test/status/9999", "quote": "Agents are the new apps", "date": "2026-09-02"}])
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: answer)
     run_id = db.new_run(conn, "classify")
@@ -338,14 +338,14 @@ def test_refresh_field_selects_only_classifications_without_it(world, monkeypatc
     # one person already re-classified with the new field; one person never classified
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: seen.append(
         json.loads(prompt.split("## Dossier", 1)[1].strip())["handle"]) or FIXTURE)
-    classify.run_classify(conn, db.new_run(conn, "classify"), candidate_ids=[cid(conn, "ringnerd_test")])
-    pid, _ = discover.upsert_candidate(conn, "6", "parody_test", "Rina Ring (parody)", "manual")
-    persist_posts(conn, [XPost(post_id="778", x_id="2", handle="ringnerd_test", text="Voice agents, again", likes=3)], "fixture")
+    classify.run_classify(conn, db.new_run(conn, "classify"), candidate_ids=[cid(conn, "wearablenerd_test")])
+    pid, _ = discover.upsert_candidate(conn, "6", "parody_test", "Rina Wearable (parody)", "manual")
+    persist_posts(conn, [XPost(post_id="778", x_id="2", handle="wearablenerd_test", text="Voice agents, again", likes=3)], "fixture")
     conn.commit()
     seen.clear()
 
     r2 = classify.run_classify(conn, db.new_run(conn, "classify"), refresh_field="topic_voice")
-    expected = [h for h in everyone if h != "ringnerd_test"]
+    expected = [h for h in everyone if h != "wearablenerd_test"]
     assert seen == expected                                    # priority order, without the one that has it (new post or not)
     assert r2["classified"] == len(expected) and r2["skipped_has_field"] == 1 and r2["skipped_not_classified"] >= 1
     assert r2["refresh_field"] == "topic_voice" and "parody_test" not in seen
@@ -360,7 +360,7 @@ def test_refresh_field_selects_only_classifications_without_it(world, monkeypatc
 # ---- QA guards (docs/QA_TOP.md): mistakes that repeated in the top 60 of run 14
 
 def _person(conn, x_id, handle, name, bio, location=None, verified_type=None, map_role=None):
-    from ring_wishlist.sources.base import XUser, persist_users
+    from wearable_wishlist.sources.base import XUser, persist_users
     persist_users(conn, [XUser(x_id=x_id, handle=handle, name=name, bio=bio, location=location, verified_type=verified_type,
                                followers=80_000)], "test")
     pid, _ = discover.upsert_candidate(conn, x_id, handle, name, "manual")
@@ -374,10 +374,10 @@ def _person(conn, x_id, handle, name, bio, location=None, verified_type=None, ma
 
 def test_reclassification_prunes_rows_the_model_no_longer_cites(world, monkeypatch):
     conn = world
-    rid = cid(conn, "ringnerd_test")
+    rid = cid(conn, "wearablenerd_test")
     classify.run_classify(conn, db.new_run(conn, "classify"), candidate_ids=[rid])          # fixture: Oura unboxing -> wear
     conn.execute("INSERT INTO evidence (candidate_id, kind, supports, polarity, weight, url, date, text, source, fetched_at) "
-                 "VALUES (?, 'post', 'wear', 1, 1.0, 'https://x.com/ringnerd_test/status/777', '2025-01-01', "
+                 "VALUES (?, 'post', 'wear', 1, 1.0, 'https://x.com/wearablenerd_test/status/777', '2025-01-01', "
                  "'an old post outside the dossier', 'llm:old', '2025-01-02')", (rid,))
     conn.commit()
     answer = json.loads(json.dumps(FIXTURE))
@@ -385,9 +385,9 @@ def test_reclassification_prunes_rows_the_model_no_longer_cites(world, monkeypat
     monkeypatch.setattr(llm, "complete_json", lambda prompt, schema, **kw: answer)
     stats = classify.run_classify(conn, db.new_run(conn, "classify"), candidate_ids=[rid], force=True)
     wear = {r["url"] for r in db.rows(conn, "SELECT url FROM evidence WHERE candidate_id=? AND supports='wear'", (rid,))}
-    assert "https://x.com/ringnerd_test/status/101" not in wear                               # re-read, no longer cited: gone
-    assert "https://x.com/ringnerd_test/status/102" in wear                                   # still cited (voice)
-    assert "https://x.com/ringnerd_test/status/777" in wear                                   # not seen again: kept
+    assert "https://x.com/wearablenerd_test/status/101" not in wear                               # re-read, no longer cited: gone
+    assert "https://x.com/wearablenerd_test/status/102" in wear                                   # still cited (voice)
+    assert "https://x.com/wearablenerd_test/status/777" in wear                                   # not seen again: kept
     assert stats["evidence_pruned"] == 2                                                      # wear + accept rows of post 101
 
 
@@ -497,7 +497,7 @@ def test_summary_clause_outside_the_us_sets_us_based_false(world, monkeypatch):
               "Pre-seed VC; caveat: location split across India and SF, no wearable evidence",
               "NYC reporter who writes for a London-based outlet",
               "SF/London-based founder of a voice startup",
-              "San Francisco founder-CEO of Typeless; not a ring user"):
+              "San Francisco founder-CEO of Typeless; not a wearable user"):
         assert classify.summary_non_us(s) is None, s
 
 
@@ -555,7 +555,7 @@ def test_reapply_guards_needs_no_llm_and_is_idempotent(world, monkeypatch):
     """The QA guards reach classifications stored before them, from the stored JSON alone."""
     conn = world
     oid = _person(conn, "903", "gadgetradar", "GadgetRadar", "A team of gadget obsessives. Part of @futureplc")
-    rid = cid(conn, "ringnerd_test")
+    rid = cid(conn, "wearablenerd_test")
     classify.run_classify(conn, db.new_run(conn, "classify"), candidate_ids=[oid, rid])
     # as stored before the guards existed: the outlet kept the model's category and has no rows against it
     row = db.one(conn, "SELECT run_id, json FROM classifications WHERE candidate_id=?", (oid,))
@@ -565,8 +565,8 @@ def test_reapply_guards_needs_no_llm_and_is_idempotent(world, monkeypatch):
     conn.execute("UPDATE candidates SET category='media' WHERE candidate_id=?", (oid,))
     conn.execute("DELETE FROM evidence WHERE candidate_id=? AND text LIKE 'not a person%'", (oid,))
     # an earlier answer filed post 101 for love; the latest answer read post 101 and does not cite it for love
-    stale = ("https://x.com/ringnerd_test/status/101", "an earlier answer's quote")
-    unseen = ("https://x.com/ringnerd_test/status/777", "a post the latest answer never saw")
+    stale = ("https://x.com/wearablenerd_test/status/101", "an earlier answer's quote")
+    unseen = ("https://x.com/wearablenerd_test/status/777", "a post the latest answer never saw")
     for url, text in (stale, unseen):
         conn.execute("INSERT INTO evidence (candidate_id, kind, supports, polarity, weight, url, date, text, source, fetched_at) "
                      "VALUES (?, 'post', 'love', 1, 1.0, ?, '2025-01-01', ?, 'llm:old', '2025-01-02')", (rid, url, text))

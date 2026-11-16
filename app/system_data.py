@@ -1,8 +1,8 @@
 """Data for the dashboard's System tab: is the daily pipeline alive, what will it do next, what did it spend. Pure
-functions over a sqlite3 connection, config/schedule.yaml (ring_wishlist.schedule) and two folders (data/logs/alerts.log,
+functions over a sqlite3 connection, config/schedule.yaml (wearable_wishlist.schedule) and two folders (data/logs/alerts.log,
 data/backups); no Streamlit imports, so tests/test_system_tab.py runs them directly. app/system_tab.py draws them.
 
-  health(conn, sched, now)      -> ring_wishlist.ops.health when it exists, else fallback_health (the same rule)
+  health(conn, sched, now)      -> wearable_wishlist.ops.health when it exists, else fallback_health (the same rule)
   verdict(conn, h, sched, now)  -> (level ok|error|warning, headline, bullets): the tab's first line
   stage_rows(conn, sched, now)  -> one row per stage: every, last ok, next due, provider, paid or free
   spend(conn, sched, now)       -> this month per provider against its cap, today, the month total
@@ -24,7 +24,7 @@ from collections import Counter, deque
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from ring_wishlist import config, costs, db, schedule
+from wearable_wishlist import config, costs, db, schedule
 
 HEALTHY_HOURS = 36                  # the latest scheduled run must have finished within this
 ALERTS_LOG = config.DATA_DIR / "logs" / "alerts.log"
@@ -175,7 +175,7 @@ def recent_runs(conn: sqlite3.Connection, n: int = RUNS_SHOWN) -> list[dict]:
 
 def fallback_health(conn: sqlite3.Connection, sched: Mapping[str, Any] | None = None,
                     now: dt.datetime | None = None) -> dict:
-    """ops.health's rule, for as long as src/ring_wishlist/ops.py is not there: healthy when the latest scheduled run finished
+    """ops.health's rule, for as long as src/wearable_wishlist/ops.py is not there: healthy when the latest scheduled run finished
     within the last 36 hours and none of its stages failed. A provider at its monthly cap is a warning."""
     sched, now = sched or schedule.load(), _now(now)
     last, problems = last_scheduled_run(conn), []
@@ -199,11 +199,11 @@ def fallback_health(conn: sqlite3.Connection, sched: Mapping[str, Any] | None = 
 
 
 def ops_health() -> Callable | None:
-    """ring_wishlist.ops.health, built alongside this tab; None while src/ring_wishlist/ops.py does not exist."""
+    """wearable_wishlist.ops.health, built alongside this tab; None while src/wearable_wishlist/ops.py does not exist."""
     try:
-        return getattr(importlib.import_module("ring_wishlist.ops"), "health", None)
+        return getattr(importlib.import_module("wearable_wishlist.ops"), "health", None)
     except ModuleNotFoundError as e:
-        if e.name != "ring_wishlist.ops":   # ops.py is there but broken: health() says so
+        if e.name != "wearable_wishlist.ops":   # ops.py is there but broken: health() says so
             raise
         return None
 

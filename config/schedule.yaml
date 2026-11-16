@@ -1,4 +1,4 @@
-# When the system runs by itself (src/ring_wishlist/schedule.py reads this file; src/ring_wishlist/ops.py runs it).
+# When the system runs by itself (src/wearable_wishlist/schedule.py reads this file; src/wearable_wishlist/ops.py runs it).
 # One trigger a day at `daily_at` (local time of the machine). Each run does only the stages that are due: a stage is
 # due when its last successful run is at least `every_days` old (a few hours of slack, so a 06:05 run yesterday does not
 # skip today). Free stages run every day; paid ones less often. A stage whose provider reached its monthly cap is
@@ -6,8 +6,8 @@
 daily_at: "06:00"
 
 stages:                 # every_days per stage; 0 = never by schedule (run it by hand: make <stage>)
-  ingest: 1             # free: re-reads Carlo's map from the read-only mirror in data/raw
-  crawl: 7              # paid (monid): Carlo's follow graph
+  ingest: 1             # free: re-reads the operator's map from the read-only mirror in data/raw
+  crawl: 7              # paid (monid): the operator's follow graph
   resolve: 7            # paid (X API): handles for new map contacts
   discover: 7           # paid (monid): the topic, competitor, author and evidence searches
   expand: 14            # paid (monid): who the best people follow

@@ -5,7 +5,7 @@ import types
 
 import pytest
 
-from ring_wishlist import db, score, weights
+from wearable_wishlist import db, score, weights
 
 NOW = dt.datetime.now(dt.timezone.utc)
 
@@ -20,7 +20,7 @@ def day(days_ago: float = 0.0) -> str:
 
 CLS_VOICE = {"category": "x_voice", "us_based": True, "audience_relevance": 0.9,
              "handle_authenticity": {"value": "verified", "reasons": "blue verified since 2015"},
-             "summary": "Wearables reviewer who already wears two rings.", "unknowns": ["whether they accept free devices"]}
+             "summary": "Wearables reviewer who already wears two wearables.", "unknowns": ["whether they accept free devices"]}
 CLS_VC = {"category": "vc", "us_based": True, "audience_relevance": 0.7,
           "handle_authenticity": {"value": "likely_real", "reasons": "bio links to the fund site"}, "summary": "Consumer hardware VC.", "unknowns": []}
 CLS_MEDIA = {"category": "media", "us_based": False, "us_based_evidence": "location says Berlin", "audience_relevance": 0.6,
@@ -65,7 +65,7 @@ def add_post(conn, post_id, x_id, likes=400, reposts=60, replies=30, quotes=5):
 
 @pytest.fixture(autouse=True)
 def affinity(monkeypatch):
-    """score.py imports topic_affinity lazily from ring_wishlist.affinity (workstream AF). Every test here gets a fake module instead:
+    """score.py imports topic_affinity lazily from wearable_wishlist.affinity (workstream AF). Every test here gets a fake module instead:
     by default it knows nobody (computed affinity unknown), so these tests do not depend on AF's implementation.
     A test sets `affinity.data[candidate_id] = aff(...)` to control the computed values; `affinity.calls` records the calls."""
     fake = types.SimpleNamespace(data={}, calls=[])
@@ -74,9 +74,9 @@ def affinity(monkeypatch):
         fake.calls.append({"candidate_ids": candidate_ids, "now": now, "window_days": window_days})
         return {cid: v for cid, v in fake.data.items() if candidate_ids is None or cid in candidate_ids}
 
-    mod = types.ModuleType("ring_wishlist.affinity")
+    mod = types.ModuleType("wearable_wishlist.affinity")
     mod.topic_affinity = topic_affinity
-    monkeypatch.setitem(sys.modules, "ring_wishlist.affinity", mod)
+    monkeypatch.setitem(sys.modules, "wearable_wishlist.affinity", mod)
     return fake
 
 
@@ -104,7 +104,7 @@ def test_missing_weights_file_keeps_todays_totals(conn):
 
 def test_weights_default_reweights_the_scheduled_total(conn, tmp_path, monkeypatch):
     p = tmp_path / "weights.yaml"
-    weights.save_preset("Carlo live", {"impact": 2.0, "media": 0.0, "connection": 1.0}, as_default=True, path=p)
+    weights.save_preset("the operator live", {"impact": 2.0, "media": 0.0, "connection": 1.0}, as_default=True, path=p)
     monkeypatch.setattr(score, "WEIGHTS_FILE", p)
     run1, ids, _ = seed(conn)
     score.run_score(conn, run1)
@@ -116,7 +116,7 @@ def test_weights_default_reweights_the_scheduled_total(conn, tmp_path, monkeypat
         assert (r["total"] == 0) == (cat == "media")
     reason = score.explain(conn, run1, ids["a"])["per_factor"]["total"]["reasons"][0]
     assert "(0.3 + 0.7 x" in reason and ")^2" in reason and "(0.25 + 0.75 x reach 0.70)" in reason
-    assert "config/weights.yaml default 'Carlo live'" in reason and "reach is not in the total" not in reason
+    assert "config/weights.yaml default 'the operator live'" in reason and "reach is not in the total" not in reason
     # the path now counts, so A (via path, reach 0.7) leads B (no path) by more than the p_accept nudge alone
     assert s[ids["a"]]["total"] / s[ids["b"]]["total"] > s[ids["a"]]["p_accept"] / s[ids["b"]]["p_accept"] * 1.5
 
@@ -159,16 +159,16 @@ def seed(conn):
     ev = {}
     for cid in (a, b):
         ev[cid] = [
-            add_evidence(conn, cid, "wear", 1, 0.8, "Unboxing smart ring number three", url=f"https://x.com/c{cid}/status/1", date=day(12)),
-            add_evidence(conn, cid, "love", 1, 0.6, "Rings win on that, the pendant lost", url=f"https://x.com/c{cid}/status/2", date=day(40)),
+            add_evidence(conn, cid, "wear", 1, 0.8, "Unboxing smart wearable number three", url=f"https://x.com/c{cid}/status/1", date=day(12)),
+            add_evidence(conn, cid, "love", 1, 0.6, "Wearables win on that, the pendant lost", url=f"https://x.com/c{cid}/status/2", date=day(40)),
             add_evidence(conn, cid, "love", -1, 0.5, "Returned the pendant after a week", url=f"https://x.com/c{cid}/status/3", date=day(60)),
             add_evidence(conn, cid, "impact", 1, 0.9, "audience relevance 0.9", kind="profile_signal", url=f"https://x.com/c{cid}"),
         ]
-        add_event(conn, cid, "ring_unboxing", days_ago=5, text="Unboxing the new ring", url=f"https://x.com/c{cid}/status/1")
+        add_event(conn, cid, "wearable_unboxing", days_ago=5, text="Unboxing the new wearable", url=f"https://x.com/c{cid}/status/1")
     add_post(conn, "p1", "10")
     add_post(conn, "p2", "11")
     add_post(conn, "p3", "12", likes=1500, reposts=250, replies=200, quotes=50)
-    ev[c] = [add_evidence(conn, c, "wear", 1, 0.7, "Wears a ring, talks to her AI", kind="bio", url="https://x.com/charlie_vc")]
+    ev[c] = [add_evidence(conn, c, "wear", 1, 0.7, "Wears a wearable, talks to her AI", kind="bio", url="https://x.com/charlie_vc")]
     ev[d] = [add_evidence(conn, d, "competitor", 1, 1.0, "Product lead @ouraring", kind="bio", url="https://x.com/delta_media"),
              add_evidence(conn, d, "love", 1, 0.8, "Reviewed the Humane Pin successor", kind="review", url="https://x.com/delta_media/status/9")]
     for cid, cls in ((a, CLS_VOICE), (b, CLS_VOICE), (c, CLS_VC), (d, CLS_MEDIA)):
@@ -237,9 +237,9 @@ def test_second_run_writes_changes_with_reasons(conn):
     conn.execute("UPDATE runs SET started_at=?, finished_at=? WHERE run_id=?", (iso(2), iso(1.9), run1))
     before = scores_of(conn, run1)
     # between runs: B posts an unboxing (new evidence + event), C raises a fund, E joins the list
-    add_evidence(conn, ids["b"], "wear", 1, 1.0, "Unboxing the Oura Ring 5 on day one", url="https://x.com/bravo/status/77",
+    add_evidence(conn, ids["b"], "wear", 1, 1.0, "Unboxing the Oura Wearable 5 on day one", url="https://x.com/bravo/status/77",
                  fetched_days_ago=0.0, date=day(1))
-    add_event(conn, ids["b"], "posted_about_product", days_ago=1, text="ring_wishlist's ring looks like the one I asked for", fetched_days_ago=0.0)
+    add_event(conn, ids["b"], "posted_about_product", days_ago=1, text="wearable_wishlist's wearable looks like the one I asked for", fetched_days_ago=0.0)
     add_event(conn, ids["c"], "fund_raised", days_ago=1, text="We just closed Fund IV", fetched_days_ago=0.0)
     add_user(conn, "14", "echo", 15000, bio="Founder. Angel in 30 companies.")
     e = add_candidate(conn, "14", "echo", "Echo Founder", "founder_angel", handle_verified="likely_real")
@@ -258,9 +258,9 @@ def test_second_run_writes_changes_with_reasons(conn):
     fields_b = {r["field"] for r in ch_b}
     assert {"p_wear", "total"} <= fields_b
     wear_row = next(r for r in ch_b if r["field"] == "p_wear")
-    assert "Unboxing the Oura Ring 5" in wear_row["reason"] and "#" in wear_row["reason"]
+    assert "Unboxing the Oura Wearable 5" in wear_row["reason"] and "#" in wear_row["reason"]
     love_row = next(r for r in ch_b if r["field"] == "p_love")
-    assert "posted about ring_wishlist" in love_row["reason"]
+    assert "posted about wearable_wishlist" in love_row["reason"]
     assert float(wear_row["old_value"]) == b0["p_wear"] and float(wear_row["new_value"]) == b1["p_wear"]
     # C: fund raised -> accept and impact move, reason names the event
     ch_c = changes_of(conn, run2, ids["c"])
@@ -360,19 +360,19 @@ def test_change_reasons_ignore_reclassified_evidence(conn):
     run1 = db.new_run(conn, "score")
     add_user(conn, "30", "rerun", 20000)
     cid = add_candidate(conn, "30", "rerun", "Re Run", "x_voice")
-    add_evidence(conn, cid, "wear", 1, 1.0, "Old ring post from last month", url="https://x.com/rerun/status/1", date=day(30))
+    add_evidence(conn, cid, "wear", 1, 1.0, "Old wearable post from last month", url="https://x.com/rerun/status/1", date=day(30))
     conn.commit()
     score.run_score(conn, run1)
     conn.execute("UPDATE runs SET started_at=?, finished_at=? WHERE run_id=?", (iso(2), iso(1.9), run1))
     db.upsert(conn, "evidence", {"candidate_id": cid, "kind": "post", "supports": "wear", "url": "https://x.com/rerun/status/1",
-                                 "text": "Old ring post from last month", "polarity": 1, "weight": 1.0, "fetched_at": iso(0)},
+                                 "text": "Old wearable post from last month", "polarity": 1, "weight": 1.0, "fetched_at": iso(0)},
               keys=("candidate_id", "kind", "supports", "url", "text"))
-    add_evidence(conn, cid, "wear", 1, 1.0, "Brand new ring unboxing", url="https://x.com/rerun/status/2", fetched_days_ago=0.0, date=day(1))
+    add_evidence(conn, cid, "wear", 1, 1.0, "Brand new wearable unboxing", url="https://x.com/rerun/status/2", fetched_days_ago=0.0, date=day(1))
     run2 = db.new_run(conn, "score")
     conn.commit()
     score.run_score(conn, run2)
     wear = next(r for r in changes_of(conn, run2, cid) if r["field"] == "p_wear")
-    assert "Brand new ring unboxing" in wear["reason"] and "Old ring post" not in wear["reason"]
+    assert "Brand new wearable unboxing" in wear["reason"] and "Old wearable post" not in wear["reason"]
 
 
 def test_accept_spillover_counts_each_quote_once(conn):
@@ -380,7 +380,7 @@ def test_accept_spillover_counts_each_quote_once(conn):
     run1 = db.new_run(conn, "score")
     cid = add_candidate(conn, None, None, "Spill Over", "x_voice")
     for supports, w in (("wear", 1.0), ("accept", 0.5)):          # wearable_user -> wear 1.0 + accept 0.5 (classify.EVIDENCE_MAP)
-        add_evidence(conn, cid, supports, 1, w, "Wearing my ring", url="https://x.com/s/status/1")
+        add_evidence(conn, cid, supports, 1, w, "Wearing my wearable", url="https://x.com/s/status/1")
     for supports in ("wear", "love"):                               # voice_tool_user -> wear 1.0 + love 1.0
         add_evidence(conn, cid, supports, 1, 1.0, "Talking to my AI all day", url="https://x.com/s/status/2")
     conn.commit()
@@ -392,7 +392,7 @@ def test_accept_spillover_counts_each_quote_once(conn):
 def test_spillover_alone_is_not_reported_as_prior_only(conn):
     run1 = db.new_run(conn, "score")
     cid = add_candidate(conn, None, None, "Only Wears", "x_voice")
-    add_evidence(conn, cid, "wear", 1, 1.0, "Wears a ring daily", url="https://x.com/w/status/1")
+    add_evidence(conn, cid, "wear", 1, 1.0, "Wears a wearable daily", url="https://x.com/w/status/1")
     conn.commit()
     score.run_score(conn, run1)
     ex = score.explain(conn, run1, cid)
@@ -410,7 +410,7 @@ def test_impact_profile_signals_are_not_double_counted(conn):
     a = add_candidate(conn, "40", "plain", "Plain", "x_voice")
     b = add_candidate(conn, "41", "restated", "Restated", "x_voice")
     for cid in (a, b):
-        add_evidence(conn, cid, "wear", 1, 1.0, "Wears a ring daily", url=f"https://x.com/c{cid}/status/1")
+        add_evidence(conn, cid, "wear", 1, 1.0, "Wears a wearable daily", url=f"https://x.com/c{cid}/status/1")
     add_evidence(conn, b, "impact", 1, 0.9, "audience relevance 0.90", kind="profile_signal", url="https://x.com/restated")
     add_evidence(conn, b, "impact", 1, 0.78, "48,000 followers", kind="profile_signal", url="https://x.com/restated")
     conn.commit()
@@ -442,7 +442,7 @@ def test_undated_event_counts_half_even_when_refetched(conn):
     run1 = db.new_run(conn, "score")
     cid = add_candidate(conn, None, None, "No Date", "x_voice")
     conn.execute("INSERT INTO events (candidate_id, kind, date, url, text, source, fetched_at) VALUES (?,?,?,?,?,?,?)",
-                 (cid, "ring_unboxing", None, "https://x.com/n/status/1", "Unboxing", "test", iso(0)))
+                 (cid, "wearable_unboxing", None, "https://x.com/n/status/1", "Unboxing", "test", iso(0)))
     add_classification(conn, cid, run1, CLS_VOICE)                  # classify writes events together with a classification
     conn.commit()
     score.run_score(conn, run1)
@@ -455,13 +455,13 @@ def test_path_note_compares_with_the_path_the_previous_run_used(conn):
     """A score-only run has no paths rows and reuses the latest path; the next run must not report a path change."""
     run1 = db.new_run(conn, "all")
     cid = add_candidate(conn, None, None, "Warm Path", "media")
-    add_evidence(conn, cid, "wear", 1, 0.5, "Tried a ring", url="https://x.com/p/status/1")
+    add_evidence(conn, cid, "wear", 1, 0.5, "Tried a wearable", url="https://x.com/p/status/1")
     add_path(conn, run1, cid, "via", 0.7, via_name="Marwan Refaat")
     conn.commit()
     score.run_score(conn, run1)
     run2 = db.new_run(conn, "score")
     score.run_score(conn, run2)
-    add_evidence(conn, cid, "wear", 1, 1.0, "Wears the ring every day now", url="https://x.com/p/status/2")
+    add_evidence(conn, cid, "wear", 1, 1.0, "Wears the wearable every day now", url="https://x.com/p/status/2")
     run3 = db.new_run(conn, "score")
     conn.commit()
     score.run_score(conn, run3)
@@ -471,13 +471,13 @@ def test_path_note_compares_with_the_path_the_previous_run_used(conn):
 
 
 def test_worked_example_fixture_reviewer(conn):
-    """The worked example in SCORING.md: @ringnerd_test through the real classify stage (fixture LLM backend) and score.
+    """The worked example in SCORING.md: @wearablenerd_test through the real classify stage (fixture LLM backend) and score.
     The fixture classification says topic_voice true (posts 102 and 103); computed affinity is pinned unknown by the fake,
     so affinity is the classifier floor 0.40. Since 30 Sep: the second post counts half, the voice-agent post counts half
     toward wear, and reach is no longer in the total: p_accept 0.689, p_wear 0.599, p_love 0.778, total 24.58 (was 18.80)."""
     import json
 
-    from ring_wishlist import classify, config
+    from wearable_wishlist import classify, config
 
     fx = config.FIXTURES_DIR
     users = {u["x_id"]: u for u in json.loads((fx / "x_users.json").read_text())}
@@ -492,9 +492,9 @@ def test_worked_example_fixture_reviewer(conn):
                                                               "replies", "quotes", "url")} | {"source": "fixture", "fetched_at": iso(1)},
                       keys=("post_id",))
     run1 = db.new_run(conn, "all")
-    rina = add_candidate(conn, "2", "ringnerd_test", "Rina Ring", None, us_based=None, handle_verified=None)
+    rina = add_candidate(conn, "2", "wearablenerd_test", "Rina Wearable", None, us_based=None, handle_verified=None)
     conn.commit()
-    assert classify.run_classify(conn, run1, candidate_ids=[rina], seed_handle="carlo_test")["classified"] == 1
+    assert classify.run_classify(conn, run1, candidate_ids=[rina], seed_handle="seed_test")["classified"] == 1
     add_path(conn, run1, rina, "x_direct", 0.35)                    # what paths.py gives a mutual follow with the seed
     conn.commit()
     stored = db.jloads(db.one(conn, "SELECT json FROM classifications WHERE candidate_id=?", (rina,))["json"], {})
@@ -509,7 +509,7 @@ def test_worked_example_fixture_reviewer(conn):
     # wear: the Oura unboxing in full, the voice-agent post (#3, classify's voice_tool_user) at half weight, as the second post
     assert s["p_wear"] == _p(0.30, 1.0 + score.EVIDENCE_DECAY * score.VOICE_WEAR_WEIGHT)
     ex = score.explain(conn, run1, rina)
-    voice = db.one(conn, "SELECT evidence_id FROM evidence WHERE candidate_id=? AND supports='wear' AND text LIKE 'Smart rings%'", (rina,))
+    voice = db.one(conn, "SELECT evidence_id FROM evidence WHERE candidate_id=? AND supports='wear' AND text LIKE 'Smart wearables%'", (rina,))
     assert ex["per_factor"]["p_wear"]["voice_tool_ids"] == [voice["evidence_id"]]
     f = ex["per_factor"]["affinity"]
     aff_rows = [r["evidence_id"] for r in db.rows(conn, "SELECT evidence_id FROM evidence WHERE candidate_id=? AND supports='affinity'", (rina,))]
@@ -517,13 +517,13 @@ def test_worked_example_fixture_reviewer(conn):
 
 
 def test_worked_example_with_real_affinity_module(conn, monkeypatch):
-    """Integration with workstream AF once src/ring_wishlist/affinity.py exists (skipped before): the real topic_affinity is called
+    """Integration with workstream AF once src/wearable_wishlist/affinity.py exists (skipped before): the real topic_affinity is called
     with the run's reference time, returns the contract's shape for the fixture reviewer, and only raises her score."""
-    monkeypatch.delitem(sys.modules, "ring_wishlist.affinity", raising=False)
-    real = pytest.importorskip("ring_wishlist.affinity")
+    monkeypatch.delitem(sys.modules, "wearable_wishlist.affinity", raising=False)
+    real = pytest.importorskip("wearable_wishlist.affinity")
     import json
 
-    from ring_wishlist import config
+    from wearable_wishlist import config
     fx = config.FIXTURES_DIR
     u = next(u for u in json.loads((fx / "x_users.json").read_text()) if u["x_id"] == "2")
     add_user(conn, "2", u["handle"], u["followers"], bio=u["bio"])
@@ -533,8 +533,8 @@ def test_worked_example_with_real_affinity_module(conn, monkeypatch):
                                                               "replies", "quotes", "url")} | {"source": "fixture", "fetched_at": iso(1)},
                       keys=("post_id",))
     run1 = db.new_run(conn, "score")
-    rina = add_candidate(conn, "2", "ringnerd_test", "Rina Ring", "x_voice")
-    add_evidence(conn, rina, "love", 1, 1.0, "Smart rings plus a voice agent is the form factor", url="https://x.com/ringnerd_test/status/102")
+    rina = add_candidate(conn, "2", "wearablenerd_test", "Rina Wearable", "x_voice")
+    add_evidence(conn, rina, "love", 1, 1.0, "Smart wearables plus a voice agent is the form factor", url="https://x.com/wearablenerd_test/status/102")
     conn.commit()
     got, status = score._computed_affinity(conn, [rina], db.one(conn, "SELECT * FROM runs WHERE run_id=?", (run1,)))
     assert status == "ok" and real.topic_affinity
@@ -556,7 +556,7 @@ def _twins(conn, run_id, cls=CLS_VOICE, x_ids=("50", "51")):
         add_user(conn, xid, f"twin{i}", 20000)
         cid = add_candidate(conn, xid, f"twin{i}", f"Twin {i}", "x_voice")
         add_evidence(conn, cid, "love", 1, 1.0, "Reviewed the new pendant in depth", url=f"https://x.com/twin{i}/status/1")
-        add_evidence(conn, cid, "wear", 1, 1.0, "Wears a ring daily", url=f"https://x.com/twin{i}/status/2")
+        add_evidence(conn, cid, "wear", 1, 1.0, "Wears a wearable daily", url=f"https://x.com/twin{i}/status/2")
         add_classification(conn, cid, run_id, cls)
         ids.append(cid)
     return ids
@@ -641,7 +641,7 @@ def test_affinity_evidence_rows_are_cited_not_counted(conn, affinity):
     """supports='affinity' rows quote the posts the computed score already measures: cited, never summed into a probability."""
     run1 = db.new_run(conn, "score")
     a, b = _twins(conn, run1, cls=with_topic_voice(CLS_VOICE, True))
-    rows = [add_evidence(conn, a, "affinity", 1, 1.0, "Agents need a body, and the ring is it", url="https://x.com/twin0/status/5"),
+    rows = [add_evidence(conn, a, "affinity", 1, 1.0, "Agents need a body, and the wearable is it", url="https://x.com/twin0/status/5"),
             add_evidence(conn, a, "affinity", 1, 0.8, "Building a voice agent in public", kind="bio", url="https://x.com/twin0")]
     add_evidence(conn, b, "affinity", -1, 1.0, "Posted once about agents", url="https://x.com/twin1/status/5")
     for cid in (a, b):
@@ -686,14 +686,14 @@ def test_affinity_change_row_on_a_010_move(conn, affinity):
     conn.commit()
     score.run_score(conn, run1)
     # next run: a new topical post lifts cid by 0.10; other moves 0.09, below the threshold
-    new_post = ("https://x.com/twin0/status/21", day(1), "Spent the week talking to my ring instead of my laptop")
+    new_post = ("https://x.com/twin0/status/21", day(1), "Spent the week talking to my wearable instead of my laptop")
     affinity.data[cid] = aff(0.30, topical=3, top=(new_post, old_post))
     affinity.data[other] = aff(0.29, topical=2)
     run2 = db.new_run(conn, "score")
     score.run_score(conn, run2)
     row = next(r for r in changes_of(conn, run2, cid) if r["field"] == "affinity")
     assert (float(row["old_value"]), float(row["new_value"])) == (0.2, 0.3)
-    assert row["reason"].startswith("topic affinity 0.20 -> 0.30: new topical posts: 'Spent the week talking to my ring")
+    assert row["reason"].startswith("topic affinity 0.20 -> 0.30: new topical posts: 'Spent the week talking to my wearable")
     assert new_post[0] in row["reason"] and old_post[0] not in row["reason"] and "3 topical posts in 90 days (was 2)" in row["reason"]
     assert not any(r["field"] == "affinity" for r in changes_of(conn, run2, other))
     # the classifier's verdict alone: unknown -> 0.40 floor, and p_love's row names the affinity move, not "same evidence"
@@ -718,7 +718,7 @@ def test_affinity_unknown_when_the_module_is_missing_or_fails(conn, monkeypatch)
     add_classification(conn, a, run1, with_topic_voice(CLS_VOICE, True))
     add_classification(conn, b, run1, CLS_VOICE)
     conn.commit()
-    monkeypatch.setitem(sys.modules, "ring_wishlist.affinity", None)       # makes `from .affinity import topic_affinity` raise ImportError
+    monkeypatch.setitem(sys.modules, "wearable_wishlist.affinity", None)       # makes `from .affinity import topic_affinity` raise ImportError
     score.run_score(conn, run1)
     s = scores_of(conn, run1)
     assert s[a]["affinity"] == 0.4 and s[b]["affinity"] is None
@@ -727,9 +727,9 @@ def test_affinity_unknown_when_the_module_is_missing_or_fails(conn, monkeypatch)
 
     def broken(conn, candidate_ids=None, now=None, window_days=90):
         raise RuntimeError("bug in affinity")
-    mod = types.ModuleType("ring_wishlist.affinity")
+    mod = types.ModuleType("wearable_wishlist.affinity")
     mod.topic_affinity = broken
-    monkeypatch.setitem(sys.modules, "ring_wishlist.affinity", mod)
+    monkeypatch.setitem(sys.modules, "wearable_wishlist.affinity", mod)
     run2 = db.new_run(conn, "score")
     score.run_score(conn, run2)
     assert scores_of(conn, run2)[a]["affinity"] == 0.4
@@ -790,8 +790,8 @@ def test_voice_tool_fallback_without_a_classification(conn):
     for supports in ("wear", "love"):
         add_evidence(conn, cid, supports, 1, 1.0, "Talking to my agent all day", url="https://x.com/n/status/1")
     for supports, w in (("wear", 1.0), ("accept", 0.5)):
-        add_evidence(conn, cid, supports, 1, w, "My ring tracks my sleep", url="https://x.com/n/status/2")
-    add_evidence(conn, cid, "wear", 1, 1.0, "Bought a second ring", url="https://x.com/n/status/3")   # wear alone: a device
+        add_evidence(conn, cid, supports, 1, w, "My wearable tracks my sleep", url="https://x.com/n/status/2")
+    add_evidence(conn, cid, "wear", 1, 1.0, "Bought a second wearable", url="https://x.com/n/status/3")   # wear alone: a device
     conn.commit()
     score.run_score(conn, run1)
     assert scores_of(conn, run1)[cid]["p_wear"] == _p(0.30, score.diminishing([1.0, 1.0, score.VOICE_WEAR_WEIGHT]))
@@ -875,19 +875,19 @@ def test_competitor_ties_yaml_funds_aliases_and_people(conn, tmp_path, monkeypat
     assert any("Andreessen Horowitz" in r for r in score.explain(conn, run1, vc)["per_factor"]["flags"]["reasons"])
 
 
-def _RING_WISHLIST_post(conn, post_id, x_id, days_ago, text):
+def _WEARABLE_WISHLIST_post(conn, post_id, x_id, days_ago, text):
     db.upsert(conn, "x_posts", {"post_id": post_id, "x_id": x_id, "created_at": iso(days_ago), "text": text,
                                 "url": f"https://x.com/u{x_id}/status/{post_id}", "likes": 1, "reposts": 0, "replies": 0, "quotes": 0,
                                 "source": "test", "fetched_at": iso(1)}, keys=("post_id",))
 
 
 def test_launch_wave_praise_counts_less_toward_love(conn):
-    """Praise of ring_wishlist's products posted while 10+ accounts do the same (within 7 days) counts LAUNCH_WAVE_WEIGHT toward
+    """Praise of wearable_wishlist's products posted while 10+ accounts do the same (within 7 days) counts LAUNCH_WAVE_WEIGHT toward
     p_love, quote and posted_about_product event alike; accept keeps it. The same praise alone, weeks later, counts in full.
     A bio that sells posts (discover's paid_promo) gets the wave weight whenever it posted."""
     run1 = db.new_run(conn, "score")
     for i in range(score.LAUNCH_WAVE_MIN_ACCOUNTS - 1):                    # 9 other accounts reply to the launch
-        _RING_WISHLIST_post(conn, str(9000 + i), f"w{i}", 5 + i % 3, f"@carloAI @RingWishlistAI tinyNature is the future {i}")
+        _WEARABLE_WISHLIST_post(conn, str(9000 + i), f"w{i}", 5 + i % 3, f"@WearableAI @WearableWishlistAI tinyNature is the future {i}")
     add_user(conn, "60", "waver", 5000)
     add_user(conn, "61", "organic", 5000)
     add_user(conn, "62", "promo", 5000, bio="AI news daily. DM for paid partnership.")
@@ -895,7 +895,7 @@ def test_launch_wave_praise_counts_less_toward_love(conn):
     for key, xid, days_ago in (("wave", "60", 5), ("organic", "61", 30), ("promo", "62", 30)):
         cid = add_candidate(conn, xid, key, key.title(), "x_voice")
         url = f"https://x.com/{key}/status/{700 + int(xid)}"
-        add_evidence(conn, cid, "love", 1, 1.0, "Cannot stop thinking about @RingWishlistAI's TinyNature", url=url, date=day(days_ago))
+        add_evidence(conn, cid, "love", 1, 1.0, "Cannot stop thinking about @WearableWishlistAI's TinyNature", url=url, date=day(days_ago))
         add_evidence(conn, cid, "love", 1, 1.0, "this is top!!!", url=url, date=day(days_ago))   # same post, no product name
         add_event(conn, cid, "posted_about_product", days_ago=days_ago, text="Praised TinyNature", url=url)
         ids[key] = cid
@@ -912,18 +912,18 @@ def test_launch_wave_praise_counts_less_toward_love(conn):
     assert s[ids["wave"]]["p_accept"] == _p(0.40, score.ACCEPT_SPILLOVER * 1.0 + 1.0 * score.decay(5))
     ex = score.explain(conn, run1, ids["wave"])["per_factor"]["p_love"]
     assert len(ex["launch_wave_ids"]) == 2
-    assert any("launch-wave praise" in r and "accounts praised ring_wishlist" in r for r in ex["reasons"])
+    assert any("launch-wave praise" in r and "accounts praised wearable_wishlist" in r for r in ex["reasons"])
     assert not score.explain(conn, run1, ids["organic"])["per_factor"]["p_love"]["launch_wave_ids"]
-    # one account fewer is no wave; and ordinary-language lookalikes are not ring_wishlist
+    # one account fewer is no wave; and ordinary-language lookalikes are not wearable_wishlist
     conn.execute("DELETE FROM x_posts WHERE post_id='9000'")
     assert score._load(conn, run1)["wave"]["days"] == {}
-    assert score.RING_WISHLIST_PRODUCT_RE.search("the most ordinary TTS I have tried") is None
-    assert all(score.RING_WISHLIST_PRODUCT_RE.search(t) for t in ("@RingWishlistAI", "Ring Wishlist", "HumanPods", "#tinyNature", "ring-wishlist.example"))
+    assert score.WEARABLE_WISHLIST_PRODUCT_RE.search("the most ordinary TTS I have tried") is None
+    assert all(score.WEARABLE_WISHLIST_PRODUCT_RE.search(t) for t in ("@WearableWishlistAI", "Wearable Wishlist", "HumanPods", "#tinyNature", "wearable-wishlist.example"))
 
 
 def test_rejected_people_rank_last_and_leave_the_export_and_verify(conn, tmp_path):
     """QA rejections (status 'rejected') stay scored but rank after everyone, are not exported and are not re-verified."""
-    from ring_wishlist import export, verify
+    from wearable_wishlist import export, verify
     run1 = db.new_run(conn, "score")
     best = add_candidate(conn, None, "best", "Best But Rejected", "x_voice")
     kept = add_candidate(conn, None, "kept", "Kept", "x_voice")
@@ -941,7 +941,7 @@ def test_rejected_people_rank_last_and_leave_the_export_and_verify(conn, tmp_pat
 
 
 def test_single_word_fund_matches_its_handle_in_any_case():
-    from ring_wishlist.score import fund_matches
+    from wearable_wishlist.score import fund_matches
     funds = [{"fund": "Betaworks", "competitor": "Sandbar"}, {"fund": "Adjacent", "competitor": "Sandbar"}]
     assert [f["fund"] for f in fund_matches("CEO @betaworks, NYC", funds)] == ["Betaworks"]
     assert fund_matches("adjacent to the park", funds) == []          # a plain lower-case word is still not the fund

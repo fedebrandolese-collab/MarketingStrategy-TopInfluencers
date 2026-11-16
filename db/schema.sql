@@ -1,4 +1,4 @@
--- ring_wishlist wishlist: SQLite schema. All timestamps ISO-8601 UTC ("2026-09-29T10:00:00Z").
+-- wearable_wishlist wishlist: SQLite schema. All timestamps ISO-8601 UTC ("2026-09-29T10:00:00Z").
 -- Booleans: 1 / 0 / NULL (NULL = unknown, never guessed).
 -- Handles are stored lowercase without "@". x_id is the X numeric id as TEXT.
 
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS runs (
   cost_usd REAL DEFAULT 0
 );
 
--- ---------- Carlo's network map (read-only mirror of network.ri.fo) ----------
+-- ---------- the operator's network map (read-only mirror of network.ri.fo) ----------
 CREATE TABLE IF NOT EXISTS map_people (
   id INTEGER PRIMARY KEY,     -- id from the map
   group_name TEXT NOT NULL,   -- 'capital' | 'press'
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS map_monthly (
   group_name TEXT, month TEXT, source TEXT, n INTEGER,
   PRIMARY KEY (group_name, month, source)
 );
--- X handle resolved for a map person (Carlo's contacts), so paths can use the X side.
+-- X handle resolved for a map person (the operator's contacts), so paths can use the X side.
 CREATE TABLE IF NOT EXISTS map_x_handles (
   person_id INTEGER PRIMARY KEY,
   handle TEXT, x_id TEXT,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS candidates (
   name TEXT,
   category TEXT,              -- 'x_voice' | 'media' | 'vc' | 'founder_angel' | 'other' | NULL
   us_based INTEGER,           -- 1/0/NULL
-  map_person_id INTEGER,      -- link to map_people when the candidate IS in Carlo's map
+  map_person_id INTEGER,      -- link to map_people when the candidate IS in the operator's map
   linkedin_url TEXT,
   handle_verified TEXT,       -- 'verified' | 'likely_real' | 'suspicious' | 'unknown'
   handle_verification_method TEXT,
@@ -114,11 +114,11 @@ CREATE TABLE IF NOT EXISTS classifications (
   PRIMARY KEY (candidate_id, run_id)
 );
 
--- Dated events that move scores (fund raised, ring unboxing, joined competitor, posted about ring_wishlist...).
+-- Dated events that move scores (fund raised, wearable unboxing, joined competitor, posted about wearable_wishlist...).
 CREATE TABLE IF NOT EXISTS events (
   event_id INTEGER PRIMARY KEY AUTOINCREMENT,
   candidate_id INTEGER NOT NULL,
-  kind TEXT NOT NULL,         -- 'fund_raised' | 'ring_unboxing' | 'joined_competitor' | 'left_competitor' | 'posted_about_product' | 'device_review' | 'other'
+  kind TEXT NOT NULL,         -- 'fund_raised' | 'wearable_unboxing' | 'joined_competitor' | 'left_competitor' | 'posted_about_product' | 'device_review' | 'other'
   date TEXT, url TEXT, text TEXT, source TEXT, fetched_at TEXT,
   UNIQUE (candidate_id, kind, url)
 );
@@ -127,8 +127,8 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS scores (
   run_id INTEGER NOT NULL, candidate_id INTEGER NOT NULL,
   p_accept REAL, p_wear REAL, p_love REAL, impact REAL, reach REAL,
-  affinity REAL,              -- topic affinity 0..1 (src/ring_wishlist/affinity.py): discusses personal agents / voice / wearables, and a community answers
-  engagement REAL,            -- community engagement 0..1 (src/ring_wishlist/engagement.py): the average post's views, likes, replies
+  affinity REAL,              -- topic affinity 0..1 (src/wearable_wishlist/affinity.py): discusses personal agents / voice / wearables, and a community answers
+  engagement REAL,            -- community engagement 0..1 (src/wearable_wishlist/engagement.py): the average post's views, likes, replies
                               -- and reposts per follower against accounts of the same size; NULL = unknown (no sample)
   confidence REAL,            -- share of factors backed by evidence rather than priors
   total REAL, rank INTEGER,
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS changes (
   reason TEXT NOT NULL        -- human sentence: "Posted an Oura unboxing on 2026-09-20"
 );
 
--- ---------- Paths (who in Carlo's network can reach the candidate) ----------
+-- ---------- Paths (who in the operator's network can reach the candidate) ----------
 CREATE TABLE IF NOT EXISTS paths (
   path_id INTEGER PRIMARY KEY AUTOINCREMENT,
   run_id INTEGER NOT NULL, candidate_id INTEGER NOT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS paths (
   how TEXT NOT NULL,          -- 'direct' | 'via' | 'x_direct' | 'open_dm' | 'none'
   strength REAL,              -- 0..1
   via_person_id INTEGER, via_name TEXT,
-  you_rel TEXT,               -- label of Carlo -> via (or Carlo -> target for direct), e.g. "met · 3 meetings · warm"
+  you_rel TEXT,               -- label of the operator -> via (or the operator -> target for direct), e.g. "met · 3 meetings · warm"
   target_rel TEXT,            -- label of via -> target, e.g. "introduced them in the map"
   evidence TEXT,              -- why we believe the relationship is real
   json TEXT                   -- full path object in the map's wishlist shape
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS paths (
 -- ---------- Status (the only table the dashboard writes) ----------
 CREATE TABLE IF NOT EXISTS status (
   candidate_id INTEGER PRIMARY KEY,
-  status TEXT NOT NULL DEFAULT 'candidate',  -- candidate|approved|intro_asked|ring_sent|wearing|posted|rejected
+  status TEXT NOT NULL DEFAULT 'candidate',  -- candidate|approved|intro_asked|wearable_sent|wearing|posted|rejected
   owner TEXT, note TEXT, updated_at TEXT
 );
 
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS costs (
   endpoint TEXT, units INTEGER, unit_cost_usd REAL, cost_usd REAL, note TEXT
 );
 
--- ---------- On-demand account checks (dashboard "Check an account", src/ring_wishlist/check.py) ----------
+-- ---------- On-demand account checks (dashboard "Check an account", src/wearable_wishlist/check.py) ----------
 -- A paid check is its own runs row (stage 'check') with the ledger rows under it; it writes no scores, paths or changes,
 -- so it never becomes the run the list compares against. A free "Show" from stored data has run_id NULL and cost 0.
 CREATE TABLE IF NOT EXISTS checks (
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS checks (
   created_at TEXT NOT NULL
 );
 
--- ---------- Community engagement samples (src/ring_wishlist/engagement.py computes, src/ring_wishlist/sample.py fetches) ----------
+-- ---------- Community engagement samples (src/wearable_wishlist/engagement.py computes, src/wearable_wishlist/sample.py fetches) ----------
 -- A person's latest original posts (no reposts, no replies, newest first) as fetched on one date. The KPIs average these,
 -- not the engagement-ranked posts enrich stores (those are their best posts). x_posts holds each post's counts; the newest
 -- sample per x_id is the one used.

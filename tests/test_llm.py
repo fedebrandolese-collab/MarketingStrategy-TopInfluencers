@@ -8,7 +8,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from ring_wishlist import config, costs, db, llm
+from wearable_wishlist import config, costs, db, llm
 
 CLASSIFICATION_SCHEMA = {
     "type": "object",
@@ -73,9 +73,9 @@ def test_extract_json_plain_fenced_and_noisy(text):
 
 
 def test_extract_json_nested_and_braces_in_strings():
-    text = 'Note: the {weird} bio.\n{"summary": "likes {rings} and }braces{", "evidence": [{"url": "https://x.com/a/status/1", "quote": "hi"}]}\nThanks.'
+    text = 'Note: the {weird} bio.\n{"summary": "likes {wearables} and }braces{", "evidence": [{"url": "https://x.com/a/status/1", "quote": "hi"}]}\nThanks.'
     out = llm.extract_json(text)
-    assert out["summary"] == "likes {rings} and }braces{" and out["evidence"][0]["url"].endswith("/1")
+    assert out["summary"] == "likes {wearables} and }braces{" and out["evidence"][0]["url"].endswith("/1")
 
 
 def test_extract_json_takes_outermost_object():

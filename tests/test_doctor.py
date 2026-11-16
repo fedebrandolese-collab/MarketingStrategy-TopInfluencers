@@ -1,4 +1,4 @@
-"""The doctor (src/ring_wishlist/doctor.py): offline, read-only check-up of an install."""
+"""The doctor (src/wearable_wishlist/doctor.py): offline, read-only check-up of an install."""
 import hashlib
 import shutil
 import socket
@@ -6,10 +6,10 @@ import sqlite3
 
 import pytest
 
-from ring_wishlist import config, db, doctor as D
-from ring_wishlist.ingest_map import RAW_FILES
+from wearable_wishlist import config, db, doctor as D
+from wearable_wishlist.ingest_map import RAW_FILES
 
-KEYS = ("CARLO_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY", "MAP_PASSPHRASE", "SOURCE_BULK",
+KEYS = ("SEED_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY", "MAP_PASSPHRASE", "SOURCE_BULK",
         "SOURCE_VERIFY", "LLM_BACKEND", "CLAUDE_CLI_PATH", "BUDGET_IGNORE_MONTH", *D.BUDGET_VARS)
 
 
@@ -39,11 +39,11 @@ def test_env_needs_the_keys_of_the_configured_sources_and_backend(tmp_path, clea
     clean_env.setenv("LLM_BACKEND", "anthropic")
     lines = D.check_env(tmp_path)
     assert find(lines, "no .env")[0] == D.WARN
-    for key in ("CARLO_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY"):
+    for key in ("SEED_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY"):
         assert find(lines, f"{key} missing")[0] == D.FAIL
-    for key in ("CARLO_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY"):
+    for key in ("SEED_X_HANDLE", "MONID_API_KEY", "X_BEARER_TOKEN", "ANTHROPIC_API_KEY"):
         clean_env.setenv(key, "secret-value-123")
-    (tmp_path / ".env").write_text("CARLO_X_HANDLE=x\n")
+    (tmp_path / ".env").write_text("SEED_X_HANDLE=x\n")
     (tmp_path / ".env").chmod(0o600)
     lines = D.check_env(tmp_path)
     assert D.FAIL not in statuses(lines) and D.WARN not in statuses(lines), lines
@@ -180,14 +180,14 @@ def test_disk_is_writable_and_free_space_has_a_floor(tmp_path):
 
 
 def test_launchd_reads_the_listing_and_the_agents_dir(tmp_path):
-    listing = "PID\tStatus\tLabel\n812\t0\tcom.ring-wishlist.dashboard\n-\t0\tcom.apple.x\n"
+    listing = "PID\tStatus\tLabel\n812\t0\tcom.wearable-wishlist.dashboard\n-\t0\tcom.apple.x\n"
     lines = D.check_launchd(listing, tmp_path, "Darwin")
-    assert lines[0] == (D.WARN, "launchd com.ring-wishlist.wishlist: not installed (make schedule, then make schedule-on)")
-    assert lines[1] == (D.OK, "launchd com.ring-wishlist.dashboard: loaded, running (pid 812)")
-    (tmp_path / "com.ring-wishlist.wishlist.plist").write_text("<plist/>")
+    assert lines[0] == (D.WARN, "launchd com.wearable-wishlist.wishlist: not installed (make schedule, then make schedule-on)")
+    assert lines[1] == (D.OK, "launchd com.wearable-wishlist.dashboard: loaded, running (pid 812)")
+    (tmp_path / "com.wearable-wishlist.wishlist.plist").write_text("<plist/>")
     assert "installed, not loaded" in D.check_launchd(listing, tmp_path, "Darwin")[0][1]
-    lines = D.check_launchd(listing + "-\t3\tcom.ring-wishlist.wishlist\n", tmp_path, "Darwin")
-    assert lines[0] == (D.WARN, "launchd com.ring-wishlist.wishlist: loaded, last exit 3 (see data/logs)")
+    lines = D.check_launchd(listing + "-\t3\tcom.wearable-wishlist.wishlist\n", tmp_path, "Darwin")
+    assert lines[0] == (D.WARN, "launchd com.wearable-wishlist.wishlist: loaded, last exit 3 (see data/logs)")
     assert D.check_launchd(listing, tmp_path, "Linux") == []
 
 
@@ -208,9 +208,9 @@ def test_python_version_and_imports(monkeypatch):
     assert D.check_python((3, 11, 4))[0][0] == D.WARN
     monkeypatch.setattr(D, "REQUIRED_MODULES", ("streamlit",))
     assert statuses(D.check_python((3, 12, 1))) == [D.OK, D.OK]
-    monkeypatch.setattr(D, "REQUIRED_MODULES", ("ring_wishlist.no_such_module",))
+    monkeypatch.setattr(D, "REQUIRED_MODULES", ("wearable_wishlist.no_such_module",))
     s, text = D.check_python((3, 12, 1))[1]
-    assert s == D.FAIL and "ring_wishlist.no_such_module" in text
+    assert s == D.FAIL and "wearable_wishlist.no_such_module" in text
 
 
 def test_main_exits_1_on_any_failure_and_a_crashing_check_is_a_failure(monkeypatch, capsys):

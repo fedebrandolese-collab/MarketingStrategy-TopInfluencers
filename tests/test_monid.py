@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from ring_wishlist import costs, db
-from ring_wishlist.sources import monid
-from ring_wishlist.sources.monid import MonidBalanceError, MonidError, MonidSource, to_web_query
+from wearable_wishlist import costs, db
+from wearable_wishlist.sources import monid
+from wearable_wishlist.sources.monid import MonidBalanceError, MonidError, MonidSource, to_web_query
 
 SAMPLES = monid.config.ROOT / "tests" / "samples" / "c"
 
@@ -52,22 +52,22 @@ def src(conn, completed, **kw):
 
 def test_profile_maps_and_caches(conn):
     s = src(conn, sample("run_profile_completed.json"))
-    u = s.get_user_by_handle("@CarloAI")
-    assert u.x_id == "1413073125542178819" and u.handle == "carloai"
+    u = s.get_user_by_handle("@WearableAI")
+    assert u.x_id == "1413073125542178819" and u.handle == "wearableai"
     assert u.followers == 6852 and u.following == 1210 and u.verified is True
     assert u.created_at == "2021-07-08T09:51:28Z"
     # second call served from the local cache: no new run
     before = len(s.session.posts)
-    assert s.get_user_by_handle("carloai").x_id == u.x_id
+    assert s.get_user_by_handle("wearableai").x_id == u.x_id
     assert len(s.session.posts) == before
     assert costs.spent(conn, "monid") == pytest.approx(0.0015)
 
 
 def test_search_posts_maps_and_caches_authors(conn):
     s = src(conn, sample("run_tweets_completed.json"))
-    posts = s.search_posts('"smart ring" voice -is:retweet lang:en', max_results=10)
+    posts = s.search_posts('"smart wearable" voice -is:retweet lang:en', max_results=10)
     body = s.session.posts[0][1]["input"]["body"]
-    assert body["searchTerms"] == ['"smart ring" voice -filter:retweets lang:en'] and body["tweetLanguage"] == "en"
+    assert body["searchTerms"] == ['"smart wearable" voice -filter:retweets lang:en'] and body["tweetLanguage"] == "en"
     assert posts and all(p.url and p.x_id and p.handle for p in posts)
     assert posts[0].created_at.endswith("Z")
     n = db.one(conn, "SELECT COUNT(*) AS n FROM x_users")["n"]
@@ -78,7 +78,7 @@ def test_search_posts_maps_and_caches_authors(conn):
 
 def test_follow_list_enforces_actor_minimum(conn):
     s = src(conn, sample("run_follows_completed.json"))
-    users = s.get_following("carloai", max_users=50)
+    users = s.get_following("wearableai", max_users=50)
     body = s.session.posts[0][1]["input"]["body"]
     assert body["getFollowing"] is True and body["getFollowers"] is False
     assert body["maxFollowings"] >= 200 and body["maxFollowers"] >= 200
@@ -96,14 +96,14 @@ def test_budget_guard_blocks_before_spending(conn, monkeypatch):
     monkeypatch.setenv("BUDGET_MONID_USD", "0.01")
     s = src(conn, sample("run_follows_completed.json"))
     with pytest.raises(costs.BudgetExceeded):
-        s.get_followers("carloai", max_users=7000)
+        s.get_followers("wearableai", max_users=7000)
     assert s.session.posts == []
 
 
 def test_balance_error(conn):
     s = src(conn, sample("run_follows_completed.json"), post_status=402)
     with pytest.raises(MonidBalanceError):
-        s.get_following("carloai")
+        s.get_following("wearableai")
 
 
 def test_query_translation():
@@ -117,7 +117,7 @@ def test_estimates():
 
 def test_prefetch_then_search_is_free(conn):
     s = src(conn, sample("run_tweets_completed.json"))
-    stats = s.prefetch_searches([("from:someone (ring OR voice) -is:retweet", 20), ("from:someone -is:retweet", 10)], workers=2)
+    stats = s.prefetch_searches([("from:someone (wearable OR voice) -is:retweet", 20), ("from:someone -is:retweet", 10)], workers=2)
     assert stats["fetched"] == 2 and stats["failed"] == 0
     posts_before = len(s.session.posts)
     got = s.search_posts("from:someone -is:retweet", max_results=10)

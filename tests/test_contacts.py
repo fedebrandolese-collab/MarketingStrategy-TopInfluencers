@@ -1,4 +1,4 @@
-"""Contact routes (src/ring_wishlist/contacts.py) and the reach half of the brief's bar: the loader, the route order and labels,
+"""Contact routes (src/wearable_wishlist/contacts.py) and the reach half of the brief's bar: the loader, the route order and labels,
 the bar, the export fields, the count line and the check tab. Offline: research comes from tmp yaml files."""
 import csv
 import json
@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import check, contacts, db, export, weights  # noqa: E402
+from wearable_wishlist import check, contacts, db, export, weights  # noqa: E402
 from app import data  # noqa: E402
 from scripts.seed_demo_db import seed  # noqa: E402
 
@@ -54,7 +54,7 @@ people:
 """)
     _yaml(d, "batch_3.yaml", "people: [unclosed")                      # broken: logged and skipped
     _yaml(d, "batch_4.yaml", "just: a mapping\n")                       # no people list: skipped
-    with caplog.at_level(logging.WARNING, logger="ring_wishlist.contacts"):
+    with caplog.at_level(logging.WARNING, logger="wearable_wishlist.contacts"):
         idx = contacts.load_routes(d)
     assert "batch_3.yaml" in caplog.text and "batch_4.yaml" in caplog.text
     tom = contacts.researched_for(idx, "TECHWRITER_TEST")
@@ -81,13 +81,13 @@ def test_routes_best_first_warm_dm_research_bio_then_weak_and_unconfirmed():
     c = contacts.contact_for(paths, can_dm=1, bio="Writer. Reach me: hi@x.example", handle="@Xperson", researched=research)
     assert c["contactable"] and c["contact_reason"] == ""
     assert [r["label"] for r in c["routes"]] == [
-        "Intro via Jane Doe", "Carlo knows them", "X DMs open", "Contact form on x.example", "Email in X bio: hi@x.example",
+        "Intro via Jane Doe", "the operator knows them", "X DMs open", "Contact form on x.example", "Email in X bio: hi@x.example",
         "LinkedIn (weak)", "Email: sponsors@show.example (weak)", "Press email: press@x.example (unconfirmed)"]
     assert c["best"] == "Intro via Jane Doe" and c["routes"][2]["source_url"] == "https://x.com/xperson"
     assert contacts.export_routes(c)[3] == {"type": "contact_form", "detail": "https://x.example/contact",
                                             "source_url": "https://x.example/contact"}
-    # a follower of Carlo can be messaged on X even with DMs closed; a reply alone is not a way in
-    assert contacts.contact_for([{"how": "x_direct", "you": "follows you on X"}], can_dm=0)["best"] == "X DM: follows Carlo"
+    # a follower of the operator can be messaged on X even with DMs closed; a reply alone is not a way in
+    assert contacts.contact_for([{"how": "x_direct", "you": "follows you on X"}], can_dm=0)["best"] == "X DM: follows the operator"
     assert not contacts.contact_for([{"how": "x_direct", "you": "replied to you on X · 2 posts"}], can_dm=0)["contactable"]
     # an unconfirmed route is never the best route, nor enough alone
     only = contacts.contact_for([], can_dm=0, researched={"verdict": "contactable", "routes": [research["routes"][1]]})
@@ -160,7 +160,7 @@ def test_ranked_table_and_count_line_hide_people_with_no_way_to_contact(demo, mo
     t = df[df["candidate_id"] == tom].iloc[0]
     assert (t["contact"], bool(t["contactable"]), t["contact_routes"]) == (contacts.NONE_LABEL, False, [])
     assert t["bar_reason"] == t["contact_reason"] == "no way to contact found: X DMs closed, no warm path, no public route researched yet"
-    rina = df[df["handle"] == "ringnerd_test"].iloc[0]
+    rina = df[df["handle"] == "wearablenerd_test"].iloc[0]
     assert rina["contact"] == "Intro via Marwan Refaat" and [r["label"] for r in rina["contact_routes"]][:2] == [
         "Intro via Marwan Refaat", "X DMs open"]
     lst = data.rank_list(df)
@@ -199,18 +199,18 @@ def test_export_carries_contact_and_drops_people_with_no_way_to_contact(demo, tm
     p, conn, tom = demo
     res = export.run_export(conn, 2, out_dir=tmp_path / "out")
     items = json.loads((tmp_path / "out" / "wishlist.json").read_text())
-    assert [i["handle"] for i in items] == ["ringnerd_test", "vc_test"] and res["wishlist"] == 2
+    assert [i["handle"] for i in items] == ["wearablenerd_test", "vc_test"] and res["wishlist"] == 2
     assert items[0]["contact"]["best"] == "Intro via Marwan Refaat"
     assert items[0]["contact"]["routes"][:2] == [
         {"type": "warm", "detail": "Intro via Marwan Refaat", "source_url": None},
-        {"type": "x_dm", "detail": "X DMs open to everyone", "source_url": "https://x.com/ringnerd_test"}]
+        {"type": "x_dm", "detail": "X DMs open to everyone", "source_url": "https://x.com/wearablenerd_test"}]
     with (tmp_path / "out" / "wishlist.csv").open(newline="", encoding="utf-8") as f:
         rows = {r["handle"]: r for r in csv.DictReader(f)}
     assert {"contact", "contactable"} <= set(export.CSV_COLUMNS)
     assert (rows["techwriter_test"]["contact"], rows["techwriter_test"]["contactable"], rows["techwriter_test"]["meets_bar"]) == (
         contacts.NONE_LABEL, "False", "False")
     assert rows["techwriter_test"]["bar_reason"].startswith("no way to contact found: X DMs closed, no warm path")
-    assert rows["ringnerd_test"]["contact"] == "Intro via Marwan Refaat" and rows["ringnerd_test"]["contactable"] == "True"
+    assert rows["wearablenerd_test"]["contact"] == "Intro via Marwan Refaat" and rows["wearablenerd_test"]["contactable"] == "True"
 
     monkeypatch.setattr(contacts, "ROUTES_DIR", _yaml(tmp_path / "routes", "batch_1.yaml", TOM_YAML))
     export.run_export(conn, 2, out_dir=tmp_path / "out")
@@ -252,20 +252,20 @@ def test_repo_research_files_parse():
 
 
 def test_strip_reach_keeps_the_person_and_drops_dm_remarks():
-    from ring_wishlist.contacts import strip_reach
+    from wearable_wishlist.contacts import strip_reach
     cases = {
         "New York tech analyst who tested 10 AI wearables; skeptical of the category and cannot be DMed.":
             "New York tech analyst who tested 10 AI wearables; skeptical of the category.",
-        "Reviewer with 6.1M followers; only one topical post, and he doesn't follow Carlo, and DMs are closed.":
+        "Reviewer with 6.1M followers; only one topical post, and he doesn't follow the operator, and DMs are closed.":
             "Reviewer with 6.1M followers; only one topical post.",
-        "Analyst; caveats: paid Qualcomm travel, no voice or agent focus, not following Carlo, DMs closed.":
+        "Analyst; caveats: paid Qualcomm travel, no voice or agent focus, not following the operator, DMs closed.":
             "Analyst; caveats: paid Qualcomm travel, no voice or agent focus.",
-        "Founder who praises voice products; no wearable evidence, can't be DMed, and does not follow Carlo.":
+        "Founder who praises voice products; no wearable evidence, can't be DMed, and does not follow operator_user.":
             "Founder who praises voice products; no wearable evidence.",
-        "Angel who wears an Oura; no ring-specific posts, and hard to reach by DM.":
-            "Angel who wears an Oura; no ring-specific posts.",
-        "YouTuber who wears an Oura Ring; mainly Apple and audio focused, DMs closed.":
-            "YouTuber who wears an Oura Ring; mainly Apple and audio focused.",
+        "Angel who wears an Oura; no wearable-specific posts, and hard to reach by DM.":
+            "Angel who wears an Oura; no wearable-specific posts.",
+        "YouTuber who wears an Oura Wearable; mainly Apple and audio focused, DMs closed.":
+            "YouTuber who wears an Oura Wearable; mainly Apple and audio focused.",
         "Editor who reviews wearables; he may not accept free devices, and DMs are closed.":
             "Editor who reviews wearables; he may not accept free devices.",
         "Plain summary with nothing about reach.": "Plain summary with nothing about reach.",

@@ -1,4 +1,4 @@
-# Score weights (src/ring_wishlist/weights.py, SCORING.md 'Tuning the weights live'). Written by the dashboard's
+# Score weights (src/wearable_wishlist/weights.py, SCORING.md 'Tuning the weights live'). Written by the dashboard's
 # 'Manual weights' switch (Save weights). `default:` sets the weights of scheduled runs; without it they use the built-in
 # defaults (today's formula).
 presets:

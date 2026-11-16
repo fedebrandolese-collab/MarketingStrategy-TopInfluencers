@@ -1,10 +1,10 @@
-"""Score weights (src/ring_wishlist/weights.py): the weighted total, re-ranking, filters, presets. Pure, offline."""
+"""Score weights (src/wearable_wishlist/weights.py): the weighted total, re-ranking, filters, presets. Pure, offline."""
 import itertools
 
 import pandas as pd
 import pytest
 
-from ring_wishlist import export, weights as W
+from wearable_wishlist import export, weights as W
 
 
 def formula(pa, pw, pl, imp):
@@ -66,9 +66,9 @@ def test_formula_text():
     t2 = W.weighted_total(dict(f, engagement=0.75))
     assert "x (0.7 + 0.6 x engagement 0.75) = " in W.formula_text(dict(f, engagement=0.75), None, t2)
     w = {"impact": 2, "accept": 0, "connection": 1, "vc": 1.5}
-    text = W.formula_text(f, w, W.weighted_total(f, w), "config/weights.yaml default 'Carlo'")
+    text = W.formula_text(f, w, W.weighted_total(f, w), "config/weights.yaml default 'the operator'")
     assert "0.80" not in text and "(0.3 + 0.7 x 0.40)^2" in text and "(0.25 + 0.75 x reach 0.30)" in text
-    assert "1.5 (VCs weight)" in text and "config/weights.yaml default 'Carlo'" in text and "accept 0" in text
+    assert "1.5 (VCs weight)" in text and "config/weights.yaml default 'the operator'" in text and "accept 0" in text
     assert "reach is not in the total" not in text
 
 
@@ -161,11 +161,11 @@ def test_presets_round_trip_and_scheduled_default(tmp_path):
     cur = W.load_file(p)
     assert cur["presets"]["Attention first"] == dict(W.DEFAULT_WEIGHTS, impact=2.0, media=1.5) and cur["default"] is None
     assert W.scheduled_weights(p)[1] is None
-    W.save_preset("  Carlo  live ", {"love": 2.0}, as_default=True, path=p)
+    W.save_preset("  the operator  live ", {"love": 2.0}, as_default=True, path=p)
     W.save_preset("Scratch", {"wear": 0.5}, path=p)             # a later preset keeps the default
     w, source = W.scheduled_weights(p)
-    assert w == dict(W.DEFAULT_WEIGHTS, love=2.0) and "Carlo live" in source
-    assert set(W.load_file(p)["presets"]) == {"Attention first", "Carlo live", "Scratch"}
+    assert w == dict(W.DEFAULT_WEIGHTS, love=2.0) and "the operator live" in source
+    assert set(W.load_file(p)["presets"]) == {"Attention first", "the operator live", "Scratch"}
     with pytest.raises(ValueError):
         W.save_preset("  ", {}, path=p)
     p.write_text("default: [unclosed")
@@ -195,9 +195,9 @@ def test_effective_weights_follow_the_manual_switch(tmp_path):
     assert W.effective(sliders, p) == (W.DEFAULT_WEIGHTS, W.DEFAULT_LABEL)          # switch off: sliders ignored
     w, label = W.effective({"manual_weights": True, **sliders}, p)
     assert w == dict(W.DEFAULT_WEIGHTS, wear=2.0, vc=0.5) and label == W.MANUAL_LABEL
-    W.save_preset("Carlo", {"love": 2.0}, as_default=True, path=p)
+    W.save_preset("the operator", {"love": 2.0}, as_default=True, path=p)
     w, label = W.effective({}, p)                                                   # a saved default is the default
-    assert w == dict(W.DEFAULT_WEIGHTS, love=2.0) and "Carlo" in label
+    assert w == dict(W.DEFAULT_WEIGHTS, love=2.0) and "the operator" in label
 
 
 def test_rerank_baseline_is_what_default_means():

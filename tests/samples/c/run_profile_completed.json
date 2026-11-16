@@ -8,7 +8,7 @@
  "status": "COMPLETED",
  "input": {
   "queryParams": {
-   "screen_name": "carloAI"
+   "screen_name": "wearableAI"
   }
  },
  "providerResponse": {
@@ -35,7 +35,7 @@
  },
  "output": {
   "status": "active",
-  "profile": "carloAI",
+  "profile": "wearableAI",
   "rest_id": "1413073125542178819",
   "blue_verified": true,
   "verification_type": null,
@@ -44,9 +44,9 @@
     "badge": {
      "url": "https://pbs.twimg.com/profile_images/2035025717369741315/a39jnmMM_bigger.jpg"
     },
-    "description": "ring_wishlist Inc.",
+    "description": "wearable_wishlist Inc.",
     "url": {
-     "url": "https://twitter.com/RingWishlistAI",
+     "url": "https://twitter.com/WearableWishlistAI",
      "urlType": "DeepLink"
     },
     "userLabelDisplayType": "Badge",
@@ -56,9 +56,9 @@
   "business_account": [],
   "avatar": "https://pbs.twimg.com/profile_images/1863581498093252608/Nr44yajJ_normal.jpg",
   "header_image": "https://pbs.twimg.com/profile_banners/1413073125542178819/1733147509",
-  "desc": "Building the next interface between humans and technology. @RingWishlistAI\n\nangel investing",
-  "name": "Carlo Edoardo Ferraris",
-  "website": "https://ring-wishlist.example",
+  "desc": "Building the next interface between humans and technology. @WearableWishlistAI\n\nangel investing",
+  "name": "the operator Edoardo Ferraris",
+  "website": "https://wearable-wishlist.example",
   "protected": false,
   "location": "SF \ud83c\uddfa\ud83c\uddf8 / CH \ud83c\udde8\ud83c\udded",
   "friends": 1210,

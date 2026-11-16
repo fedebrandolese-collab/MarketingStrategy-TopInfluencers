@@ -6,16 +6,16 @@ from pathlib import Path
 
 import pytest
 
-from ring_wishlist import classify, costs, db, discover
-from ring_wishlist.sources.base import FixtureSource, XPost, XUser, persist_posts, persist_users
+from wearable_wishlist import classify, costs, db, discover
+from wearable_wishlist.sources.base import FixtureSource, XPost, XUser, persist_posts, persist_users
 
-REAL_VOICES = {"ringnerd_test", "techwriter_test", "vc_test", "founder_test", "competitor_test"}
+REAL_VOICES = {"wearablenerd_test", "techwriter_test", "vc_test", "founder_test", "competitor_test"}
 REAL_CATEGORIES = {"x_voice", "media", "vc", "founder_angel"}
 
 
 @pytest.fixture(autouse=True)
 def _seed_env(monkeypatch):
-    monkeypatch.setenv("CARLO_X_HANDLE", "carlo_test")
+    monkeypatch.setenv("SEED_X_HANDLE", "seed_test")
 
 
 @pytest.fixture
@@ -28,11 +28,11 @@ def queries_file(tmp_path):
     p = tmp_path / "queries.yaml"
     p.write_text("\n".join([
         "topics:",
-        "  - '\"smart ring\" -is:retweet lang:en'",
+        "  - '\"smart wearable\" -is:retweet lang:en'",
         "  - '\"screen-free\" OR \"voice-first\" -is:retweet lang:en'",
         "competitor_products:",
         "  - '\"Oura\" (unboxing OR review) -is:retweet lang:en'",
-        "ring_wishlist: []",
+        "wearable_wishlist: []",
         "hubs: []",
         "limits:",
         "  posts_per_query: 100",
@@ -49,13 +49,13 @@ def cands(conn):
 # ------------------------------------------------------------------ crawl
 
 def test_crawl_creates_candidates_for_real_voices(conn, run_id, fixture_source):
-    stats = discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    stats = discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     c = cands(conn)
     assert REAL_VOICES <= set(c)
-    assert "carlo_test" not in c                      # the seed is never a candidate
+    assert "seed_test" not in c                      # the seed is never a candidate
     assert all(r["discovered_via"] == "seed" for r in c.values())
     assert all(r["category"] is None for r in c.values())   # category comes from classify, never from a bio heuristic
-    assert "seed:mutual" in c["ringnerd_test"]["notes"] and "hint:x_voice" in c["ringnerd_test"]["notes"]
+    assert "seed:mutual" in c["wearablenerd_test"]["notes"] and "hint:x_voice" in c["wearablenerd_test"]["notes"]
     assert "hint:vc" in c["vc_test"]["notes"]
     assert stats["following"] == 5 and stats["followers"] == 3
     assert sum(stats["by_hint"].values()) == stats["candidates_new"] == 5
@@ -63,17 +63,17 @@ def test_crawl_creates_candidates_for_real_voices(conn, run_id, fixture_source):
     assert len(follows) == 8
     assert db.one(conn, "SELECT COUNT(*) AS n FROM x_users")["n"] == 6   # seed + 5
     # idempotent: a re-run refreshes, never duplicates, and keeps discovered_via
-    again = discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    again = discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     assert again["candidates_new"] == 0 and again["candidates_updated"] == 5
     assert len(cands(conn)) == 5
 
 
 def test_crawl_never_makes_parody_a_real_candidate(conn, run_id, fixture_source):
-    discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     row = cands(conn).get("parody_test")
     assert row is None or row["category"] not in REAL_CATEGORIES
-    # ringnerd follows the parody account: crawling from there must skip it explicitly
-    stats = discover.run_crawl(conn, run_id, fixture_source, "ringnerd_test")
+    # wearablenerd follows the parody account: crawling from there must skip it explicitly
+    stats = discover.run_crawl(conn, run_id, fixture_source, "wearablenerd_test")
     assert stats["skipped"].get("parody") == 1 and stats["parody_skipped"] == ["parody_test"]
     assert "parody_test" not in cands(conn)
 
@@ -110,7 +110,7 @@ class BigGraphSource(FixtureSource):
 def test_crawl_handles_thousands_of_users(conn, run_id):
     src = BigGraphSource(3000)
     t0 = time.time()
-    stats = discover.run_crawl(conn, run_id, src, "carlo_test", max_following=3000, max_followers=3000)
+    stats = discover.run_crawl(conn, run_id, src, "seed_test", max_following=3000, max_followers=3000)
     elapsed = time.time() - t0
     assert elapsed < 10, f"crawl of 3000 users took {elapsed:.1f}s"
     assert stats["users"] == 3000
@@ -127,14 +127,14 @@ def test_crawl_handles_thousands_of_users(conn, run_id):
 
 
 def test_crawl_projection_is_source_aware(conn, run_id, capsys):
-    from ring_wishlist.sources import monid, x_api
+    from wearable_wishlist.sources import monid, x_api
 
     class Named(FixtureSource):
         def __init__(self, name):
             super().__init__()
             self.name = name
 
-    discover.run_crawl(conn, run_id, Named("monid"), "carlo_test", max_following=5300, max_followers=3000)
+    discover.run_crawl(conn, run_id, Named("monid"), "seed_test", max_following=5300, max_followers=3000)
     out = capsys.readouterr().out
     expected = monid.estimate("follows", 5300) + monid.estimate("follows", 3000) + monid.estimate("profile", 1)
     assert f"~{costs.fmt(expected)}" in out and expected < 3
@@ -147,7 +147,7 @@ def test_crawl_projection_is_source_aware(conn, run_id, capsys):
 
 def _fixtures_with_lurker(tmp_path):
     """The shared fixtures plus a low-signal author: one topical post with 3 likes and an unrelated bio."""
-    from ring_wishlist import config
+    from wearable_wishlist import config
     d = tmp_path / "fx"
     d.mkdir()
     users = json.loads((config.FIXTURES_DIR / "x_users.json").read_text())
@@ -155,7 +155,7 @@ def _fixtures_with_lurker(tmp_path):
     users.append({"x_id": "9", "handle": "lurker_test", "name": "Lurker", "bio": "coffee and cats", "location": "",
                   "verified": False, "followers": 40, "following": []})
     posts.append({"post_id": "901", "x_id": "9", "handle": "lurker_test", "created_at": "2026-09-01T00:00:00Z",
-                  "text": "my smart ring died again", "likes": 3})
+                  "text": "my smart wearable died again", "likes": 3})
     (d / "x_users.json").write_text(json.dumps(users))
     (d / "x_posts.json").write_text(json.dumps(posts))
     return FixtureSource(d)
@@ -166,9 +166,9 @@ def test_discover_aggregates_posts_into_people(conn, run_id, queries_file, tmp_p
     stats = discover.run_discover(conn, run_id, src, queries_file=queries_file)
     c = cands(conn)
     # people, not posts: one row per author, with the reason and the query that surfaced them
-    assert {"ringnerd_test", "techwriter_test", "vc_test", "founder_test", "eu_test", "competitor_test"} <= set(c)
+    assert {"wearablenerd_test", "techwriter_test", "vc_test", "founder_test", "eu_test", "competitor_test"} <= set(c)
     assert all(r["discovered_via"].startswith("query:") for r in c.values())
-    assert "posts:2 topical" in c["ringnerd_test"]["notes"]
+    assert "posts:2 topical" in c["wearablenerd_test"]["notes"]
     assert "posts:1 topical with 300 likes" in c["eu_test"]["notes"]
     assert "lurker_test" not in c            # 1 topical post, 3 likes, no bio match
     assert "parody_test" not in c and stats["parody_skipped"] == ["parody_test"]
@@ -180,13 +180,13 @@ def test_discover_aggregates_posts_into_people(conn, run_id, queries_file, tmp_p
 
 
 def test_discover_keeps_seed_provenance_and_skips_seed(conn, run_id, fixture_source, queries_file):
-    discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     discover.run_discover(conn, run_id, fixture_source, queries_file=queries_file)
     c = cands(conn)
-    assert c["ringnerd_test"]["discovered_via"] == "seed"          # first provenance kept
-    assert "seed:mutual" in c["ringnerd_test"]["notes"] and "posts:" in c["ringnerd_test"]["notes"]
+    assert c["wearablenerd_test"]["discovered_via"] == "seed"          # first provenance kept
+    assert "seed:mutual" in c["wearablenerd_test"]["notes"] and "posts:" in c["wearablenerd_test"]["notes"]
     assert c["eu_test"]["discovered_via"].startswith("query:")
-    assert "carlo_test" not in c
+    assert "seed_test" not in c
 
 
 def test_discover_stops_at_budget(conn, run_id, queries_file):
@@ -196,10 +196,10 @@ def test_discover_stops_at_budget(conn, run_id, queries_file):
 
         def search_posts(self, query, max_results=100, since=None):   # a full page: the actual cost equals the projection
             PaidFixture.calls += 1
-            return [XPost(post_id=f"{PaidFixture.calls}-{i}", x_id=str(500 + i), handle=f"a{i}", text="smart ring review",
+            return [XPost(post_id=f"{PaidFixture.calls}-{i}", x_id=str(500 + i), handle=f"a{i}", text="smart wearable review",
                           query=query) for i in range(max_results)]
 
-    from ring_wishlist.sources import x_api
+    from wearable_wishlist.sources import x_api
     per_query = x_api.estimate("search_posts", 100)
     stats = discover.run_discover(conn, run_id, PaidFixture(), queries_file=queries_file, budget_usd=per_query * 1.5)
     assert PaidFixture.calls == 1
@@ -207,7 +207,7 @@ def test_discover_stops_at_budget(conn, run_id, queries_file):
 
 
 def test_evidence_queries_are_first_person_searches_with_an_engagement_floor():
-    from ring_wishlist.sources.monid import to_web_query
+    from wearable_wishlist.sources.monid import to_web_query
     cfg = discover.load_queries()
     ev = cfg["evidence"]
     assert "evidence" in discover.QUERY_GROUPS and 18 <= len(ev) <= 22 and len(set(ev)) == len(ev)
@@ -225,9 +225,9 @@ def test_discover_runs_the_evidence_group_alone(conn, run_id, fixture_source):
     stats = discover.run_discover(conn, run_id, fixture_source, groups=("evidence",))
     assert stats["queries_run"] == len(ev) and stats["hubs_crawled"] == 0
     c = cands(conn)
-    assert {"ringnerd_test", "techwriter_test", "vc_test", "founder_test"} <= set(c)
+    assert {"wearablenerd_test", "techwriter_test", "vc_test", "founder_test"} <= set(c)
     assert all(r["discovered_via"].removeprefix("query:") in ev for r in c.values())
-    assert "parody_test" not in c and "carlo_test" not in c
+    assert "parody_test" not in c and "seed_test" not in c
     assert all(r["query"] in ev for r in db.rows(conn, "SELECT query FROM x_posts"))
 
 
@@ -243,11 +243,11 @@ def _person(conn, x_id, handle, bio, followers, verified=False, posts=(), now="2
 def test_priority_prefers_topical_people_over_celebrities(conn):
     celeb = _person(conn, "100", "celeb", "Founder. Actor. Investor.", 10_000_000, verified=True,
                     posts=[("great game tonight", 50_000, None)])
-    small = _person(conn, "101", "smallvoice", "", 2_000, posts=[("my smart ring finally has voice notes", 50, None)])
+    small = _person(conn, "101", "smallvoice", "", 2_000, posts=[("my smart wearable finally has voice notes", 50, None)])
     reviewer = _person(conn, "102", "reviewer", "I review wearables", 48_000, verified=True,
-                       posts=[("Oura unboxing", 400, "q"), ("smart rings are the form factor", 1200, "q"),
+                       posts=[("Oura unboxing", 400, "q"), ("smart wearables are the form factor", 1200, "q"),
                               ("three weeks with a pendant", 800, None)])
-    parody = _person(conn, "103", "parodyacct", "PARODY account", 900_000, posts=[("smart ring lol", 5000, "q")])
+    parody = _person(conn, "103", "parodyacct", "PARODY account", 900_000, posts=[("smart wearable lol", 5000, "q")])
     conn.commit()
     order = [s["candidate_id"] for s in discover.candidate_priorities(conn)]
     assert order == [reviewer, small, celeb, parody]
@@ -255,7 +255,7 @@ def test_priority_prefers_topical_people_over_celebrities(conn):
     assert sig["topical_posts"] == 3 and sig["priority"] == pytest.approx(order and discover.candidate_priorities(conn)[0]["priority"])
     # enrichment searches ('from:<h> ...') are evidence, not topic signals
     persist_posts(conn, [XPost(post_id="9999", x_id="100", handle="celeb", text="love my new glasses",
-                               query="from:celeb (ring OR glasses) -is:retweet")], "test")
+                               query="from:celeb (wearable OR glasses) -is:retweet")], "test")
     assert discover.candidate_signals(conn, celeb)["topical_posts"] == 0
 
 
@@ -263,7 +263,7 @@ def test_crawl_latest_status_is_not_a_topic_search_hit(conn):
     # the crawl stores each account's latest post with query='latest_status': topical only if the text is
     assert discover.query_kind("latest_status") is None
     assert not discover.post_is_topical("latest_status", "The only sells on the orderbooks are fake scare walls")
-    assert discover.post_is_topical("latest_status", "day ten with my smart ring")
+    assert discover.post_is_topical("latest_status", "day ten with my smart wearable")
     crypto = _person(conn, "200", "cryptoguy", "", 1_000_000, posts=[("fake scare walls on the orderbooks", 900, "latest_status")])
     conn.commit()
     assert discover.candidate_signals(conn, crypto)["topical_posts"] == 0
@@ -291,9 +291,9 @@ class SearchSource(FixtureSource):
             return []
         if self.fill:
             kind = "e" if "(" in query else "r"
-            return [XPost(post_id=f"{u.x_id}{kind}{i}", x_id=u.x_id, handle=handle, text="ring", likes=1) for i in range(max_results)]
+            return [XPost(post_id=f"{u.x_id}{kind}{i}", x_id=u.x_id, handle=handle, text="wearable", likes=1) for i in range(max_results)]
         if "(" in query:
-            own = [XPost(post_id=f"{u.x_id}e{i}", x_id=u.x_id, handle=handle, text=f"day {i} with my Oura ring and voice notes",
+            own = [XPost(post_id=f"{u.x_id}e{i}", x_id=u.x_id, handle=handle, text=f"day {i} with my Oura wearable and voice notes",
                          likes=10 + i, created_at=f"2026-09-{10 + i:02d}T00:00:00Z") for i in range(3)]
         else:
             own = [XPost(post_id=f"{u.x_id}r{i}", x_id=u.x_id, handle=handle, text=f"lunch thoughts {i}", likes=1,
@@ -307,7 +307,7 @@ class SearchSource(FixtureSource):
 
 
 def test_enrich_fetches_own_posts_in_priority_order_and_marks_candidates(conn, run_id, fixture_source, queries_file):
-    discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     discover.run_discover(conn, run_id, fixture_source, queries_file=queries_file)
     ranked = discover.candidate_priorities(conn)
     eligible = [s["handle"] for s in ranked if discover.enrich_gate(s) is None]
@@ -317,7 +317,7 @@ def test_enrich_fetches_own_posts_in_priority_order_and_marks_candidates(conn, r
     src = SearchSource()
     stats = discover.run_enrich(conn, run_id, src, top=3, posts_per_user=30)
     assert stats["skipped"] == {}          # was competitor_role 1, non_us 1: gates removed (Federico, 30 Sep)
-    assert stats["enriched"] == 3 and stats["handles"] == top == ["ringnerd_test", "techwriter_test", "competitor_test"]
+    assert stats["enriched"] == 3 and stats["handles"] == top == ["wearablenerd_test", "techwriter_test", "competitor_test"]
     assert stats["posts_new"] == 3 * 5 and stats["evidence_posts"] == 3 * 3
     # two searches per person: device/voice evidence (20) then recent context (10)
     assert [q.split()[0] for q, _ in src.searches] == [f"from:{h}" for h in top for _ in (0, 1)]
@@ -336,7 +336,7 @@ def test_enrich_fetches_own_posts_in_priority_order_and_marks_candidates(conn, r
 
 
 def test_enrich_keeps_discovery_query_on_known_posts(conn, run_id, fixture_source, queries_file):
-    discover.run_crawl(conn, run_id, fixture_source, "carlo_test")
+    discover.run_crawl(conn, run_id, fixture_source, "seed_test")
     discover.run_discover(conn, run_id, fixture_source, queries_file=queries_file)
     before = {r["post_id"]: r["query"] for r in db.rows(conn, "SELECT post_id, query FROM x_posts WHERE x_id='2'")}
     discover.run_enrich(conn, run_id, fixture_source, top=10, mode="timeline")
@@ -347,10 +347,10 @@ def test_enrich_keeps_discovery_query_on_known_posts(conn, run_id, fixture_sourc
 
 
 def test_enrich_stops_at_budget_and_skips_parody(conn, run_id):
-    from ring_wishlist.sources import monid
-    for x_id, h, bio in [("2", "ringnerd_test", "Reviewing wearables"), ("3", "techwriter_test", "Editor, covers wearables"),
+    from wearable_wishlist.sources import monid
+    for x_id, h, bio in [("2", "wearablenerd_test", "Reviewing wearables"), ("3", "techwriter_test", "Editor, covers wearables"),
                          ("4", "vc_test", "Partner @ExampleVentures"), ("6", "parody_test", "PARODY account")]:
-        _person(conn, x_id, h, bio, 10_000, posts=[("smart ring talk", 100, "q")])
+        _person(conn, x_id, h, bio, 10_000, posts=[("smart wearable talk", 100, "q")])
     conn.commit()
     src = SearchSource(name="monid", fill=True)
     per_user = monid.estimate("tweets", 20) + monid.estimate("tweets", 10)
@@ -362,33 +362,33 @@ def test_enrich_stops_at_budget_and_skips_parody(conn, run_id):
 
 
 def test_enrich_survives_a_failing_account(conn, run_id):
-    for x_id, h in [("2", "ringnerd_test"), ("3", "techwriter_test")]:
-        _person(conn, x_id, h, "reviews wearables", 10_000, posts=[("smart ring", 100, "q")])
+    for x_id, h in [("2", "wearablenerd_test"), ("3", "techwriter_test")]:
+        _person(conn, x_id, h, "reviews wearables", 10_000, posts=[("smart wearable", 100, "q")])
     conn.commit()
 
     class Flaky(SearchSource):
         def search_posts(self, query, max_results=100, since=None):
-            if "ringnerd_test" in query:
+            if "wearablenerd_test" in query:
                 raise RuntimeError("upstream 500")
             return super().search_posts(query, max_results, since)
 
     stats = discover.run_enrich(conn, run_id, Flaky(), top=5)
     assert stats["errors"] == 1 and stats["enriched"] == 1
-    assert discover.enriched_on(cands(conn)["ringnerd_test"]["notes"]) is None
+    assert discover.enriched_on(cands(conn)["wearablenerd_test"]["notes"]) is None
 
 
 def test_enrich_gates_skip_brands_and_tiny_accounts_but_not_competitor_staff_or_non_us(conn, run_id):
     people = [
-        ("11", "ultrahumanhq", "The world's most advanced wearable. We make rings.", 90_000, None, None),
+        ("11", "ultrahumanhq", "The world's most advanced wearable. We make wearables.", 90_000, None, None),
         ("12", "techmeme", "Tech news, curated.", 500_000, None, None),
         ("13", "trueventures", "Early-stage venture capital firm based in San Francisco.", 50_000, None, None),
         ("14", "jesselyu", "founder and ceo @rabbit_hmi", 100_000, None, None),
         ("15", "tankots", "CEO at wisprflow.ai", 30_000, None, None),
         ("16", "copenhagener", "AI hardware and voice interfaces", 20_000, "Copenhagen, Denmark", None),
         ("17", "tinyvoice", "AI wearables nerd", 420, None, None),
-        ("18", "mapfriend", "GP, early stage. Wearables.", 300, None, 7),          # in Carlo's map: exempt from the floor
+        ("18", "mapfriend", "GP, early stage. Wearables.", 300, None, 7),          # in the operator's map: exempt from the floor
         ("19", "reviewer", "I review wearables. Oura on one hand, Ultrahuman on the other.", 48_000, "Austin, TX", None),
-        ("20", "nolocation", "Voice-first believer and ring reviewer", 9_000, "", None),
+        ("20", "nolocation", "Voice-first believer and wearable reviewer", 9_000, "", None),
     ]
     names = {"ultrahumanhq": "Ultrahuman", "techmeme": "Techmeme", "trueventures": "True Ventures"}
     for x_id, h, bio, followers, loc, map_id in people:
@@ -417,9 +417,9 @@ def test_enrich_gate_skips_accounts_selling_collabs_in_bio_or_location():
 
 
 def test_enrich_prefetches_the_exact_searches_and_respects_the_budget(conn, run_id):
-    from ring_wishlist.sources import monid
+    from wearable_wishlist.sources import monid
     for i in range(5):
-        _person(conn, str(30 + i), f"voice{i}", "I review wearables", 10_000 + i, posts=[("smart ring talk", 100 - i, "q")])
+        _person(conn, str(30 + i), f"voice{i}", "I review wearables", 10_000 + i, posts=[("smart wearable talk", 100 - i, "q")])
     conn.commit()
 
     class Prefetching(SearchSource):
@@ -443,7 +443,7 @@ def test_enrich_prefetches_the_exact_searches_and_respects_the_budget(conn, run_
 
 
 def test_enrich_gate_has_no_reachability_gate_and_map_is_a_small_hint():
-    """Carlo, 29 Sep: rings may go outside the map. A big on-topic creator with no path is enriched; a map link weighs
+    """the operator, 29 Sep: wearables may go outside the map. A big on-topic creator with no path is enriched; a map link weighs
     half a topical post in priority, so topic evidence outranks map membership."""
     mkbhd = {"name": "Marques Brownlee", "handle": "mkbhd", "bio": "Web Video Producer", "followers": 6_800_000,
              "location": "NJ", "map_person_id": None, "mutual_follow_with_seed": False}
@@ -464,7 +464,7 @@ def test_enrich_gate_pays_for_competitor_staff_and_non_us_people_but_not_competi
     assert classify.precheck_us_based(abroad["location"])[0] is False and discover.enrich_gate(abroad) is None
     assert discover.enrich_gate({**staff, "location": "Bengaluru, India"}) is None                 # both at once
     for handle, name in (("ultrahumanhq", "Ultrahuman"), ("ouraring", "Oura"), ("plaudai", "PLAUD")):
-        assert discover.enrich_gate({"name": name, "handle": handle, "bio": "Smart ring", "followers": 90_000}) == "competitor_brand"
+        assert discover.enrich_gate({"name": name, "handle": handle, "bio": "Smart wearable", "followers": 90_000}) == "competitor_brand"
 
 
 # ---- persona guards (red_flag): the reviewers' repeat rejects, docs/QA_TOP.md runs 14, 30 and 39 ----
@@ -559,7 +559,7 @@ def test_red_flag_kinds(name, handle, bio, location, url, kind):
     ("JK Molina", "onejkmolina", "Reducing coaches' and agencies' churn by half (DFY).", None, None, False),
     ("Jane Dao", "janedao", "Reporter @verge covering AI news and gadgets", None, None, False),   # 'Dao' is a name; a job
     ("Oreoluwa B", "bukkyoa", "I coach young professionals", None, "https://stan.store/bukkyoa", False),
-    ("ted", "tednotlasso", "", None, None, True),                                     # in Carlo's map: he knows who it is
+    ("ted", "tednotlasso", "", None, None, True),                                     # in the operator's map: he knows who it is
 ])
 def test_red_flag_spares_real_people(name, handle, bio, location, url, in_map):
     assert discover.red_flag(name, handle, bio, location, url, in_map=in_map) is None
@@ -577,12 +577,12 @@ def test_enrich_gate_skips_red_flags_before_paying():
 
 
 def test_enrich_device_only_runs_one_device_search(conn, run_id):
-    _person(conn, "2", "ringnerd_test", "reviews wearables", 10_000, posts=[("smart ring", 100, "q")])
+    _person(conn, "2", "wearablenerd_test", "reviews wearables", 10_000, posts=[("smart wearable", 100, "q")])
     conn.commit()
-    cid = cands(conn)["ringnerd_test"]["candidate_id"]
+    cid = cands(conn)["wearablenerd_test"]["candidate_id"]
     src = SearchSource()
     stats = discover.run_enrich(conn, run_id, src, top=5, posts_per_user=20, candidate_ids=[cid], device_only=True)
     assert stats["enriched"] == 1 and [n for _, n in src.searches] == [20]          # no recent-context search
     q = src.searches[0][0]
-    assert q == discover.device_queries("ringnerd_test")[0] and "Oura" in q and "Wispr" in q
+    assert q == discover.device_queries("wearablenerd_test")[0] and "Oura" in q and "Wispr" in q
     assert "ChatGPT" not in q and "agent" not in q and discover.query_kind(q) == "evidence"

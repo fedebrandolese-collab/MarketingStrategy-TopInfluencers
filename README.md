@@ -1,8 +1,8 @@
-# ring_wishlist ring wishlist
+# wearable_wishlist wearable wishlist
 
 A system, not a list. It finds people who are actually talking about AI wearables, voice interfaces, personal agents,
-smart rings and screen-free life. It scores each one on three probabilities: accepting a ring, wearing it every day,
-and loving it and saying so. Impact weighs in too. The path through Carlo's network is shown as information on how to
+smart wearables and screen-free life. It scores each one on three probabilities: accepting a wearable, wearing it every day,
+and loving it and saying so. Impact weighs in too. The path through the operator's network is shown as information on how to
 approach each person, not scored: a warm relationship only nudges P(accept). It re-runs on a schedule and explains
 every move. A local dashboard shows the ranked list, the reasons, the path and a status per person.
 
@@ -12,7 +12,7 @@ The scoring method is in [SCORING.md](SCORING.md), the calls made and why in [DE
 
 ```bash
 make setup                      # venv + dependencies (needs uv)
-cp .env.example .env            # MAP_PASSPHRASE, CARLO_X_HANDLE, X_BEARER_TOKEN, MONID_API_KEY, budgets
+cp .env.example .env            # MAP_PASSPHRASE, SEED_X_HANDLE, X_BEARER_TOKEN, MONID_API_KEY, budgets
 make test                       # everything offline, no network, no spend
 make run                        # the whole pipeline; every paid batch prints its projected cost first
 make dashboard                  # http://localhost:8501
@@ -21,9 +21,9 @@ make status                     # is it alive: what ran, what is due, spend agai
 ```
 
 Running it for good (a new Mac or server, Docker, monitoring, backups, handover): [docs/OPERATIONS.md](docs/OPERATIONS.md).
-One stage at a time: `python -m ring_wishlist.pipeline run --stage crawl` (or a comma list such as `discover,enrich,classify`).
-`DRY_RUN=1 python -m ring_wishlist.pipeline run --stage all --seed carlo_test` runs every stage on fixtures with no network and no spend.
-`python -m ring_wishlist.dossier <handle>` prints everything the system knows about one person, evidence and paths included.
+One stage at a time: `python -m wearable_wishlist.pipeline run --stage crawl` (or a comma list such as `discover,enrich,classify`).
+`DRY_RUN=1 python -m wearable_wishlist.pipeline run --stage all --seed seed_test` runs every stage on fixtures with no network and no spend.
+`python -m wearable_wishlist.dossier <handle>` prints everything the system knows about one person, evidence and paths included.
 
 ## How it works
 
@@ -51,14 +51,14 @@ X official API ─verify─▶ same numeric account? badge, age, parody signals
 | Stage | What it does | Paid? |
 |---|---|---|
 | ingest | Mirrors capital and press from network.ri.fo (131 + 188 people, 75 intro edges, 12 competitor funds, 46 LinkedIn links) | no |
-| crawl | Carlo's following and followers with profiles and each account's latest post | monid |
-| resolve | Finds the X handles of map contacts by matching them against Carlo's own follow lists (a real relationship), text handles in the map, then a bounded paid search | mostly free |
-| discover | Runs [config/queries.yaml](config/queries.yaml) (topics, competitor products, ring_wishlist mentions, `authors`: posts with 200+ likes on voice AI, AI glasses, dictation, agents, wearables, screen time, and `evidence`: people's own first-person posts, 50+ or 100+ likes, about wearing a ring, Whoop, Apple Watch, Meta glasses or a pendant, or using dictation, voice mode or AirPods with AI) and aggregates posts into people | monid |
-| expand | People our best people follow: the top 12 of the list (US or unknown, not rejected, no competitor flag, confidence 0.67+, 5k+ followers) are seeds; accounts followed by at least max(3, 20%) of them, with 5k+ followers and no parody, org, spam or brand signs, become candidates (`cofollow:k/n`). The network's vouching replaces the bio keywords, and ranks them for enrichment like strong topical evidence. `python -m ring_wishlist.expand` projects the cost | monid |
+| crawl | the operator's following and followers with profiles and each account's latest post | monid |
+| resolve | Finds the X handles of map contacts by matching them against the operator's own follow lists (a real relationship), text handles in the map, then a bounded paid search | mostly free |
+| discover | Runs [config/queries.yaml](config/queries.yaml) (topics, competitor products, wearable_wishlist mentions, `authors`: posts with 200+ likes on voice AI, AI glasses, dictation, agents, wearables, screen time, and `evidence`: people's own first-person posts, 50+ or 100+ likes, about wearing a wearable, Whoop, Apple Watch, Meta glasses or a pendant, or using dictation, voice mode or AirPods with AI) and aggregates posts into people | monid |
+| expand | People our best people follow: the top 12 of the list (US or unknown, not rejected, no competitor flag, confidence 0.67+, 5k+ followers) are seeds; accounts followed by at least max(3, 20%) of them, with 5k+ followers and no parody, org, spam or brand signs, become candidates (`cofollow:k/n`). The network's vouching replaces the bio keywords, and ranks them for enrichment like strong topical evidence. `python -m wearable_wishlist.expand` projects the cost | monid |
 | enrich | For the most promising people, searches their own posts for devices, voice tools and screen-free life | monid |
 | classify | One Claude call per person on a compact dossier; evidence must quote something in the dossier or it is dropped | Claude Code CLI |
 | verify | Official X lookup: the handle still belongs to the same numeric account, plus badge, age and parody checks | X API |
-| paths | Best routes from Carlo to each person, strongest first | no |
+| paths | Best routes from the operator to each person, strongest first | no |
 | score | Three probabilities, impact, confidence, flags (reach shown, not scored), and a change log against the previous run | no |
 | export | `data/exports/wishlist.json`: the people who meet the brief's bar, in the map's wishlist shape (renders in its wishlist tab), each with `contact` (the best route and every route with its source); `wishlist.csv`: every scored person with `contact`, `contactable`, `meets_bar` and `bar_reason`; `changes.csv` | no |
 
@@ -78,16 +78,16 @@ Follow lists are reused for seven days and identical searches for twenty hours, 
 ## Privacy and safety
 
 * Nothing contacts anyone. The X side is read-only by construction: an app-only token and scrapers, no write scopes.
-* Map data and scrapes stay in this repository on this machine. Carlo approved sending the data to Claude for classification.
+* Map data and scrapes stay in this repository on this machine. the operator approved sending the data to Claude for classification.
 * `.env` holds the passphrase and keys and is git-ignored. The map is only re-read with `--refresh-map`.
 
 ## Layout
 
 ```
-src/ring_wishlist/          pipeline.py (orchestrator) · ingest_map · discover (crawl, discover, enrich) · resolve_handles · classify
+src/wearable_wishlist/          pipeline.py (orchestrator) · ingest_map · discover (crawl, discover, enrich) · resolve_handles · classify
                      verify · paths · score · export · llm (Claude CLI / API backends) · dossier · config · db · costs
-src/ring_wishlist/sources/  monid.py · x_api.py · base.py (shared protocol, offline fixtures)
-src/ring_wishlist/prompts/  classify.md
+src/wearable_wishlist/sources/  monid.py · x_api.py · base.py (shared protocol, offline fixtures)
+src/wearable_wishlist/prompts/  classify.md
 app/                 dashboard.py (Streamlit) · data.py (testable data layer)
 db/schema.sql        SQLite schema
 config/queries.yaml  discovery queries and limits
@@ -104,19 +104,19 @@ ingestion, the two X adapters, discovery and classification, scoring, paths and 
 Each workstream owned its files and its offline tests; the orchestrator, the monid adapter and the verification stage
 were written by the lead, and every paid run was started by hand.
 
-## Status (30 September 2026): the list for Carlo
+## Status (30 September 2026): the list for the operator
 
 **The list is the 137 people who meet the brief's bar.** The brief says "a name nobody can reach, or someone who has never
 worn a device or used a voice tool, does not belong on the list however big they are" and "a shorter list with real
 evidence beats a hundred names with adjectives". So the bar is a rule, not a weight. A person makes the list only if they
 are in a person category (X voice, media, VC, founder or angel), have net positive evidence that they wear a device or use
 a voice tool, and have at least one real way to be contacted; they are US-based or unknown, and nobody rejected them by
-hand. Every one of them has been reviewed by hand ([docs/QA_TOP.md](docs/QA_TOP.md)). Rings may go outside Carlo's network
+hand. Every one of them has been reviewed by hand ([docs/QA_TOP.md](docs/QA_TOP.md)). Wearables may go outside the operator's network
 (his decision of 29 September) and he may approach people cold, but never someone nobody can reach.
 
 | Step | People |
 |---|---|
-| X accounts seen | 19,859: Carlo's 1,211 following and 6,820 followers, 55 topic, competitor, author and evidence searches, the follow lists of the top 12 |
+| X accounts seen | 19,859: the operator's 1,211 following and 6,820 followers, 55 topic, competitor, author and evidence searches, the follow lists of the top 12 |
 | Candidates | 4,018 (a role or topic signal, a search hit, followed by 3+ of the top 12, a map contact, or checked by hand) |
 | Classified by Claude, with quoted evidence | 1,340 |
 | Scored (run 77) | 1,394 |
@@ -124,7 +124,7 @@ hand. Every one of them has been reviewed by hand ([docs/QA_TOP.md](docs/QA_TOP.
 | Wear a device or use a voice tool (US or unknown) | 191 |
 | Meet the bar: and can be contacted | **137**, in `data/exports/wishlist.json` (the map's wishlist shape) and the dashboard |
 
-**The 137:** 59 X voices, 30 media, 35 founders or angels, 13 VCs. 105 are confirmed US-based and 32 unknown. 18 are in Carlo's map. Every one was reviewed by hand. Carlo has about 100 rings: the list is ranked, so the top 100 are the first asks and the rest are the bench for anyone who says no.
+**The 137:** 59 X voices, 30 media, 35 founders or angels, 13 VCs. 105 are confirmed US-based and 32 unknown. 18 are in the operator's map. Every one was reviewed by hand. the operator has about 100 wearables: the list is ranked, so the top 100 are the first asks and the rest are the bench for anyone who says no.
 Each has a way in: 23 a warm path, 105 open X DMs, 9 a public route found by research (`config/contact_routes/`: an email,
 a contact form, a press office...); the researched routes stay listed for everyone as second routes. X reports "DMs open"
 differently depending on the account that loads the page, so any sighting of open DMs counts (30 Sep). @iam_agg left the list: X DMs closed, no warm path, no published email or site. 15 carry a competitor flag (founders, investors or staff of Rabbit, Sandbar, Pebble, Sesame, Limitless, Wispr Flow and dictation-app rivals): flagged, never removed; Filters can hide them. Top ten: @joannastern, @alexfinn, @nathie,
@@ -156,7 +156,7 @@ typical or unknown is ×1.0 (2 of the 64 post too little to measure). It moved t
 person panel shows the raw numbers and the arithmetic; a "Community engagement" slider turns it up, down or off.
 
 **First account: Andrew Yeung (@andruyeung), #32.** He names Oura among his favourite products (wear), dictates daily with
-Wispr Flow (voice), throws New York tech parties (attention), and is a warm contact in Carlo's map (accept); his X audience answers less than
+Wispr Flow (voice), throws New York tech parties (attention), and is a warm contact in the operator's map (accept); his X audience answers less than
 peers' (0.6×), so engagement lowered him from #11 (#32 of 137 now). Joanna Stern
 (#1) has the strongest wear evidence (a year testing about ten AI wearables, Meta Ray-Bans), but she calls AI gadgets
 "all suck right now", and whether her newsroom lets her keep a device is unknown: a loan, not a gift, and a high-stakes review.
@@ -167,19 +167,19 @@ peers' (0.6×), so engagement lowered him from #11 (#32 of 137 now). Joanna Ster
   warm paths and the change history.
 * **Manual weights**: shows the weights as sliders; Run re-ranks in well under a second at no cost. Save a preset, or make it
   the default of the daily run.
-* **Check an account**: any X handle Carlo names. It previews the cost (about $0.05, their latest posts included), then says where they would rank and why.
+* **Check an account**: any X handle the operator names. It previews the cost (about $0.05, their latest posts included), then says where they would rank and why.
 
 **Spend:** $26.05: monid $21.73, X API $4.32 of the $5 credit, Claude $0 (Claude Code CLI). Details in [COSTS.md](COSTS.md).
 
 **Known limits**
-1. Discovery is a sample. @simonw (#5) was found only when checked by hand: he is outside Carlo's graph, none of his posts
+1. Discovery is a sample. @simonw (#5) was found only when checked by hand: he is outside the operator's graph, none of his posts
    made the searches, and none of the top 12 follow him among their latest 1,000 follows. The daily run widens the sample,
-   and "Check an account" covers names Carlo has in mind.
+   and "Check an account" covers names the operator has in mind.
 2. The automatic filters catch 54 of the 69 junk accounts the hand reviews rejected, with no false hits on the 75 kept.
-   New names after a daily run still deserve a quick look before a ring ships.
+   New names after a daily run still deserve a quick look before a wearable ships.
 3. 32 of the 137 have an unknown US base.
 
 **Next**
-1. Carlo sets a status per person in the dashboard (approved, intro asked, ring sent...).
-2. Carlo enables the daily schedule when he is ready (`make schedule` prints the command).
+1. the operator sets a status per person in the dashboard (approved, intro asked, wearable sent...).
+2. the operator enables the daily schedule when he is ready (`make schedule` prints the command).
 3. Seed the co-follow step with AI-builder voices as well as press, to reach people like @simonw on its own.

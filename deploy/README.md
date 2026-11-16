@@ -1,6 +1,6 @@
 # Running unattended
 
-The runtime is `python -m ring_wishlist.ops` (`src/ring_wishlist/ops.py`):
+The runtime is `python -m wearable_wishlist.ops` (`src/wearable_wishlist/ops.py`):
 
 | command | what it does |
 |---|---|
@@ -15,7 +15,7 @@ A run that has stages to run backs up the database first. Every run logs to `dat
 ## macOS (launchd)
 
 ```
-make schedule       # installs com.ring-wishlist.wishlist (daily at daily_at) and com.ring-wishlist.dashboard (localhost:8501), disabled
+make schedule       # installs com.wearable-wishlist.wishlist (daily at daily_at) and com.wearable-wishlist.dashboard (localhost:8501), disabled
 make schedule-on    # enables and loads both: the daily run spends, up to the caps
 make status         # launchd state, health, plan
 make schedule-off   # unloads both
@@ -25,20 +25,20 @@ After changing `daily_at`, run `make schedule && make schedule-on` again.
 
 ## Linux (systemd)
 
-1. Put the repo in `/opt/ring_wishlist`, create a `ring_wishlist` user that owns it, run `make setup`, and fill in `.env` as on the Mac.
+1. Put the repo in `/opt/wearable_wishlist`, create a `wearable_wishlist` user that owns it, run `make setup`, and fill in `.env` as on the Mac.
 2. Install the units. Edit the paths, `User` or `TZ` first if yours differ; `daily_at` is the server's local time.
    ```
-   sudo cp deploy/systemd/ring_wishlist-scheduler.service deploy/systemd/ring_wishlist-dashboard.service /etc/systemd/system/
+   sudo cp deploy/systemd/wearable_wishlist-scheduler.service deploy/systemd/wearable_wishlist-dashboard.service /etc/systemd/system/
    sudo systemctl daemon-reload
-   sudo systemctl enable --now ring_wishlist-scheduler ring_wishlist-dashboard
+   sudo systemctl enable --now wearable_wishlist-scheduler wearable_wishlist-dashboard
    ```
-3. Check it: `systemctl status ring_wishlist-scheduler`, `journalctl -u ring_wishlist-scheduler -f`,
-   `cd /opt/ring_wishlist && PYTHONPATH=src .venv/bin/python -m ring_wishlist.ops health`.
+3. Check it: `systemctl status wearable_wishlist-scheduler`, `journalctl -u wearable_wishlist-scheduler -f`,
+   `cd /opt/wearable_wishlist && PYTHONPATH=src .venv/bin/python -m wearable_wishlist.ops health`.
 
 The dashboard listens on localhost only. Reach it with `ssh -L 8501:localhost:8501 <server>`.
 
 To use cron instead of the scheduler service, add one line with `crontab -e`, at `daily_at`:
-`0 6 * * * /opt/ring_wishlist/scripts/refresh.sh >> /opt/ring_wishlist/data/logs/cron.log 2>&1`
+`0 6 * * * /opt/wearable_wishlist/scripts/refresh.sh >> /opt/wearable_wishlist/data/logs/cron.log 2>&1`
 
 ## Alerts
 
@@ -51,6 +51,6 @@ Each alert is one line in `data/logs/alerts.log`: `<ISO UTC time>\t<error|warnin
 
 | env (.env) | effect |
 |---|---|
-| `NOTIFY_WEBHOOK_URL` | every alert is also POSTed as `{"text": "ring_wishlist wishlist <level>: <message>"}` (a Slack incoming webhook works) |
-| `RING_WISHLIST_NO_DESKTOP_NOTIFY=1` | no macOS notification for alerts |
+| `NOTIFY_WEBHOOK_URL` | every alert is also POSTed as `{"text": "wearable_wishlist wishlist <level>: <message>"}` (a Slack incoming webhook works) |
+| `WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY=1` | no macOS notification for alerts |
 | `BUDGET_IGNORE_MONTH=1` | lifts the monthly caps for a deliberate manual run; scheduled runs ignore it |

@@ -1,7 +1,7 @@
 import pytest
 
-from ring_wishlist import costs, db, schedule
-from ring_wishlist.sources.base import persist_follows, persist_posts, persist_users
+from wearable_wishlist import costs, db, schedule
+from wearable_wishlist.sources.base import persist_follows, persist_posts, persist_users
 
 
 def test_schema_and_run(conn):
@@ -12,17 +12,17 @@ def test_schema_and_run(conn):
 
 
 def test_fixture_source_and_persistence(conn, fixture_source):
-    carlo = fixture_source.get_user_by_handle("@Carlo_Test")
-    assert carlo and carlo.x_id == "1"
-    following = fixture_source.get_following("carlo_test")
-    assert {u.handle for u in following} >= {"ringnerd_test", "vc_test"}
-    persist_follows(conn, carlo.x_id, following, "following", "fixture")
+    operator_user = fixture_source.get_user_by_handle("@Seed_Test")
+    assert operator_user and operator_user.x_id == "1"
+    following = fixture_source.get_following("seed_test")
+    assert {u.handle for u in following} >= {"wearablenerd_test", "vc_test"}
+    persist_follows(conn, operator_user.x_id, following, "following", "fixture")
     assert db.one(conn, "SELECT COUNT(*) AS n FROM x_follows WHERE src_x_id='1'")["n"] == len(following)
-    posts = fixture_source.search_posts('"smart ring" -is:retweet lang:en')
-    assert posts and all("smart ring" in p.text.lower() for p in posts)
+    posts = fixture_source.search_posts('"smart wearable" -is:retweet lang:en')
+    assert posts and all("smart wearable" in p.text.lower() for p in posts)
     persist_posts(conn, posts, "fixture")
-    persist_users(conn, [carlo], "fixture")
-    assert db.one(conn, "SELECT handle FROM x_users WHERE x_id='1'")["handle"] == "carlo_test"
+    persist_users(conn, [operator_user], "fixture")
+    assert db.one(conn, "SELECT handle FROM x_users WHERE x_id='1'")["handle"] == "seed_test"
 
 
 def test_budget_guard(conn, monkeypatch):
@@ -61,7 +61,7 @@ def test_budget_guard_monthly_cap(conn, monkeypatch, tmp_path):
 
 
 def test_monthly_cap_holds_in_classify_worker_threads(conn, monkeypatch, tmp_path):
-    from ring_wishlist import classify, llm
+    from wearable_wishlist import classify, llm
     month_caps(tmp_path, monkeypatch, anthropic=2)
     monkeypatch.setenv("BUDGET_ANTHROPIC_USD", "100")
     costs.record(conn, llm.PROVIDER, "messages", 1, 1.5, db.new_run(conn, "classify"))
@@ -80,7 +80,7 @@ def test_map_fixtures(map_conn):
 
 
 def test_open_dms_are_sticky_once_seen(conn):
-    from ring_wishlist.sources.base import XUser, persist_users
+    from wearable_wishlist.sources.base import XUser, persist_users
     u = lambda dm: XUser(x_id="7", handle="dm_test", can_dm=dm)   # noqa: E731
     persist_users(conn, [u(True)], "monid")
     persist_users(conn, [u(False)], "monid")          # another scraper account read the same author as closed

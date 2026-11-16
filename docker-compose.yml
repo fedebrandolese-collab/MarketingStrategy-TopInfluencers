@@ -1,20 +1,20 @@
-# The ring_wishlist wishlist on a server: the dashboard and the scheduler, from one image (Dockerfile), sharing one SQLite
+# The wearable_wishlist wishlist on a server: the dashboard and the scheduler, from one image (Dockerfile), sharing one SQLite
 # database in ./data. Keys in .env, cadence and monthly caps in config/schedule.yaml. Runbook: docs/OPERATIONS.md.
 #   make docker-build && make docker-up       docker compose ps · docker compose logs -f scheduler · make docker-down
-name: ring_wishlist
+name: wearable_wishlist
 
-x-ring_wishlist: &ring_wishlist
+x-wearable_wishlist: &wearable_wishlist
   build:
     context: .
     args:
-      RING_WISHLIST_UID: ${RING_WISHLIST_UID:-1000}
-      RING_WISHLIST_GID: ${RING_WISHLIST_GID:-1000}
-  image: ring-wishlist:latest
+      WEARABLE_WISHLIST_UID: ${WEARABLE_WISHLIST_UID:-1000}
+      WEARABLE_WISHLIST_GID: ${WEARABLE_WISHLIST_GID:-1000}
+  image: wearable-wishlist:latest
   env_file: .env
   environment:
     TZ: ${TZ:-Europe/Rome}              # the machine's timezone: daily_at in config/schedule.yaml is local time
     LLM_BACKEND: anthropic              # wins over .env: a container has no Claude Code login
-    RING_WISHLIST_NO_DESKTOP_NOTIFY: "1"       # no macOS notifications here: alerts.log and NOTIFY_WEBHOOK_URL
+    WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY: "1"       # no macOS notifications here: alerts.log and NOTIFY_WEBHOOK_URL
   volumes:
     - ./data:/app/data                  # database, logs, backups, exports, the map mirror. A local disk, not a share
     - ./config:/app/config              # schedule, weights (the dashboard saves them here), queries, contact routes
@@ -26,7 +26,7 @@ x-ring_wishlist: &ring_wishlist
 
 services:
   dashboard:
-    <<: *ring_wishlist
+    <<: *wearable_wishlist
     # Published on this machine only (127.0.0.1): reach it with an SSH tunnel, ssh -L 8501:localhost:8501 <server>.
     # To share it on a VPN or the intranet, set DASHBOARD_BIND in .env to that interface's address, and only with
     # DASHBOARD_PASSWORD set. Never on a public address: it holds private network and contact details.
@@ -35,10 +35,10 @@ services:
     # healthcheck: the image's, streamlit's /_stcore/health
 
   scheduler:
-    <<: *ring_wishlist
-    command: ["python", "-m", "ring_wishlist.ops", "serve"]
+    <<: *wearable_wishlist
+    command: ["python", "-m", "wearable_wishlist.ops", "serve"]
     healthcheck:
-      test: ["CMD", "python", "-m", "ring_wishlist.ops", "health"]
+      test: ["CMD", "python", "-m", "wearable_wishlist.ops", "health"]
       interval: 15m
       timeout: 60s
       start_period: 2m

@@ -1,7 +1,7 @@
 [project]
-name = "ring-wishlist"
+name = "wearable-wishlist"
 version = "0.1.0"
-description = "Ring wishlist: crawlers, scoring, paths and dashboard"
+description = "Wearable wishlist: crawlers, scoring, paths and dashboard"
 requires-python = ">=3.10"
 dependencies = [
   "requests>=2.31",

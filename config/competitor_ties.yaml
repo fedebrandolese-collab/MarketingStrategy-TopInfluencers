@@ -1,7 +1,7 @@
-# Competitor ties not in Carlo's map. score.py reads funds (matched in company field / bio like the map's list) and people.
+# Competitor ties not in the operator's map. score.py reads funds (matched in company field / bio like the map's list) and people.
 # Found by web search, 2026-09-29. Funds: the LEAD (or co-lead) of a priced round of one of the 14 competitors in the brief
 # (config.COMPETITORS), plus notable funds that led a round. Angels and small participants are left out. Funds already in
-# Carlo's map list (Kindred Ventures led Humane's seed and Series C; Sandbar's and Ultrahuman's investors) are not repeated.
+# the operator's map list (Kindred Ventures led Humane's seed and Series C; Sandbar's and Ultrahuman's investors) are not repeated.
 # One row per fund and competitor, so a fund that led rounds of two competitors has two rows.
 # Not found / left out (no sourced lead): Plaud (no venture round; the 2025 Tencent report was denied by both sides),
 # Omi ($2M seed "from Tim Draper", an individual), Friend (angels and small funds, no named lead), Oasis Devices (no
@@ -57,17 +57,17 @@ funds:
     aliases: ["Fidelity"]
     competitor: "Oura"
     round: "led Series E ($900M), Oct 2025"
-    source_url: "https://www.digitalhealthnews.com/oura-secures-900m-in-series-e-funding-amid-surge-in-smart-ring-sales"
+    source_url: "https://www.digitalhealthnews.com/oura-secures-900m-in-series-e-funding-amid-surge-in-smart-wearable-sales"
   - fund: "The Chernin Group"
     aliases: ["Chernin Group"]
     competitor: "Oura"
     round: "co-led Series C ($100M), May 2021"
-    source_url: "https://techcrunch.com/2021/05/04/fitness-ring-maker-oura-raises-100m/amp"
+    source_url: "https://techcrunch.com/2021/05/04/fitness-wearable-maker-oura-raises-100m/amp"
   - fund: "Elysian Park Ventures"
     aliases: ["Elysian Park"]
     competitor: "Oura"
     round: "co-led Series C ($100M), May 2021"
-    source_url: "https://techcrunch.com/2021/05/04/fitness-ring-maker-oura-raises-100m/amp"
+    source_url: "https://techcrunch.com/2021/05/04/fitness-wearable-maker-oura-raises-100m/amp"
 people:
   - handle: kodjima33
     name: "Nik Shevchenko"
@@ -82,7 +82,7 @@ people:
   - handle: ericmigi
     name: "Eric Migicovsky"
     competitor: "Pebble (not in the brief's list)"
-    kind: founder             # Pebble Index 01, a $75-99 voice-note ring; his site links twitter.com/ericmigi
+    kind: founder             # Pebble Index 01, a $75-99 voice-note wearable; his site links twitter.com/ericmigi
     source_url: "https://ericmigi.com/"
   - handle: dsiroker
     name: "Dan Siroker"
@@ -121,9 +121,9 @@ people:
     name: "John Borthwick"
     competitor: "Sandbar"
     kind: investor            # CEO of betaworks, which backed Sandbar's $3M pre-seed (2024, with Upfront); X bio "@betaworks";
-                              # he posts that he loves his Stream ring (May 2026)
-    source_url: "https://techcrunch.com/2026/03/10/sandbar-secures-23m-series-a-for-its-ai-note-taking-ring/"
-  # Voice-dictation software, Wispr Flow's category (not companies in the brief's list): flagged for Carlo, never rejected.
+                              # he posts that he loves his Stream wearable (May 2026)
+    source_url: "https://techcrunch.com/2026/03/10/sandbar-secures-23m-series-a-for-its-ai-note-taking-wearable/"
+  # Voice-dictation software, Wispr Flow's category (not companies in the brief's list): flagged for the operator, never rejected.
   # classify.builds_voice_rival catches founders whose summary names "a dictation app"; these two it cannot see.
   - handle: kai_brokering
     name: "Kai Brokering"

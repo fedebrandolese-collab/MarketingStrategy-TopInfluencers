@@ -1,5 +1,5 @@
 """Dashboard tab "System": is the daily pipeline alive, and what will it do next? A ten-second read for Federico or
-Carlo's team, no terminal needed.
+the operator's team, no terminal needed.
 
 Top to bottom: the verdict (green healthy, red needs attention with the problems, amber not scheduled yet with the one
 command that turns it on), the stages (how often, last success, next due, provider, paid or free), this month's spend
@@ -18,7 +18,7 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 
-from ring_wishlist import config, schedule
+from wearable_wishlist import config, schedule
 from app import system_data as sd
 
 _MD_SPECIAL = re.compile(r"([\\`*_\[\]<>#|~$])")
@@ -37,7 +37,7 @@ OPERATE = """\
 | To | Run from the repository root | Cost |
 |---|---|---|
 | See health, what is due and this month's spend | `make status` | free |
-| See what the next run would do | `.venv/bin/python -m ring_wishlist.ops plan` | free |
+| See what the next run would do | `.venv/bin/python -m wearable_wishlist.ops plan` | free |
 | Run once now: the due stages, as the schedule would | `make ops-run` | **paid** |
 | Turn the daily run on or off | `make schedule-on` · `make schedule-off` | free |
 | Change the cadence or the monthly budgets | edit `config/schedule.yaml` (the next run reads it; a new `daily_at` also needs `make schedule` and `make schedule-on` again) | free |

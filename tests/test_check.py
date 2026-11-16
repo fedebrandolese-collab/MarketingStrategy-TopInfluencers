@@ -1,4 +1,4 @@
-"""Check an account on demand (src/ring_wishlist/check.py): offline, on the demo DB of scripts/seed_demo_db.py (runs 1 and 2
+"""Check an account on demand (src/wearable_wishlist/check.py): offline, on the demo DB of scripts/seed_demo_db.py (runs 1 and 2
 scored), with the fixture sources and the fixture LLM (conftest forces DRY_RUN=1)."""
 import json
 import sys
@@ -11,8 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import check, db, export, score, weights  # noqa: E402
-from ring_wishlist.sources.base import FixtureSource, XUser  # noqa: E402
+from wearable_wishlist import check, db, export, score, weights  # noqa: E402
+from wearable_wishlist.sources.base import FixtureSource, XUser  # noqa: E402
 from app import data  # noqa: E402
 from scripts.seed_demo_db import seed  # noqa: E402
 
@@ -63,7 +63,7 @@ def test_parse_handle():
 
 
 def test_cost_estimate_is_itemised_from_the_adapters_estimators(demo, monkeypatch):
-    from ring_wishlist.sources import monid, x_api
+    from wearable_wishlist.sources import monid, x_api
     for k in ("SOURCE_BULK", "SOURCE_VERIFY", "LLM_BACKEND"):
         monkeypatch.delenv(k, raising=False)
     est = check.estimate(demo, "icobrando02", live=True)
@@ -89,12 +89,12 @@ def test_cost_estimate_is_itemised_from_the_adapters_estimators(demo, monkeypatc
 def test_full_check_on_a_fixture_handle(demo, table):
     before = {t: n_rows(demo, t) for t in ("scores", "paths", "changes")}
     bulk, verify, said = Spy(), Spy(), []
-    ans = check.run_check(demo, "@Carlo_Test", table=table, sources=(bulk, verify), say=said.append)
+    ans = check.run_check(demo, "@Seed_Test", table=table, sources=(bulk, verify), say=said.append)
     assert ans["ok"], ans.get("reason")
     assert verify.calls == ["get_user_by_handle"] and "search_posts" in bulk.calls
     assert bulk.calls.index("get_latest_originals") > bulk.calls.index("search_posts")   # the sample right after enrich
-    cand = db.one(demo, "SELECT * FROM candidates WHERE handle='carlo_test'")
-    # its engagement sample: a row even though the fixtures hold no post of @carlo_test
+    cand = db.one(demo, "SELECT * FROM candidates WHERE handle='seed_test'")
+    # its engagement sample: a row even though the fixtures hold no post of @seed_test
     smp = db.rows(demo, "SELECT * FROM engagement_samples WHERE x_id=?", (cand["x_id"],))
     assert [(r["run_id"], r["requested"], json.loads(r["post_ids"])) for r in smp] == [(ans["run_id"], check.SAMPLE_POSTS, [])]
     assert ans["steps"]["sample"] == {"posts": 0, "errors": 0, "budget_stop": False}
@@ -120,10 +120,10 @@ def test_full_check_on_a_fixture_handle(demo, table):
     # the checks row
     row = db.one(demo, "SELECT * FROM checks WHERE check_id=?", (ans["check_id"],))
     assert (row["handle"], row["candidate_id"], row["run_id"], row["compared_run_id"]) == \
-           ("carlo_test", cand["candidate_id"], ans["run_id"], SCORED)
+           ("seed_test", cand["candidate_id"], ans["run_id"], SCORED)
     assert (row["rank_current"], row["rank_default"], row["n"]) == (rv["rank"], rv["rank_default"], rv["n"])
-    assert row["cost_usd"] == 0.0 and json.loads(row["result_json"])["handle"] == "carlo_test"
-    assert any("Found @carlo_test" in m for m in said)
+    assert row["cost_usd"] == 0.0 and json.loads(row["result_json"])["handle"] == "seed_test"
+    assert any("Found @seed_test" in m for m in said)
     # an ordinary candidate from then on: the next scheduled scoring includes them
     nxt = db.new_run(demo, "score")
     score.run_score(demo, nxt)
@@ -133,7 +133,7 @@ def test_full_check_on_a_fixture_handle(demo, table):
 @pytest.mark.parametrize("protected", [False, True])
 def test_missing_or_protected_handle_stops_after_the_lookup(demo, table, protected):
     bulk, verify = Spy(), Spy(protected=protected)
-    handle = "carlo_test" if protected else "nobody_test"
+    handle = "seed_test" if protected else "nobody_test"
     n_cands = n_rows(demo, "candidates")
     ans = check.run_check(demo, handle, table=table, sources=(bulk, verify))
     assert not ans["ok"] and ("protected" if protected else "no active account") in ans["reason"]
@@ -190,18 +190,18 @@ def test_rank_and_neighbours_under_default_and_custom_weights():
 def test_free_show_makes_no_source_or_llm_call(demo, table, monkeypatch):
     def boom(*a, **k):
         raise AssertionError("the free Show must not call a source or the LLM")
-    monkeypatch.setattr("ring_wishlist.pipeline._sources", boom)
-    monkeypatch.setattr("ring_wishlist.sources.base.get_source", boom)
-    monkeypatch.setattr("ring_wishlist.llm.complete_json", boom)
-    demo.execute("UPDATE x_posts SET fetched_at=? WHERE x_id='2'", (db.utcnow(),))   # recent posts for @ringnerd_test
-    k = check.known(demo, "ringnerd_test")
+    monkeypatch.setattr("wearable_wishlist.pipeline._sources", boom)
+    monkeypatch.setattr("wearable_wishlist.sources.base.get_source", boom)
+    monkeypatch.setattr("wearable_wishlist.llm.complete_json", boom)
+    demo.execute("UPDATE x_posts SET fetched_at=? WHERE x_id='2'", (db.utcnow(),))   # recent posts for @wearablenerd_test
+    k = check.known(demo, "wearablenerd_test")
     assert k["fresh"] and k["posts"] > 0 and k["classified_at"]
     runs, ledger, scores = n_rows(demo, "runs"), n_rows(demo, "costs"), n_rows(demo, "scores")
-    ans = check.show_stored(demo, "ringnerd_test", table=table)
+    ans = check.show_stored(demo, "wearablenerd_test", table=table)
     assert ans["ok"] and ans["mode"] == "stored" and ans["run_id"] is None and ans["cost_usd"] == 0.0
     assert (n_rows(demo, "runs"), n_rows(demo, "costs"), n_rows(demo, "scores")) == (runs, ledger, scores)
     assert ans["rank_at_check"]["rank"] == 1 and ans["because"][0]["quote"]["url"].startswith("https://x.com/")
-    assert check.load_check(demo, ans["check_id"])["person"]["handle"] == "ringnerd_test"
+    assert check.load_check(demo, ans["check_id"])["person"]["handle"] == "wearablenerd_test"
     assert check.past_checks(demo)[0]["check_id"] == ans["check_id"]
     assert check.known(demo, "nobody_test") is None
     with pytest.raises(ValueError):
@@ -211,14 +211,14 @@ def test_free_show_makes_no_source_or_llm_call(demo, table, monkeypatch):
 def test_enrich_hook_fetches_the_checked_person_past_the_gates(demo):
     parody = db.one(demo, "SELECT candidate_id FROM candidates WHERE handle='parody_test'")["candidate_id"]
     run = db.new_run(demo, "check")
-    from ring_wishlist.discover import run_enrich
+    from wearable_wishlist.discover import run_enrich
     assert "parody_test" not in run_enrich(demo, run, FixtureSource(), top=80, posts_per_user=30)["handles"]   # gated
     got = run_enrich(demo, run, FixtureSource(), top=1, posts_per_user=30, candidate_ids=[parody])
     assert got["handles"] == ["parody_test"] and got["enriched"] == 1
 
 
 def test_keep_off_the_wishlist_hides_them_and_says_why(demo, table):
-    ans = check.run_check(demo, "carlo_test", table=table, sources=(Spy(), Spy()))
+    ans = check.run_check(demo, "seed_test", table=table, sources=(Spy(), Spy()))
     data.set_status(demo, ans["candidate_id"], "rejected", note=check.KEEP_OFF_NOTE)
     person = {**ans["person"], "status": data.get_status(demo, ans["candidate_id"])["status"]}
     rv = check.rank_view(table, person)

@@ -1,7 +1,7 @@
-"""The schedule (src/ring_wishlist/schedule.py): due stages, monthly spend and caps, next trigger."""
+"""The schedule (src/wearable_wishlist/schedule.py): due stages, monthly spend and caps, next trigger."""
 import datetime as dt
 
-from ring_wishlist import db, schedule as S
+from wearable_wishlist import db, schedule as S
 
 NOW = dt.datetime(2026, 10, 15, 6, 0, tzinfo=dt.timezone.utc)
 

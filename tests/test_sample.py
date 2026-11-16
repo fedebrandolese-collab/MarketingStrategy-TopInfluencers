@@ -1,4 +1,4 @@
-"""The engagement sample (src/ring_wishlist/sample.py): offline, on the demo DB of scripts/seed_demo_db.py (run 2 scored, three
+"""The engagement sample (src/wearable_wishlist/sample.py): offline, on the demo DB of scripts/seed_demo_db.py (run 2 scored, three
 people on its wishlist) with the fixture source or small fakes (conftest forces DRY_RUN=1). No network, no spend."""
 import dataclasses
 import datetime as dt
@@ -13,15 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import costs, db, discover, export, pipeline, sample, weights  # noqa: E402
-from ring_wishlist.sources import monid  # noqa: E402
-from ring_wishlist.sources.base import FixtureSource, XPost, persist_posts  # noqa: E402
-from ring_wishlist.sources.monid import MonidSource  # noqa: E402
-from ring_wishlist.sources.x_api import XApiSource  # noqa: E402
+from wearable_wishlist import costs, db, discover, export, pipeline, sample, weights  # noqa: E402
+from wearable_wishlist.sources import monid  # noqa: E402
+from wearable_wishlist.sources.base import FixtureSource, XPost, persist_posts  # noqa: E402
+from wearable_wishlist.sources.monid import MonidSource  # noqa: E402
+from wearable_wishlist.sources.x_api import XApiSource  # noqa: E402
 from scripts.seed_demo_db import seed  # noqa: E402
 
 SCORED = 2   # the demo's latest scored run
-WISHLIST = ["ringnerd_test", "vc_test", "techwriter_test"]   # run 2's people who meet the bar, in rank order (US only)
+WISHLIST = ["wearablenerd_test", "vc_test", "techwriter_test"]   # run 2's people who meet the bar, in rank order (US only)
 MEETS_BAR = WISHLIST + ["eu_test"]                            # US or not: Elke (Berlin, rank 6) meets the bar too
 
 
@@ -93,7 +93,7 @@ def test_run_skips_people_without_x_and_recent_samples_and_a_check_fetches_anywa
     assert (st["bar"], st["top"], st["skipped_no_x"], st["skipped_recent"]) == (4, 7, 1, 1)   # was 3, 6: elke joins
     assert (st["selected"], st["accounts"], st["posts"], st["errors"], st["cost"]) == (5, 5, 8, 0, 0.0)   # + elke's 1
     got = newest_samples(demo)
-    assert got[x["ringnerd_test"]]["post_ids"] == ["101", "102", "103"]           # newest first
+    assert got[x["wearablenerd_test"]]["post_ids"] == ["101", "102", "103"]           # newest first
     assert (got[x["vc_test"]]["run_id"], got[x["vc_test"]]["requested"], got[x["vc_test"]]["source"]) == (run, 30, "fixture")
     assert got[x["techwriter_test"]]["post_ids"] == [] and got[x["eu_test"]]["run_id"] == run   # untouched; not US, sampled
     # the next run within the refresh window buys nothing
@@ -120,15 +120,15 @@ class Latest:
         return [dataclasses.replace(p) for p in self.posts]
 
 
-def _post(post_id, created, x_id="2", handle="ringnerd_test", **kw):
+def _post(post_id, created, x_id="2", handle="wearablenerd_test", **kw):
     return XPost(post_id=post_id, x_id=x_id, handle=handle, text=kw.pop("text", f"post {post_id}"),
                  created_at=created, **kw)
 
 
 def test_existing_queries_are_kept_and_new_posts_get_the_sample_query(demo):
     c = cids(demo)
-    topic = '"smart ring" -is:retweet lang:en'
-    evidence = discover.enrich_queries("ringnerd_test")[0]
+    topic = '"smart wearable" -is:retweet lang:en'
+    evidence = discover.enrich_queries("wearablenerd_test")[0]
     demo.execute("UPDATE x_posts SET query=? WHERE post_id='101'", (topic,))
     demo.execute("UPDATE x_posts SET query='latest_status' WHERE post_id='102'")
     persist_posts(demo, [_post("902", "2026-09-28T10:00:00Z", in_reply_to_x_id="1", query=evidence)], "monid")
@@ -140,13 +140,13 @@ def test_existing_queries_are_kept_and_new_posts_get_the_sample_query(demo):
         _post("903", "2026-09-27T10:00:00Z", text="RT @someone: a repost"),       # a stray repost
         _post("904", "2026-09-26T10:00:00Z", x_id="3", handle="techwriter_test"),  # someone else's
     ])
-    st = sample.run_sample(demo, db.new_run(demo, "sample"), src, candidate_ids=[c["ringnerd_test"]])
+    st = sample.run_sample(demo, db.new_run(demo, "sample"), src, candidate_ids=[c["wearablenerd_test"]])
     assert (st["accounts"], st["posts"]) == (1, 3)
     assert newest_samples(demo)["2"]["post_ids"] == ["901", "101", "102"]        # newest first, originals only
     q = {r["post_id"]: r for r in db.rows(demo, "SELECT post_id, query, likes, views FROM x_posts")}
     assert (q["101"]["query"], q["102"]["query"], q["902"]["query"]) == (topic, "latest_status", evidence)
-    new_query = "from:ringnerd_test -filter:retweets -filter:replies"
-    assert q["901"]["query"] == sample.SAMPLE_QUERY.format(handle="ringnerd_test") == new_query
+    new_query = "from:wearablenerd_test -filter:retweets -filter:replies"
+    assert q["901"]["query"] == sample.SAMPLE_QUERY.format(handle="wearablenerd_test") == new_query
     assert discover.query_kind(new_query) == "recent" and not discover.post_is_topical(new_query, "post 901")
     assert (q["101"]["likes"], q["101"]["views"]) == (999, 123456)                # counts are refreshed
 
@@ -158,7 +158,7 @@ def test_a_row_even_for_zero_posts_and_none_for_a_failed_fetch(demo):
         def get_latest_originals(self, handle, max_results):
             if handle == "vc_test":
                 raise RuntimeError("provider HTTP 500")
-            return [] if handle == "ringnerd_test" else super().get_latest_originals(handle, max_results)
+            return [] if handle == "wearablenerd_test" else super().get_latest_originals(handle, max_results)
 
     st = sample.run_sample(demo, db.new_run(demo, "sample"), Flaky(), candidate_ids=[c[h] for h in WISHLIST], posts=20)
     assert (st["accounts"], st["empty"], st["errors"], st["posts"]) == (2, 1, 1, 2)
@@ -261,7 +261,7 @@ def test_monid_prefetch_then_latest_originals_is_free(conn, capsys):
 def test_run_sample_uses_the_monid_prefetch(demo):
     ids = [cids(demo)[h] for h in WISHLIST]
     output = [_tweet(90 + int(x), h, x, "Mon Sep 28 10:00:00 +0000 2026")
-              for h, x in (("ringnerd_test", "2"), ("vc_test", "4"), ("techwriter_test", "3"))]
+              for h, x in (("wearablenerd_test", "2"), ("vc_test", "4"), ("techwriter_test", "3"))]
     run = db.new_run(demo, "sample")
     s = MonidSource(conn=demo, run_id=run, session=FakeSession({**COMPLETED, "output": output, "billedUnits": 3}),
                     api_key="k", poll_interval=0)

@@ -5,7 +5,7 @@ altair==6.3.0
 annotated-types==0.8.0
     # via pydantic
 anthropic==1.9.0
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 anyio==4.15.1
     # via
     #   anthropic
@@ -75,7 +75,7 @@ packaging==26.3
     #   streamlit
 pandas==3.0.6
     # via
-    #   ring-wishlist (pyproject.toml)
+    #   wearable-wishlist (pyproject.toml)
     #   streamlit
 pillow==12.3.0
     # via streamlit
@@ -94,24 +94,24 @@ pydeck==0.9.3
 pygments==2.21.0
     # via pytest
 pytest==9.1.1
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via pandas
 python-dotenv==1.2.3
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 python-multipart==0.0.32
     # via streamlit
 pyyaml==6.0.3
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 rapidfuzz==3.14.6
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
 requests==2.34.2
     # via
-    #   ring-wishlist (pyproject.toml)
+    #   wearable-wishlist (pyproject.toml)
     #   streamlit
 rpds-py==2026.6.3
     # via
@@ -124,7 +124,7 @@ sniffio==1.3.1
 starlette==1.7.0
     # via streamlit
 streamlit==1.64.0
-    # via ring-wishlist (pyproject.toml)
+    # via wearable-wishlist (pyproject.toml)
 toml==0.10.2
     # via streamlit
 truststore==0.10.4 ; sys_platform != 'emscripten'

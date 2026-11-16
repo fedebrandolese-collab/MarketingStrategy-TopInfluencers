@@ -1,4 +1,4 @@
-"""The runtime (src/ring_wishlist/ops.py) and the run_stages record pipeline.run keeps. Offline (conftest forces DRY_RUN=1: the
+"""The runtime (src/wearable_wishlist/ops.py) and the run_stages record pipeline.run keeps. Offline (conftest forces DRY_RUN=1: the
 pipeline stages read fixtures) on the temp `conn` database; logs, backups, exports and config/schedule.yaml live in
 tmp_path; requests.post fails the test, so nothing reaches the network."""
 import datetime as dt
@@ -12,7 +12,7 @@ import time
 import pytest
 import requests
 
-from ring_wishlist import config, costs, db, ops, pipeline, schedule
+from wearable_wishlist import config, costs, db, ops, pipeline, schedule
 
 EVERY = dict(schedule.DEFAULT_EVERY)
 MONID_STAGES = {"crawl", "discover", "expand", "enrich", "sample"}
@@ -31,8 +31,8 @@ def rails(tmp_path, monkeypatch):
     monkeypatch.setattr(ops, "LOGS_DIR", tmp_path / "logs")
     monkeypatch.setattr(ops, "BACKUPS_DIR", tmp_path / "backups")
     monkeypatch.setattr(config, "EXPORTS_DIR", tmp_path / "exports")
-    monkeypatch.setenv("CARLO_X_HANDLE", "carlo_test")
-    monkeypatch.setenv("RING_WISHLIST_NO_DESKTOP_NOTIFY", "1")
+    monkeypatch.setenv("SEED_X_HANDLE", "seed_test")
+    monkeypatch.setenv("WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY", "1")
     monkeypatch.delenv("NOTIFY_WEBHOOK_URL", raising=False)
     monkeypatch.delenv("BUDGET_IGNORE_MONTH", raising=False)
     monkeypatch.setattr(requests, "post", lambda *a, **k: pytest.fail("tests never call the network"))
@@ -79,7 +79,7 @@ def test_pipeline_records_every_stage(conn, monkeypatch):
     def paths(conn, run_id, seed_handle=None):
         costs.record(conn, "x_api", "test", 10, 0.025, run_id)             # this stage spends $0.25
         return {"paths": 3}
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", paths)
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", paths)
     res = pipeline.run("paths,score,export", notes="a test", skipped={"crawl": "monthly cap: monid spent $40.00"})
     rows = stages_of(conn, res["run_id"])
     assert {s: r["status"] for s, r in rows.items()} == {"crawl": "skipped", "paths": "ok", "score": "ok", "export": "ok"}
@@ -91,8 +91,8 @@ def test_pipeline_records_every_stage(conn, monkeypatch):
 
 
 def test_pipeline_records_failures_budget_stops_and_interruptions(conn, monkeypatch):
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", boom)                   # not fatal: the run goes on
-    monkeypatch.setattr("ring_wishlist.score.run_score", boom)                   # fatal: export is not reached
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", boom)                   # not fatal: the run goes on
+    monkeypatch.setattr("wearable_wishlist.score.run_score", boom)                   # fatal: export is not reached
     rid = pipeline.run("paths,score,export")["run_id"]
     rows = stages_of(conn, rid)
     assert {s: r["status"] for s, r in rows.items()} == {"paths": "failed", "score": "failed", "export": "skipped"}
@@ -100,14 +100,14 @@ def test_pipeline_records_failures_budget_stops_and_interruptions(conn, monkeypa
 
     def over(*a, **k):
         raise costs.BudgetExceeded("monid: spent $40.00 this month, monthly cap is $40.00")
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", over)
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", over)
     res = pipeline.run("paths,export")
     assert res["paths"]["budget_stop"] and status_of(conn, res["run_id"]) == {"paths": "failed", "export": "skipped"}
     assert stages_of(conn, res["run_id"])["export"]["error"] == "not run: paths was stopped by the budget guard"
 
     def ctrl_c(*a, **k):
         raise KeyboardInterrupt
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", ctrl_c)
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", ctrl_c)
     with pytest.raises(KeyboardInterrupt):
         pipeline.run("paths,export")
     rid = db.latest_run_id(conn)
@@ -124,7 +124,7 @@ def test_scheduled_run_does_the_due_stages_then_nothing(conn):
     assert first["notes"] == "scheduled: 12 due" and first["finished_at"]
     assert status_of(conn, first["run_id"]) == {s: "ok" for s in schedule.STAGES}
     log_text = "".join(p.read_text() for p in ops.LOGS_DIR.glob("run-*.log"))
-    assert "ring_wishlist.pipeline: stage score" in log_text and "[cost] fixture crawl" in log_text   # logging and prints
+    assert "wearable_wishlist.pipeline: stage score" in log_text and "[cost] fixture crawl" in log_text   # logging and prints
 
     two_days_ago = iso(48)
     conn.execute("UPDATE run_stages SET finished_at=? WHERE stage IN ('paths', 'score')", (two_days_ago,))
@@ -171,7 +171,7 @@ def test_classify_counts_as_anthropic_only_on_that_backend(conn, monkeypatch):
 
 
 def test_a_failed_stage_exits_3_with_an_error_alert(conn, cheap, monkeypatch):
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", boom)
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", boom)
     assert ops.run() == ops.EXIT_FAILED
     a = ops.read_alerts()[-1]
     assert a["level"] == "error"
@@ -181,7 +181,7 @@ def test_a_failed_stage_exits_3_with_an_error_alert(conn, cheap, monkeypatch):
 
 
 def test_a_budget_stop_exits_3_with_a_warning(conn, cheap, monkeypatch):
-    monkeypatch.setattr("ring_wishlist.score.run_score", lambda conn, run_id: {"scored": 0, "budget_stop": True})
+    monkeypatch.setattr("wearable_wishlist.score.run_score", lambda conn, run_id: {"scored": 0, "budget_stop": True})
     assert ops.run() == ops.EXIT_FAILED
     a = ops.read_alerts()[-1]
     assert a["level"] == "warning" and "a budget stopped score before it finished" in a["message"]
@@ -206,7 +206,7 @@ def test_a_crash_exits_2_alerts_and_closes_the_run(conn, cheap, monkeypatch):
 def test_sigterm_during_a_run_records_the_stage_and_stops(conn, cheap, monkeypatch):
     def term(*a, **k):
         raise ops.Stop("SIGTERM")                                         # what the SIGTERM handler raises
-    monkeypatch.setattr("ring_wishlist.paths.run_paths", term)
+    monkeypatch.setattr("wearable_wishlist.paths.run_paths", term)
     with pytest.raises(ops.Stop):
         ops.run()
     r = last_scheduled(conn)
@@ -377,7 +377,7 @@ def test_alerts_post_to_the_webhook_and_never_raise(monkeypatch):
     monkeypatch.setenv("NOTIFY_WEBHOOK_URL", "https://hooks.example.test/T000/B000")
     ops.alert("error", "scheduled run 7: stage enrich failed: boom")
     assert sent == [("https://hooks.example.test/T000/B000",
-                     {"text": "ring_wishlist wishlist error: scheduled run 7: stage enrich failed: boom"}, 10)]
+                     {"text": "wearable_wishlist wishlist error: scheduled run 7: stage enrich failed: boom"}, 10)]
 
     def down(*a, **k):
         raise requests.ConnectionError("no route to host")
@@ -390,12 +390,12 @@ def test_desktop_notification_only_on_macos_and_when_allowed(monkeypatch):
     calls = []
     monkeypatch.setattr(ops.subprocess, "run", lambda argv, **kw: calls.append(argv))
     monkeypatch.setattr(ops.platform, "system", lambda: "Darwin")
-    monkeypatch.delenv("RING_WISHLIST_NO_DESKTOP_NOTIFY")
+    monkeypatch.delenv("WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY")
     ops.alert("error", 'a "quoted" failure')
-    assert calls and calls[0][0] == "osascript" and calls[0][-2:] == ['a "quoted" failure', "ring_wishlist wishlist: error"]
-    monkeypatch.setenv("RING_WISHLIST_NO_DESKTOP_NOTIFY", "1")
+    assert calls and calls[0][0] == "osascript" and calls[0][-2:] == ['a "quoted" failure', "wearable_wishlist wishlist: error"]
+    monkeypatch.setenv("WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY", "1")
     ops.alert("error", "quiet")
-    monkeypatch.delenv("RING_WISHLIST_NO_DESKTOP_NOTIFY")
+    monkeypatch.delenv("WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY")
     monkeypatch.setattr(ops.platform, "system", lambda: "Linux")
     ops.alert("error", "a server")
     assert len(calls) == 1

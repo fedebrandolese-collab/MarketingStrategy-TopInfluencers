@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install the two launchd agents (macOS), both DISABLED:
-#   com.ring-wishlist.wishlist   daily at daily_at (config/schedule.yaml): scripts/refresh.sh -> python -m ring_wishlist.ops run
-#   com.ring-wishlist.dashboard  the dashboard on http://localhost:8501, started at login and kept running
+#   com.wearable-wishlist.wishlist   daily at daily_at (config/schedule.yaml): scripts/refresh.sh -> python -m wearable_wishlist.ops run
+#   com.wearable-wishlist.dashboard  the dashboard on http://localhost:8501, started at login and kept running
 # Copies scripts/<label>.plist to ~/Library/LaunchAgents with the absolute repo path and the time filled in, then prints
 # the commands to activate and deactivate them. It does NOT load anything: you decide when the schedule starts.
 #
@@ -23,8 +23,8 @@ fi
 chmod +x "$REPO/scripts/refresh.sh"
 mkdir -p "$REPO/data/logs" "$DEST_DIR"   # launchd will not start a job if its log directory is missing
 
-# The daily time: daily_at in config/schedule.yaml, read (with its default and checks) by src/ring_wishlist/schedule.py.
-read -r HOUR MINUTE < <(PYTHONPATH="$REPO/src" "$PY" -c 'import datetime as dt; from ring_wishlist import schedule
+# The daily time: daily_at in config/schedule.yaml, read (with its default and checks) by src/wearable_wishlist/schedule.py.
+read -r HOUR MINUTE < <(PYTHONPATH="$REPO/src" "$PY" -c 'import datetime as dt; from wearable_wishlist import schedule
 t = dt.time.fromisoformat(schedule.load()["daily_at"]); print(t.hour, t.minute)')
 AT="$(printf '%02d:%02d' "$HOUR" "$MINUTE")"
 
@@ -51,17 +51,17 @@ install_plist() {   # $1: the label; scripts/$1.plist -> $DEST_DIR/$1.plist
   fi
   rm -f "$tmp"
 }
-install_plist com.ring-wishlist.wishlist
-install_plist com.ring-wishlist.dashboard
+install_plist com.wearable-wishlist.wishlist
+install_plist com.wearable-wishlist.dashboard
 
 cat <<EOF
 
 Nothing is running yet: both agents are installed disabled, so nothing starts now or at your next login.
 Once active:
-  com.ring-wishlist.wishlist   runs $REPO/scripts/refresh.sh every day at $AT (local time; daily_at in
+  com.wearable-wishlist.wishlist   runs $REPO/scripts/refresh.sh every day at $AT (local time; daily_at in
                         config/schedule.yaml): the stages that are due, which SPENDS MONEY (monid, X API, Anthropic) up
                         to the per-run budgets in .env and the monthly caps in config/schedule.yaml.
-  com.ring-wishlist.dashboard  the dashboard on http://localhost:8501, started at login and restarted if it stops.
+  com.wearable-wishlist.dashboard  the dashboard on http://localhost:8501, started at login and restarted if it stops.
 Logs: data/logs/run-*.log (one per run), data/logs/alerts.log, data/logs/launchd.log, data/logs/dashboard.log
 
 Activate both (enable + load):  make schedule-on

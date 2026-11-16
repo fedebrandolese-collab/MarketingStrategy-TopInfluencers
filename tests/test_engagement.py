@@ -1,10 +1,10 @@
-"""Community engagement KPIs (src/ring_wishlist/engagement.py): the average post per follower, against accounts of the same size."""
+"""Community engagement KPIs (src/wearable_wishlist/engagement.py): the average post per follower, against accounts of the same size."""
 import datetime as dt
 import math
 
 import pytest
 
-from ring_wishlist import db, engagement as E, score, weights
+from wearable_wishlist import db, engagement as E, score, weights
 
 FETCHED = "2026-09-30T12:00:00Z"
 F = 10_000

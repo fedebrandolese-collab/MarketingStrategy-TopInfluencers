@@ -1,7 +1,7 @@
 """Handle verification: same numeric id on the official lookup, badge/age/followers, parody signals."""
-from ring_wishlist import db
-from ring_wishlist.sources.base import XUser
-from ring_wishlist.verify import run_verify
+from wearable_wishlist import db
+from wearable_wishlist.sources.base import XUser
+from wearable_wishlist.verify import run_verify
 
 
 class FakeOfficial:
@@ -33,7 +33,7 @@ def test_verify_verdicts(conn):
         XUser(x_id="20", handle="newish", name="New Ish", bio="builder", verified=False, verified_type="none",
               created_at="2026-01-01T00:00:00Z", followers=300),
         XUser(x_id="99", handle="renamed", name="Someone Else", bio="", verified=False, created_at="2020-01-01T00:00:00Z"),
-        XUser(x_id="50", handle="funny", name="Ring Guy (parody)", bio="Parody account", verified=True, verified_type="blue",
+        XUser(x_id="50", handle="funny", name="Wearable Guy (parody)", bio="Parody account", verified=True, verified_type="blue",
               created_at="2016-01-01T00:00:00Z", followers=90000),
     ])
     run_id = db.new_run(conn, "verify")

@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ring_wishlist import db, schedule  # noqa: E402
+from wearable_wishlist import db, schedule  # noqa: E402
 from app import system_data as sd  # noqa: E402
 from scripts.seed_demo_db import seed  # noqa: E402
 
@@ -117,11 +117,11 @@ def test_health_uses_ops_health_when_it_exists(conn, monkeypatch):
     def fake(c, sched=None, now=None):
         seen.update(sched=sched, now=now)
         return {"ok": True, "problems": [], "warnings": ["from ops"], "last_scheduled_run": None}
-    monkeypatch.setitem(sys.modules, "ring_wishlist.ops", None)                     # no ops.py: the dashboard's own rule
+    monkeypatch.setitem(sys.modules, "wearable_wishlist.ops", None)                     # no ops.py: the dashboard's own rule
     assert sd.ops_health() is None and sd.health(conn, SCHED, NOW)["source"] == "fallback"
-    ops = types.ModuleType("ring_wishlist.ops")
+    ops = types.ModuleType("wearable_wishlist.ops")
     ops.health = fake
-    monkeypatch.setitem(sys.modules, "ring_wishlist.ops", ops)
+    monkeypatch.setitem(sys.modules, "wearable_wishlist.ops", ops)
     h = sd.health(conn, SCHED, NOW)
     assert h["source"] == "ops.health" and h["warnings"] == ["from ops"] and seen == {"sched": SCHED, "now": NOW}
 

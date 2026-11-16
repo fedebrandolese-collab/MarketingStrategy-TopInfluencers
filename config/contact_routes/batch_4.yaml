@@ -1,5 +1,5 @@
 # Public, professional ways to contact people with no warm path and closed X DMs. Researched 2026-09-29 from pages the
-# person published; nothing guessed, nothing from data brokers. Routes are for Carlo to act on; nobody was contacted.
+# person published; nothing guessed, nothing from data brokers. Routes are for the operator to act on; nobody was contacted.
 checked: 2026-09-29
 people:
   - handle: morganlinton
@@ -23,7 +23,7 @@ people:
       - type: email
         detail: "Max Tech business email in YouTube 'Channel details' (View email address)"
         source_url: "https://www.youtube.com/@MaxTechOfficial/about"
-        note: "Address hidden behind YouTube sign-in and captcha; Carlo reveals it himself"
+        note: "Address hidden behind YouTube sign-in and captcha; the operator reveals it himself"
     reason: "X bio links Max Tech; its About names a details-section business email and @vadimyuryev as sole contacts (read via search index)."
 
   - handle: paularambles

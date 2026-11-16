@@ -6,11 +6,11 @@ os.environ["DRY_RUN"] = "1"
 
 import pytest  # noqa: E402
 
-from ring_wishlist import config, db  # noqa: E402
+from wearable_wishlist import config, db  # noqa: E402
 
-# Alerts (src/ring_wishlist/ops.py) never leave the machine in tests, even with a webhook in .env, and pop no notifications.
+# Alerts (src/wearable_wishlist/ops.py) never leave the machine in tests, even with a webhook in .env, and pop no notifications.
 os.environ.pop("NOTIFY_WEBHOOK_URL", None)
-os.environ["RING_WISHLIST_NO_DESKTOP_NOTIFY"] = "1"
+os.environ["WEARABLE_WISHLIST_NO_DESKTOP_NOTIFY"] = "1"
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def map_conn(conn):
 
 @pytest.fixture
 def fixture_source():
-    from ring_wishlist.sources.base import FixtureSource
+    from wearable_wishlist.sources.base import FixtureSource
     return FixtureSource()
 
 
@@ -58,5 +58,5 @@ def fixture_source():
 def no_research_routes(tmp_path_factory, monkeypatch):
     """Researched contact routes come from config/contact_routes in real runs; tests start with none, so the repo's
     research never changes a test. A test that needs some writes its own directory."""
-    from ring_wishlist import contacts
+    from wearable_wishlist import contacts
     monkeypatch.setattr(contacts, "ROUTES_DIR", tmp_path_factory.getbasetemp() / "no_contact_routes")

@@ -1,11 +1,11 @@
-"""Topic affinity (src/ring_wishlist/affinity.py): topical detection, the three components, None / 0.0, ordering."""
+"""Topic affinity (src/wearable_wishlist/affinity.py): topical detection, the three components, None / 0.0, ordering."""
 import datetime as dt
 import json
 
 import pytest
 
-from ring_wishlist import affinity, config, db
-from ring_wishlist.affinity import engagement, post_topics, topic_affinity
+from wearable_wishlist import affinity, config, db
+from wearable_wishlist.affinity import engagement, post_topics, topic_affinity
 
 NOW = "2026-09-29T12:00:00Z"
 _NOW_DT = dt.datetime(2026, 9, 29, 12, tzinfo=dt.timezone.utc)
@@ -35,7 +35,7 @@ def add_post(conn, x_id: str, text: str, days: float, likes=0, reposts=0, replie
 
 
 AGENT = "My personal agent booked the dentist and cleared my inbox while I walked the dog."
-WEAR = "Thirty days with a smart ring: the best wearable is the one you forget you are wearing."
+WEAR = "Thirty days with a smart wearable: the best wearable is the one you forget you are wearing."
 OTHER = "Lovely dinner in Brooklyn with old friends tonight."
 
 
@@ -51,10 +51,10 @@ OTHER = "Lovely dinner in Brooklyn with old friends tonight."
     ("An AI assistant that remembers what I said last week is all I want.", {"personal_agents"}),
     ("Voice-first computing is closer than the skeptics think.", {"voice"}),
     ("I switched to dictation for every email. Speech-to-text is finally good.", {"voice"}),
-    ("Unboxing my third smart ring this year.", {"wearables"}),
+    ("Unboxing my third smart wearable this year.", {"wearables"}),
     ("The Limitless pendant keeps falling off my shirt.", {"wearables"}),
     ("A month with a dumbphone: my screen time dropped by 70%.", {"screen_free"}),
-    ("Smart rings plus a voice agent is the form factor.", {"personal_agents", "voice", "wearables"}),
+    ("Smart wearables plus a voice agent is the form factor.", {"personal_agents", "voice", "wearables"}),
 ])
 def test_topical_posts(text, expected):
     assert post_topics(text) == expected
@@ -78,7 +78,7 @@ def test_passing_mentions_are_not_topical(text):
 
 def test_leading_reply_handles_are_not_content():
     assert post_topics("@openclaw thanks!") == set()
-    assert post_topics("@carlo OpenClaw booked my flights while I slept") == {"personal_agents"}
+    assert post_topics("@the operator OpenClaw booked my flights while I slept") == {"personal_agents"}
 
 
 def test_replies_count_double_in_engagement():
@@ -130,7 +130,7 @@ def test_topical_posts_older_than_the_window_score_zero_but_are_reported(conn):
 
 def test_agent_posts_outweigh_other_themes(conn):
     add_candidate(conn, 1, "100", "agents")
-    add_candidate(conn, 2, "200", "rings")
+    add_candidate(conn, 2, "200", "wearables")
     for d in (2, 9, 20):
         add_post(conn, "100", AGENT, d, likes=80, replies=10)
         add_post(conn, "200", WEAR, d, likes=80, replies=10)
@@ -277,7 +277,7 @@ def test_fixture_posts(conn):
     conn.commit()
     by_handle = {handles[x]: r for x, r in zip(sorted(handles), [topic_affinity(conn, now=NOW)[i]
                                                                  for i in range(1, len(handles) + 1)])}
-    rn = by_handle["ringnerd_test"]
-    assert rn["topical_posts"] == 3 and rn["agent_posts"] == 1         # "Smart rings plus a voice agent"
-    assert by_handle["parody_test"]["score"] == 0.0                     # throwing rings into volcanoes is not the topic
+    rn = by_handle["wearablenerd_test"]
+    assert rn["topical_posts"] == 3 and rn["agent_posts"] == 1         # "Smart wearables plus a voice agent"
+    assert by_handle["parody_test"]["score"] == 0.0                     # throwing wearables into volcanoes is not the topic
     assert rn["score"] > by_handle["eu_test"]["score"] > 0              # three posts beat one

@@ -1,4 +1,4 @@
-# X handles for people in Carlo's map that the free resolve methods did not find.
+# X handles for people in the operator's map that the free resolve methods did not find.
 # Found by web search (author pages, Muck Rack, the person's own site or bio), then confirmed on the official X API
 # (GET /2/users/by, 2026-09-29): the numeric x_id below is the account that was checked.
 #   confidence: verified   the X profile carries the name AND the company, outlet or role
@@ -247,12 +247,12 @@ overrides:
     source_url: "https://x.com/jaypeters"
     match_reason: "X bio 'Senior Reporter @verge'"
   - map_person_id: 4664
-    name: "Kris Carlon"
+    name: "Kris C."
     group: press
-    handle: kriscarlon
+    handle: redacted-handle
     x_id: "166321646"
     confidence: verified
-    source_url: "https://x.com/kriscarlon"
+    source_url: "https://x.com/redacted-handle"
     match_reason: "X bio 'Previous: Exec. Editor at Android Authority'"
     non_us: true
     location: "Berlin, Germany"
@@ -427,7 +427,7 @@ overrides:
     x_id: "713196709371719680"
     confidence: verified
     source_url: "map text: 'Amazon Influencer, @themklibrary'"
-    match_reason: "handle written in Carlo's map ('@themklibrary'); display name 'MK', handle = the map company MK Library"
+    match_reason: "handle written in the operator's map ('@themklibrary'); display name 'MK', handle = the map company MK Library"
   - map_person_id: 5060
     name: "Chuck Joiner / Norbert Frassa"
     group: press
