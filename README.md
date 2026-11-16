@@ -6,7 +6,6 @@ and loving it and saying so. Impact weighs in too. The path through Carlo's netw
 approach each person, not scored: a warm relationship only nudges P(accept). It re-runs on a schedule and explains
 every move. A local dashboard shows the ranked list, the reasons, the path and a status per person.
 
-Built for the brief in [Federico_the_RING_WISHLIST_wishlist.md](Federico_the_RING_WISHLIST_wishlist.md).
 The scoring method is in [SCORING.md](SCORING.md), the calls made and why in [DECISIONS.md](DECISIONS.md), spend in [COSTS.md](COSTS.md).
 
 ## Run it
@@ -31,7 +30,7 @@ One stage at a time: `python -m ring_wishlist.pipeline run --stage crawl` (or a 
 ```
 network.ri.fo ─ingest─▶ map tables ─────────────────────────────┐
                                                                   ▼
-X via monid ─crawl─▶ Carlo's 1,211 following + 6,820 followers ─resolve─▶ X handles of Carlo's contacts
+X via monid ─crawl─▶ main following + 6,820 followers ─resolve─▶ X contacts
             ─discover─▶ 35 topic, competitor and author searches ─▶ people, not posts
             ─expand─▶ who the top 12 follow: accounts 3+ of them follow ─▶ people the network vouches for
             ─enrich─▶ targeted device/voice search per promising person
